@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administratora | SOHOsoft B2B Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-black);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: var(--color-white);
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border: 1px solid var(--color-gray);
+        }
+
+        .header h1 {
+            color: var(--color-black);
+            font-size: 28px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-badge {
+            background: var(--color-gray);
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: var(--color-black);
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .user-badge:hover {
+            background: var(--color-gray);
+        }
+
+        .user-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-menu-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: var(--color-black);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: var(--color-gray);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+        }
+
+        .logout-btn {
+            background: var(--color-action);
+            color: var(--color-white);
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #d66a04;
+            transform: translateY(-2px);
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: var(--color-white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border-left: 4px solid;
+            border: 1px solid var(--color-gray);
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        .kpi-card.revenue { border-left-color: var(--color-action); }
+        .kpi-card.orders { border-left-color: var(--color-black); }
+        .kpi-card.clients { border-left-color: var(--color-gray); }
+        .kpi-card.carriers { border-left-color: var(--color-action); }
+        .kpi-card.products { border-left-color: var(--color-black); }
+        .kpi-card.complaints { border-left-color: var(--color-action); }
+
+        .kpi-label {
+            color: var(--color-gray);
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .kpi-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--color-black);
+        }
+
+        .kpi-trend {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .trend-up { color: var(--color-action); }
+        .trend-down { color: var(--color-black); }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--color-white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--color-gray);
+        }
+
+        .chart-card h3 {
+            color: var(--color-black);
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid var(--color-action);
+            padding-bottom: 10px;
+        }
+
+        .chart-placeholder {
+            background: var(--color-gray);
+            height: 350px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-black);
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        /* Top Products Table */
+        .top-products-list {
+            list-style: none;
+        }
+
+        .product-item {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .product-item:hover {
+            background: #f8f9fa;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .product-sales {
+            color: var(--color-action);
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Data Tables Section */
+        .data-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .data-card {
+            background: var(--color-white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--color-gray);
+        }
+
+        .data-card h3 {
+            color: var(--color-black);
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid var(--color-action);
+            padding-bottom: 10px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: var(--color-gray);
+        }
+
+        .data-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-black);
+            border-bottom: 2px solid var(--color-gray);
+        }
+
+        .data-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--color-gray);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--color-gray);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-critical { background: #f8d7da; color: #721c24; }
+        .status-resolved { background: #d1ecf1; color: #0c5460; }
+
+        /* Alerts Section */
+        .alerts-section {
+            background: var(--color-white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid var(--color-gray);
+        }
+
+        .alerts-section h3 {
+            color: var(--color-black);
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 2px solid var(--color-action);
+            padding-bottom: 10px;
+        }
+
+        .alert-item {
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-item.critical {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .alert-item.info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 5px;
+        }
+
+        .alert-description {
+            color: var(--color-gray);
+            font-size: 14px;
+        }
+
+        .alert-action {
+            padding: 8px 20px;
+            background: var(--color-action);
+            color: var(--color-white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .alert-action:hover {
+            background: #d66a04;
+            transform: translateY(-2px);
+        }
+
+        /* Filters Bar */
+        .filters-bar {
+            background: var(--color-white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 1px solid var(--color-gray);
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            color: var(--color-black);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 10px 15px;
+            border: 1px solid var(--color-gray);
+            border-radius: 6px;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        .filter-apply-btn {
+            align-self: flex-end;
+            padding: 10px 30px;
+            background: var(--color-action);
+            color: var(--color-white);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .filter-apply-btn:hover {
+            background: #d66a04;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1200px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-bar {
+                flex-direction: column;
+            }
+            
+            .filter-group select,
+            .filter-group input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fi fi-rr-target"></i> Panel Administratora</h1>
+            <div class="header-actions">
+                <div class="user-badge" onclick="toggleUserMenu(event)" style="position: relative;">
+                    <i class="fi fi-rr-user"></i> Administrator
+                    <div class="user-menu-dropdown" id="userMenuDropdown">
+                        <button class="dropdown-item" onclick="window.location.href='index.html'">
+                            <i class="fi fi-rr-sign-out"></i>
+                            <span>Wyloguj</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label>Okres</label>
+                <select id="period-filter">
+                    <option>Bieżący miesiąc</option>
+                    <option>Ostatni kwartał</option>
+                    <option>Bieżący rok</option>
+                    <option>Ostatni rok</option>
+                    <option>Niestandardowy</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Oddział</label>
+                <select id="branch-filter">
+                    <option>Wszystkie</option>
+                    <option>Warszawa</option>
+                    <option>Kraków</option>
+                    <option>Wrocław</option>
+                    <option>Gdańsk</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Segment klientów</label>
+                <select id="segment-filter">
+                    <option>Wszyscy</option>
+                    <option>VIP</option>
+                    <option>Standardowi</option>
+                    <option>Nowi</option>
+                </select>
+            </div>
+            <button class="filter-apply-btn" onclick="applyFilters()">Zastosuj filtry</button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card revenue">
+                <div class="kpi-label">Przychody (bieżący mies.)</div>
+                <div class="kpi-value">2.4M PLN</div>
+                <div class="kpi-trend trend-up">↑ +12.5% vs poprzedni m-c</div>
+            </div>
+            <div class="kpi-card orders">
+                <div class="kpi-label">Zamówienia</div>
+                <div class="kpi-value">1,847</div>
+                <div class="kpi-trend trend-up">↑ +8.3% vs poprzedni m-c</div>
+            </div>
+            <div class="kpi-card clients">
+                <div class="kpi-label">Aktywni Klienci</div>
+                <div class="kpi-value">342</div>
+                <div class="kpi-trend trend-up">↑ +5.2% vs poprzedni m-c</div>
+            </div>
+            <div class="kpi-card carriers">
+                <div class="kpi-label">Przewoźnicy</div>
+                <div class="kpi-value">87</div>
+                <div class="kpi-trend trend-up">↑ +3.1% vs poprzedni m-c</div>
+            </div>
+            <div class="kpi-card products">
+                <div class="kpi-label">Top Produkt</div>
+                <div class="kpi-value">CEM-42.5</div>
+                <div class="kpi-trend">487 ton sprzedane</div>
+            </div>
+            <div class="kpi-card complaints">
+                <div class="kpi-label">Reklamacje</div>
+                <div class="kpi-value">12</div>
+                <div class="kpi-trend trend-down">↓ -25% vs poprzedni m-c</div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3><i class="fi fi-rr-chart-line-up"></i> Trend Sprzedaży (ostatnie 6 miesięcy)</h3>
+                <div class="chart-placeholder">
+                    📈 Wykres liniowy: Przychody | Zamówienia | Klienci<br>
+                    (Integracja z biblioteką Chart.js)
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fi fi-rr-trophy"></i> Top 5 Produktów</h3>
+                <ul class="top-products-list">
+                    <li class="product-item">
+                        <span class="product-name">1. CEM-42.5 R</span>
+                        <span class="product-sales">487 ton</span>
+                    </li>
+                    <li class="product-item">
+                        <span class="product-name">2. CEM-32.5</span>
+                        <span class="product-sales">412 ton</span>
+                    </li>
+                    <li class="product-item">
+                        <span class="product-name">3. Zaprawa MUR-25</span>
+                        <span class="product-sales">356 ton</span>
+                    </li>
+                    <li class="product-item">
+                        <span class="product-name">4. Beton B20</span>
+                        <span class="product-sales">298 ton</span>
+                    </li>
+                    <li class="product-item">
+                        <span class="product-name">5. Klej do płytek</span>
+                        <span class="product-sales">234 tony</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Data Tables Section -->
+        <div class="data-section">
+            <!-- Top Clients -->
+            <div class="data-card">
+                <h3><i class="fi fi-rr-users"></i> Top 10 Klientów (wg przychodu)</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Klient</th>
+                            <th>Przychód</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BudBet Sp. z o.o.</td>
+                            <td>287,500 PLN</td>
+                            <td><span class="status-badge status-active">VIP</span></td>
+                        </tr>
+                        <tr>
+                            <td>Mega-Bud SA</td>
+                            <td>245,300 PLN</td>
+                            <td><span class="status-badge status-active">VIP</span></td>
+                        </tr>
+                        <tr>
+                            <td>Polbud Construction</td>
+                            <td>198,750 PLN</td>
+                            <td><span class="status-badge status-active">Aktywny</span></td>
+                        </tr>
+                        <tr>
+                            <td>Deweloper-Plus</td>
+                            <td>187,200 PLN</td>
+                            <td><span class="status-badge status-active">Aktywny</span></td>
+                        </tr>
+                        <tr>
+                            <td>Budex Group</td>
+                            <td>165,800 PLN</td>
+                            <td><span class="status-badge status-pending">W trakcie</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recent Complaints -->
+            <div class="data-card">
+                <h3><i class="fi fi-rr-exclamation-triangle"></i> Ostatnie Reklamacje</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Klient</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#RK-2847</td>
+                            <td>BudBet Sp. z o.o.</td>
+                            <td><span class="status-badge status-critical">Pilne</span></td>
+                        </tr>
+                        <tr>
+                            <td>#RK-2846</td>
+                            <td>Polbud Construction</td>
+                            <td><span class="status-badge status-pending">W trakcie</span></td>
+                        </tr>
+                        <tr>
+                            <td>#RK-2845</td>
+                            <td>Mega-Bud SA</td>
+                            <td><span class="status-badge status-resolved">Rozwiązane</span></td>
+                        </tr>
+                        <tr>
+                            <td>#RK-2844</td>
+                            <td>Deweloper-Plus</td>
+                            <td><span class="status-badge status-resolved">Rozwiązane</span></td>
+                        </tr>
+                        <tr>
+                            <td>#RK-2843</td>
+                            <td>Budex Group</td>
+                            <td><span class="status-badge status-pending">W trakcie</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div class="alerts-section">
+            <h3><i class="fi fi-rr-bell"></i> Alerty i Powiadomienia</h3>
+            
+            <div class="alert-item critical">
+                <div class="alert-content">
+                    <div class="alert-title"><i class="fi fi-rr-exclamation-triangle"></i> Spadek aktywności klienta VIP</div>
+                    <div class="alert-description">BudBet Sp. z o.o. nie złożył zamówienia od 14 dni (przeciętnie co 7 dni)</div>
+                </div>
+                <button class="alert-action">Skontaktuj</button>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-content">
+                    <div class="alert-title"><i class="fi fi-rr-box"></i> Niski stan magazynowy</div>
+                    <div class="alert-description">CEM-42.5 R: pozostało 45 ton (próg ostrzegawczy: 50 ton)</div>
+                </div>
+                <button class="alert-action">Zamów</button>
+            </div>
+
+            <div class="alert-item info">
+                <div class="alert-content">
+                    <div class="alert-title"><i class="fi fi-rr-chart-line-up"></i> Wzrost zainteresowania nowym produktem</div>
+                    <div class="alert-description">Zaprawa MUR-25: +35% zapytań w ostatnim tygodniu</div>
+                </div>
+                <button class="alert-action">Analizuj</button>
+            </div>
+
+            <div class="alert-item">
+                <div class="alert-content">
+                    <div class="alert-title"><i class="fi fi-rr-truck"></i> Opóźnienie dostaw</div>
+                    <div class="alert-description">Przewoźnik "TransBud": 3 dostawy opóźnione o >2h dzisiaj</div>
+                </div>
+                <button class="alert-action">Sprawdź</button>
+            </div>
+
+            <div class="alert-item info">
+                <div class="alert-content">
+                    <div class="alert-title"><i class="fi fi-rr-lightbulb"></i> Okazja do cross-sellingu</div>
+                    <div class="alert-description">12 klientów zamawia cement, ale nigdy nie kupili zaprawy</div>
+                </div>
+                <button class="alert-action">Wyślij ofertę</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userMenuDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userBadge = document.querySelector('.user-badge');
+            const dropdown = document.getElementById('userMenuDropdown');
+            if (userBadge && !userBadge.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        function applyFilters() {
+            const period = document.getElementById('period-filter').value;
+            const branch = document.getElementById('branch-filter').value;
+            const segment = document.getElementById('segment-filter').value;
+            
+            alert(`Zastosowano filtry:\nOkres: ${period}\nOddział: ${branch}\nSegment: ${segment}\n\n(W produkcji: odświeżenie danych przez API)`);
+        }
+
+        // Symulacja auto-refresh danych co 30 sekund
+        let refreshTimer;
+        function startAutoRefresh() {
+            refreshTimer = setInterval(() => {
+                console.log('Auto-refresh danych (symulacja)');
+                // W produkcji: fetch API dla aktualnych danych
+            }, 30000);
+        }
+
+        window.onload = function() {
+            startAutoRefresh();
+            console.log('Panel Administratora załadowany pomyślnie');
+        };
+
+        window.onbeforeunload = function() {
+            clearInterval(refreshTimer);
+        };
+    </script>
+</body>
+</html>

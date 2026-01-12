@@ -1,0 +1,3276 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Klienta - SOHOsoft Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-white);
+            color: var(--color-black);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--color-black);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-menu a:hover {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .notification-btn {
+            position: relative;
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .notification-btn:hover {
+            background: var(--color-gray);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--color-action);
+            color: var(--color-white);
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .notification-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 320px;
+            max-width: 400px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .notification-dropdown.active {
+            display: block;
+        }
+
+        .notification-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gray);
+            font-weight: 600;
+            color: var(--color-black);
+            font-size: 14px;
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 16px;
+            border-bottom: 1px solid var(--color-gray);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: var(--color-gray);
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item-title {
+            font-weight: 600;
+            color: var(--color-black);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .notification-item-desc {
+            font-size: 13px;
+            color: var(--color-gray);
+            margin-bottom: 8px;
+        }
+
+        .notification-item-time {
+            font-size: 12px;
+            color: var(--color-gray);
+        }
+
+        .notification-item-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .notification-item-status.new {
+            background: rgba(239, 125, 5, 0.1);
+            color: var(--color-action);
+        }
+
+        .notification-item-status.updated {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-black);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .user-menu:hover {
+            background: var(--color-gray);
+        }
+
+        .user-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-menu-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: var(--color-black);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: var(--color-gray);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--color-gray);
+            margin: 4px 0;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--color-gray);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--color-white);
+            border-right: 1px solid var(--color-gray);
+            padding: 30px 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--color-black);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu a:hover {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .sidebar-menu a.active {
+            background: var(--color-black);
+            color: var(--color-white);
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-icon i {
+            font-size: 18px;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--color-action);
+            color: var(--color-white);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--color-gray);
+        }
+
+        /* Quick Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid var(--color-gray);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--color-black);
+        }
+        
+        .stat-icon i {
+            font-size: 24px;
+        }
+
+        .stat-icon.blue { background: rgba(37, 99, 235, 0.1); }
+        .stat-icon.green { background: rgba(16, 185, 129, 0.1); }
+        .stat-icon.orange { background: rgba(245, 158, 11, 0.1); }
+        .stat-icon.red { background: rgba(239, 68, 68, 0.1); }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--secondary);
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .stat-detail {
+            font-size: 12px;
+            color: var(--color-gray);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 50%, #ef7d05 100%);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 30px;
+            color: var(--color-white);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cta-content h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+
+        .cta-content p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-white {
+            background: var(--color-white);
+            color: var(--color-black);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn-action {
+            background: var(--color-action);
+            color: var(--color-white);
+            border: none;
+        }
+        
+        .btn-action:hover {
+            background: #d66a04;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 125, 5, 0.3);
+        }
+
+        /* News Carousel */
+        .news-section {
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .news-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(200, 200, 200, 0.03) 10px, rgba(200, 200, 200, 0.03) 20px),
+                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(200, 200, 200, 0.03) 10px, rgba(200, 200, 200, 0.03) 20px);
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .carousel {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            position: relative;
+            border: 1px solid var(--color-gray);
+        }
+
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--color-white);
+            border: 2px solid var(--color-gray);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .carousel-nav:hover {
+            background: var(--color-action);
+            border-color: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .carousel-nav.prev {
+            left: 10px;
+        }
+
+        .carousel-nav.next {
+            right: 10px;
+        }
+
+        .carousel-nav i {
+            font-size: 18px;
+        }
+
+        .carousel-item {
+            display: none;
+        }
+
+        .carousel-item.active {
+            display: block;
+        }
+
+        .carousel-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .carousel-icon {
+            font-size: 48px;
+            color: var(--color-action);
+        }
+        
+        .carousel-icon i {
+            font-size: 48px;
+        }
+
+        .carousel-text h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-black);
+        }
+
+        .carousel-text p {
+            font-size: 14px;
+            color: var(--color-gray);
+            margin-bottom: 12px;
+        }
+
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--color-gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: var(--color-black);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        /* Cross-sell Products */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: var(--color-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+            border: 1px solid var(--color-gray);
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+            transition: filter 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            filter: brightness(1.1);
+        }
+
+        .product-card:hover .product-name {
+            text-decoration: underline;
+            text-decoration-color: var(--color-action);
+            text-underline-offset: 4px;
+        }
+
+        .product-card:hover .product-desc {
+            color: var(--color-black);
+            opacity: 0.9;
+        }
+
+        .product-body {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 8px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--color-gray);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .product-unit {
+            font-size: 12px;
+            color: var(--color-gray);
+            margin-bottom: 16px;
+        }
+
+        .btn-outline {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--color-black);
+            background: var(--color-white);
+            color: var(--color-black);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline:hover {
+            background: var(--color-black);
+            color: var(--color-white);
+        }
+        
+        .btn-outline-action {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--color-action);
+            background: var(--color-white);
+            color: var(--color-action);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-outline-action:hover {
+            background: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .cross-sell-hint {
+            font-size: 13px;
+            color: var(--color-gray);
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        /* Orders Table */
+        .table-section {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border: 1px solid var(--color-gray);
+        }
+
+        .filters-bar {
+            background: #f5f5f5;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: none;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .date-wrapper {
+            position: relative;
+            flex: 0 0 180px;
+            min-width: 180px;
+        }
+
+        .search-wrapper .search-input,
+        .date-wrapper .datepicker-input {
+            width: 100%;
+            padding: 12px 16px;
+            padding-left: 40px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: var(--color-white);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .date-wrapper .datepicker-input {
+            padding-right: 40px;
+            padding-left: 16px;
+        }
+
+        .date-wrapper .datepicker-input::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0;
+            position: absolute;
+            right: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .search-wrapper .search-input:focus,
+        .date-wrapper .datepicker-input:focus {
+            outline: none;
+            border-color: var(--color-action);
+            box-shadow: 0 0 0 3px rgba(239, 125, 5, 0.1);
+        }
+
+        .search-wrapper .search-input::placeholder {
+            color: #999;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        input[type="date"].filter-select {
+            font-family: inherit;
+            color: var(--color-black);
+        }
+
+        input[type="date"].filter-select::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        input[type="date"].filter-select::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .table-link {
+            color: var(--color-action);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .table-link:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--color-gray);
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-black);
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px 12px;
+            border-top: 1px solid var(--color-gray);
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.success {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-black);
+        }
+
+        .status-badge.info {
+            background: rgba(239, 125, 5, 0.1);
+            color: var(--color-action);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--color-gray);
+        }
+
+        .order-details-expanded {
+            display: none;
+            background: var(--color-gray);
+            padding: 20px;
+            border-top: 1px solid var(--color-gray);
+        }
+
+        .order-details-expanded.active {
+            display: block;
+        }
+
+        .order-products-list {
+            margin-bottom: 16px;
+        }
+
+        .order-product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--color-white);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-product-name {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .order-product-quantity {
+            color: var(--color-gray);
+            font-size: 14px;
+        }
+
+        .order-product-price {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--color-white);
+            border-radius: 8px;
+            border-top: 2px solid var(--color-action);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .order-total-label {
+            color: var(--color-black);
+        }
+
+        .order-total-value {
+            color: var(--color-action);
+        }
+
+        /* Contact Card */
+        .contact-card {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-gray);
+        }
+
+        .contact-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .contact-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--color-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .contact-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .contact-info p {
+            font-size: 13px;
+            color: var(--color-gray);
+        }
+
+        .contact-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--color-black);
+        }
+
+        .contact-item .icon {
+            color: var(--color-action);
+        }
+
+        .contact-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--color-gray);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--color-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-black);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-black);
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-action);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+
+        .radio-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .file-upload {
+            border: 2px dashed var(--color-gray);
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--color-action);
+            background: var(--color-white);
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--color-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .btn-primary {
+            background: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background: #d66a04;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <i class="fi fi-rr-factory"></i>
+                <span>SOHOsoft</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="zamowienie-wizard.html">Nowe zamówienie</a></li>
+                <li><a href="#" onclick="showTab('zamowienia'); return false;">Moje zamówienia</a></li>
+                <li><a href="#" onclick="showTab('kontakt'); return false;">Kontakt z opiekunem</a></li>
+                <li><a href="#">Pomoc</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <div style="position: relative;">
+                <button class="notification-btn" onclick="toggleNotificationMenu(event)">
+                    <i class="fi fi-rr-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <i class="fi fi-rr-bell"></i> Powiadomienia
+                    </div>
+                    <div class="notification-list">
+                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                            <div class="notification-item-title">Zamówienie #ZAM-1234 - Status zmieniony</div>
+                            <div class="notification-item-desc">CEM I 42,5R | 28 ton</div>
+                            <div class="notification-item-time">2 godziny temu</div>
+                            <span class="notification-item-status updated">W realizacji</span>
+                        </div>
+                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                            <div class="notification-item-title">Zamówienie #ZAM-1235 - Nowe zamówienie</div>
+                            <div class="notification-item-desc">CEM II/B-S 42,5N | 15 ton</div>
+                            <div class="notification-item-time">5 godzin temu</div>
+                            <span class="notification-item-status new">Nowe</span>
+                        </div>
+                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                            <div class="notification-item-title">Zamówienie #ZAM-1233 - Dostarczone</div>
+                            <div class="notification-item-desc">CEM II/B-S 42,5N | 56 ton</div>
+                            <div class="notification-item-time">Wczoraj, 14:30</div>
+                            <span class="notification-item-status updated">Dostarczone</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="user-menu" onclick="toggleUserMenu(event)">
+                <div class="user-avatar">BB</div>
+                <div class="user-info">
+                    <div class="user-name">Firma Budowlana Budowa</div>
+                    <div class="user-role">Klient</div>
+                </div>
+                <div class="user-menu-dropdown" id="userMenuDropdown">
+                    <button class="dropdown-item" onclick="showTab('dane-firmy', event); toggleUserMenu(event);">
+                        <i class="fi fi-rr-building"></i>
+                        <span>Dane firmy</span>
+                    </button>
+                    <button class="dropdown-item" onclick="showTab('kontakt', event); toggleUserMenu(event);">
+                        <i class="fi fi-rr-phone-call"></i>
+                        <span>Kontakt z opiekunem</span>
+                    </button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="window.location.href='index.html'">
+                        <i class="fi fi-rr-sign-out"></i>
+                        <span>Wyloguj</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showTab('dashboard'); return false;"><i class="fi fi-rr-apps menu-icon"></i> Dashboard</a></li>
+                <li><a href="zamowienie-wizard.html"><i class="fi fi-rr-shopping-cart menu-icon"></i> Nowe zamówienie</a></li>
+                <li><a href="#" onclick="showTab('zamowienia'); return false;"><i class="fi fi-rr-clipboard-list menu-icon"></i> Moje zamówienia</a></li>
+                <li><a href="#" onclick="showTab('faktury'); return false;"><i class="fi fi-rr-file-invoice menu-icon"></i> Faktury i płatności</a></li>
+                <li><a href="#" onclick="showTab('raporty'); return false;"><i class="fi fi-rr-chart-line-up menu-icon"></i> Raporty</a></li>
+                <li><a href="#" onclick="showTab('transport'); return false;"><i class="fi fi-rr-truck menu-icon"></i> Zarządzanie transportem</a></li>
+                <li><a href="#" onclick="showTab('reklamacje'); return false;"><i class="fi fi-rr-exclamation-triangle menu-icon"></i> Reklamacje / Zgłoszenia <span class="menu-badge">2</span></a></li>
+                <li><a href="#" onclick="showTab('dane-firmy'); return false;"><i class="fi fi-rr-building menu-icon"></i> Dane firmy</a></li>
+                <li><a href="#" onclick="showTab('kontakt'); return false;"><i class="fi fi-rr-phone-call menu-icon"></i> Kontakt z opiekunem</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Tab -->
+            <div id="tab-dashboard" class="tab-content active">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Witaj, Firma Budowlana Budowa! <i class="fi fi-rr-hand-wave"></i></h1>
+                <p class="page-subtitle">Oto przegląd Twojego konta i ostatnich aktywności</p>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Saldo</div>
+                            <div class="stat-value">45,230 PLN</div>
+                            <div class="stat-detail">z 100,000 PLN limitu</div>
+                        </div>
+                        <div class="stat-icon blue"><i class="fi fi-rr-money-bill-wave"></i></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Zamówienia</div>
+                            <div class="stat-value">3</div>
+                            <div class="stat-detail">w realizacji | 24 w tym miesiącu</div>
+                        </div>
+                        <div class="stat-icon green"><i class="fi fi-rr-box"></i></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Następna dostawa</div>
+                            <div class="stat-value">Jutro</div>
+                            <div class="stat-detail">12:00 - Auto-All Magazynowa</div>
+                        </div>
+                        <div class="stat-icon orange"><i class="fi fi-rr-calendar-clock"></i></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-label">Faktury</div>
+                            <div class="stat-value">1</div>
+                            <div class="stat-detail">przeterminowana (5,000 PLN)</div>
+                        </div>
+                        <div class="stat-icon red"><i class="fi fi-rr-file-invoice"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <div class="cta-content">
+                    <h3><i class="fi fi-rr-target"></i> Złóż nowe zamówienie</h3>
+                    <p>Szybki proces zamówienia - tylko 4 kroki</p>
+                </div>
+                <a href="zamowienie-wizard.html" class="btn btn-white">ZAMÓW TERAZ</a>
+            </div>
+
+            <!-- News Carousel -->
+            <div class="news-section">
+                <h2 class="section-title"><i class="fi fi-rr-megaphone"></i> Aktualności</h2>
+                <div class="carousel">
+                    <button class="carousel-nav prev" onclick="previousSlide()">
+                        <i class="fi fi-rr-angle-left"></i>
+                    </button>
+                    <button class="carousel-nav next" onclick="nextSlide()">
+                        <i class="fi fi-rr-angle-right"></i>
+                    </button>
+                    <div class="carousel-item active">
+                        <div class="carousel-content">
+                            <div class="carousel-icon"><i class="fi fi-rr-gift" style="font-size: 48px;"></i></div>
+                            <div class="carousel-text">
+                                <h4>PROMOCJA: -5% na cementy specjalne do 31.12.2024</h4>
+                                <p>Skorzystaj z wyjątkowej oferty na całą linię cementów specjalnych. Oferta ograniczona czasowo!</p>
+                                <a href="produkt-cem-ii.html" class="btn btn-outline-action" style="width: auto; padding: 8px 16px;">Sprawdź szczegóły</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-content">
+                            <div class="carousel-icon"><i class="fi fi-rr-marker" style="font-size: 48px;"></i></div>
+                            <div class="carousel-text">
+                                <h4>Nowy punkt odbioru w Warszawie</h4>
+                                <p>Od 1 grudnia dostępny nowy magazyn przy ul. Przemysłowej 15 z pełnym asortymentem.</p>
+                                <a href="#" class="btn btn-outline-action" style="width: auto; padding: 8px 16px;">Zobacz lokalizację</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="carousel-content">
+                            <div class="carousel-icon"><i class="fi fi-rr-sparkles" style="font-size: 48px;"></i></div>
+                            <div class="carousel-text">
+                                <h4>Rozszerzona oferta: CEM II/A-LL 42,5R już dostępny</h4>
+                                <p>Cement naturalny z dodatkiem wapienia. Wysoka wytrzymałość wczesna - idealny do szybkich realizacji!</p>
+                                <a href="produkt-cem-ii.html" class="btn btn-outline-action" style="width: auto; padding: 8px 16px;">Dowiedz się więcej</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-controls">
+                        <span class="carousel-dot active" onclick="showSlide(0)"></span>
+                        <span class="carousel-dot" onclick="showSlide(1)"></span>
+                        <span class="carousel-dot" onclick="showSlide(2)"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cross-sell Products -->
+            <div style="margin-bottom: 30px;">
+                <h2 class="section-title"><i class="fi fi-rr-star"></i> Polecane dla Ciebie</h2>
+                <div class="products-grid">
+                    <div class="product-card">
+                        <div class="product-image" style="background-image: url('https://static.ozarow.com.pl/sg/slider_glowny/3/1904x6642.webp'); background-size: cover; background-position: 0% 0%;"></div>
+                        <div class="product-body">
+                            <h3 class="product-name">CEM II/A-LL 42,5R</h3>
+                            <p class="product-desc">Cement naturalny z dodatkiem wapienia. Wysoka wytrzymałość wczesna - idealny do szybkich realizacji!</p>
+                            <div class="product-price">410 PLN</div>
+                            <div class="product-unit">netto / tona</div>
+                            <a href="produkt-cem-ii.html" class="btn-outline-action" style="text-decoration: none; display: block; text-align: center;">Dowiedz się więcej</a>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image" style="background-image: url('https://static.ozarow.com.pl/sg/slider_glowny/3/1904x6642.webp'); background-size: cover; background-position: 50% 0%;"></div>
+                        <div class="product-body">
+                            <h3 class="product-name">CEM V 32,5N</h3>
+                            <p class="product-desc">Cement hydrotechniczny. Odporny na siarczan - ideał dla fundamentów w mokrym gruncie.</p>
+                            <div class="product-price">480 PLN</div>
+                            <div class="product-unit">netto / tona</div>
+                            <a href="produkt-cem-ii.html" class="btn-outline-action" style="text-decoration: none; display: block; text-align: center;">Dowiedz się więcej</a>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <div class="product-image" style="background-image: url('https://static.ozarow.com.pl/sg/slider_glowny/3/1904x6642.webp'); background-size: cover; background-position: 100% 0%;"></div>
+                        <div class="product-body">
+                            <h3 class="product-name">Dodatki do betonu</h3>
+                            <p class="product-desc">Plastyfikatory i domieszki chemiczne poprawiające parametry betonu.</p>
+                            <div class="product-price">85 PLN</div>
+                            <div class="product-unit">netto / worek 25kg</div>
+                            <a href="produkt-cem-ii.html" class="btn-outline-action" style="text-decoration: none; display: block; text-align: center;">Dowiedz się więcej</a>
+                        </div>
+                    </div>
+                </div>
+                <p class="cross-sell-hint"><i class="fi fi-rr-lightbulb"></i> Na podstawie Twoich ostatnich zamówień</p>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h2 class="table-title"><i class="fi fi-rr-clipboard-list"></i> Ostatnie zamówienia</h2>
+                    <a href="#" class="table-link" onclick="showTab('zamowienia'); return false;">Zobacz wszystkie →</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nr zamówienia</th>
+                            <th>Data</th>
+                            <th>Produkt</th>
+                            <th>Ilość</th>
+                            <th>Status</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr data-status="Nowe">
+                            <td><strong>#ZAM-1236</strong></td>
+                            <td>12.01.2026</td>
+                            <td>CEM II/A-S 42,5N</td>
+                            <td>21 ton</td>
+                            <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1236')"><i class="fi fi-rr-eye"></i></button>
+                                    <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1236')"><i class="fi fi-rr-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="order-details-row" data-status="Nowe">
+                            <td colspan="6" class="order-details-expanded" id="details-zam-1236">
+                                <div class="order-products-list">
+                                    <div class="order-product-item">
+                                        <div>
+                                            <div class="order-product-name">CEM II/A-S 42,5N</div>
+                                            <div class="order-product-quantity">21 ton × 420 PLN</div>
+                                        </div>
+                                        <div class="order-product-price">8,820 PLN</div>
+                                    </div>
+                                </div>
+                                <div class="order-total">
+                                    <span class="order-total-label">Suma zamówienia:</span>
+                                    <span class="order-total-value">8,820 PLN</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-status="W realizacji">
+                            <td><strong>#ZAM-1234</strong></td>
+                            <td>09.01.2026</td>
+                            <td>CEM I 42,5R</td>
+                            <td>28 ton</td>
+                            <td><span class="status-badge info">W realizacji</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1234')"><i class="fi fi-rr-eye"></i></button>
+                                    <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1234')"><i class="fi fi-rr-download"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="order-details-row" data-status="W realizacji">
+                            <td colspan="6" class="order-details-expanded" id="details-zam-1234">
+                                <div class="order-products-list">
+                                    <div class="order-product-item">
+                                        <div>
+                                            <div class="order-product-name">CEM I 42,5R</div>
+                                            <div class="order-product-quantity">28 ton × 410 PLN</div>
+                                        </div>
+                                        <div class="order-product-price">11,480 PLN</div>
+                                    </div>
+                                </div>
+                                <div class="order-total">
+                                    <span class="order-total-label">Suma zamówienia:</span>
+                                    <span class="order-total-value">11,480 PLN</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-status="Dostarczone">
+                            <td><strong>#ZAM-1233</strong></td>
+                            <td>05.01.2026</td>
+                            <td>CEM II/B-S 42,5N</td>
+                            <td>56 ton</td>
+                            <td><span class="status-badge success">Dostarczone</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1233')"><i class="fi fi-rr-eye"></i></button>
+                                    <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1233')"><i class="fi fi-rr-download"></i></button>
+                                    <button class="icon-btn" title="Powtórz zamówienie" onclick="repeatOrder('zam-1233')"><i class="fi fi-rr-refresh"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="order-details-row" data-status="Dostarczone">
+                            <td colspan="6" class="order-details-expanded" id="details-zam-1233">
+                                <div class="order-products-list">
+                                    <div class="order-product-item">
+                                        <div>
+                                            <div class="order-product-name">CEM II/B-S 42,5N</div>
+                                            <div class="order-product-quantity">56 ton × 410 PLN</div>
+                                        </div>
+                                        <div class="order-product-price">22,960 PLN</div>
+                                    </div>
+                                </div>
+                                <div class="order-total">
+                                    <span class="order-total-label">Suma zamówienia:</span>
+                                    <span class="order-total-value">22,960 PLN</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr data-status="Dostarczone">
+                            <td><strong>#ZAM-1232</strong></td>
+                            <td>01.01.2026</td>
+                            <td>CEM I 42,5R</td>
+                            <td>28 ton</td>
+                            <td><span class="status-badge success">Dostarczone</span></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1232')"><i class="fi fi-rr-eye"></i></button>
+                                    <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1232')"><i class="fi fi-rr-download"></i></button>
+                                    <button class="icon-btn" title="Powtórz zamówienie" onclick="repeatOrder('zam-1232')"><i class="fi fi-rr-refresh"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="order-details-row" data-status="Dostarczone">
+                            <td colspan="6" class="order-details-expanded" id="details-zam-1232">
+                                <div class="order-products-list">
+                                    <div class="order-product-item">
+                                        <div>
+                                            <div class="order-product-name">CEM I 42,5R</div>
+                                            <div class="order-product-quantity">28 ton × 410 PLN</div>
+                                        </div>
+                                        <div class="order-product-price">11,480 PLN</div>
+                                    </div>
+                                </div>
+                                <div class="order-total">
+                                    <span class="order-total-label">Suma zamówienia:</span>
+                                    <span class="order-total-value">11,480 PLN</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Contact Card -->
+            <div class="contact-card">
+                <h2 class="section-title"><i class="fi fi-rr-user"></i> Twój opiekun handlowy</h2>
+                <div class="contact-header">
+                    <div class="contact-avatar">JK</div>
+                    <div class="contact-info">
+                        <h4>Jan Kowalski</h4>
+                        <p>Specjalista ds. sprzedaży</p>
+                    </div>
+                </div>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fi fi-rr-phone-call icon"></i>
+                        <span>+48 123 456 789</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fi fi-rr-envelope icon"></i>
+                        <span>j.kowalski@sohosoft.pl</span>
+                    </div>
+                </div>
+                <div class="contact-actions">
+                    <button class="btn btn-outline btn-sm" onclick="openCalendarModal()"><i class="fi fi-rr-calendar"></i> UMÓW SPOTKANIE</button>
+                    <button class="btn btn-action btn-sm" onclick="openMessageModal()"><i class="fi fi-rr-envelope"></i> WYŚLIJ WIADOMOŚĆ</button>
+                </div>
+            </div>
+            </div>
+            
+            <!-- Moje Zamówienia Tab -->
+            <div id="tab-zamowienia" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-clipboard-list"></i> Moje zamówienia</h1>
+                    <p class="page-subtitle">Przeglądaj i zarządzaj wszystkimi zamówieniami</p>
+                </div>
+                
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="search-wrapper">
+                        <i class="fi fi-rr-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="text" class="search-input" id="search-orders" placeholder="Szukaj po nr zamówienia lub produkcie..." oninput="filterOrdersRealTime()" style="padding-left: 40px;">
+                    </div>
+                    <div class="date-wrapper">
+                        <i class="fi fi-rr-calendar" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="date" class="datepicker-input" id="filter-order-date" onchange="filterOrdersRealTime()" style="padding-right: 40px; cursor: pointer;">
+                    </div>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">Wszystkie zamówienia</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="statusFilter" class="form-select" style="width: auto; padding: 8px 12px;" onchange="filterOrdersRealTime()">
+                                <option value="all">Wszystkie statusy</option>
+                                <option value="Nowe">Nowe</option>
+                                <option value="W realizacji">W realizacji</option>
+                                <option value="Dostarczone">Dostarczone</option>
+                                <option value="Anulowane">Anulowane</option>
+                            </select>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr zamówienia</th>
+                                <th>Data</th>
+                                <th>Produkt</th>
+                                <th>Ilość</th>
+                                <th>Wartość</th>
+                                <th>Status</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <tr data-status="Nowe" data-date="2026-01-12" data-order-number="ZAM-1236" data-product="CEM II/A-S 42,5N">
+                                <td><strong>#ZAM-1236</strong></td>
+                                <td>12.01.2026</td>
+                                <td>CEM II/A-S 42,5N</td>
+                                <td>21 ton</td>
+                                <td>8,820 PLN</td>
+                                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1236-full')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1236-full')"><i class="fi fi-rr-download"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="order-details-row" data-status="Nowe">
+                                <td colspan="7" class="order-details-expanded" id="details-zam-1236-full">
+                                    <div class="order-products-list">
+                                        <div class="order-product-item">
+                                            <div>
+                                                <div class="order-product-name">CEM II/A-S 42,5N</div>
+                                                <div class="order-product-quantity">21 ton × 420 PLN</div>
+                                            </div>
+                                            <div class="order-product-price">8,820 PLN</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-total">
+                                        <span class="order-total-label">Suma zamówienia:</span>
+                                        <span class="order-total-value">8,820 PLN</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="W realizacji" data-date="2026-01-09" data-order-number="ZAM-1234" data-product="CEM I 42,5R">
+                                <td><strong>#ZAM-1234</strong></td>
+                                <td>09.01.2026</td>
+                                <td>CEM I 42,5R</td>
+                                <td>28 ton</td>
+                                <td>11,480 PLN</td>
+                                <td><span class="status-badge info">W realizacji</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1234-full')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1234-full')"><i class="fi fi-rr-download"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="order-details-row" data-status="W realizacji">
+                                <td colspan="7" class="order-details-expanded" id="details-zam-1234-full">
+                                    <div class="order-products-list">
+                                        <div class="order-product-item">
+                                            <div>
+                                                <div class="order-product-name">CEM I 42,5R</div>
+                                                <div class="order-product-quantity">28 ton × 410 PLN</div>
+                                            </div>
+                                            <div class="order-product-price">11,480 PLN</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-total">
+                                        <span class="order-total-label">Suma zamówienia:</span>
+                                        <span class="order-total-value">11,480 PLN</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="Dostarczone" data-date="2026-01-05" data-order-number="ZAM-1233" data-product="CEM II/B-S 42,5N">
+                                <td><strong>#ZAM-1233</strong></td>
+                                <td>05.01.2026</td>
+                                <td>CEM II/B-S 42,5N</td>
+                                <td>56 ton</td>
+                                <td>22,960 PLN</td>
+                                <td><span class="status-badge success">Dostarczone</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1233-full')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1233-full')"><i class="fi fi-rr-download"></i></button>
+                                        <button class="icon-btn" title="Powtórz zamówienie" onclick="repeatOrder('zam-1233-full')"><i class="fi fi-rr-refresh"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="order-details-row" data-status="Dostarczone">
+                                <td colspan="7" class="order-details-expanded" id="details-zam-1233-full">
+                                    <div class="order-products-list">
+                                        <div class="order-product-item">
+                                            <div>
+                                                <div class="order-product-name">CEM II/B-S 42,5N</div>
+                                                <div class="order-product-quantity">56 ton × 410 PLN</div>
+                                            </div>
+                                            <div class="order-product-price">22,960 PLN</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-total">
+                                        <span class="order-total-label">Suma zamówienia:</span>
+                                        <span class="order-total-value">22,960 PLN</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="Dostarczone">
+                                <td><strong>#ZAM-1232</strong></td>
+                                <td>01.01.2026</td>
+                                <td>CEM I 42,5R</td>
+                                <td>28 ton</td>
+                                <td>11,480 PLN</td>
+                                <td><span class="status-badge success">Dostarczone</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1232-full')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1232-full')"><i class="fi fi-rr-download"></i></button>
+                                        <button class="icon-btn" title="Powtórz zamówienie" onclick="repeatOrder('zam-1232-full')"><i class="fi fi-rr-refresh"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="order-details-row" data-status="Dostarczone">
+                                <td colspan="7" class="order-details-expanded" id="details-zam-1232-full">
+                                    <div class="order-products-list">
+                                        <div class="order-product-item">
+                                            <div>
+                                                <div class="order-product-name">CEM I 42,5R</div>
+                                                <div class="order-product-quantity">28 ton × 410 PLN</div>
+                                            </div>
+                                            <div class="order-product-price">11,480 PLN</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-total">
+                                        <span class="order-total-label">Suma zamówienia:</span>
+                                        <span class="order-total-value">11,480 PLN</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="Dostarczone">
+                                <td><strong>#ZAM-1231</strong></td>
+                                <td>14.01.2026</td>
+                                <td>CEM V 32,5N</td>
+                                <td>15 ton</td>
+                                <td>7,200 PLN</td>
+                                <td><span class="status-badge success">Dostarczone</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('zam-1231-full')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('zam-1231-full')"><i class="fi fi-rr-download"></i></button>
+                                        <button class="icon-btn" title="Powtórz zamówienie" onclick="repeatOrder('zam-1231-full')"><i class="fi fi-rr-refresh"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="order-details-row" data-status="Dostarczone">
+                                <td colspan="7" class="order-details-expanded" id="details-zam-1231-full">
+                                    <div class="order-products-list">
+                                        <div class="order-product-item">
+                                            <div>
+                                                <div class="order-product-name">CEM V 32,5N</div>
+                                                <div class="order-product-quantity">15 ton × 480 PLN</div>
+                                            </div>
+                                            <div class="order-product-price">7,200 PLN</div>
+                                        </div>
+                                    </div>
+                                    <div class="order-total">
+                                        <span class="order-total-label">Suma zamówienia:</span>
+                                        <span class="order-total-value">7,200 PLN</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Faktury i Płatności Tab -->
+            <div id="tab-faktury" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-file-invoice"></i> Faktury i płatności</h1>
+                    <p class="page-subtitle">Zarządzaj fakturami i płatnościami</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Do zapłaty</div>
+                                <div class="stat-value">45,230 PLN</div>
+                                <div class="stat-detail">Termin: 14.01.2026</div>
+                            </div>
+                            <div class="stat-icon blue"><i class="fi fi-rr-money-bill-wave"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Przeterminowane</div>
+                                <div class="stat-value">5,000 PLN</div>
+                                <div class="stat-detail">1 faktura</div>
+                            </div>
+                            <div class="stat-icon red"><i class="fi fi-rr-exclamation-circle"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Zapłacone w tym miesiącu</div>
+                                <div class="stat-value">125,450 PLN</div>
+                                <div class="stat-detail">12 faktur</div>
+                            </div>
+                            <div class="stat-icon green"><i class="fi fi-rr-check-circle"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="search-wrapper">
+                        <i class="fi fi-rr-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="text" class="search-input" id="search-invoices" placeholder="Szukaj po nr faktury..." oninput="filterInvoicesRealTime()" style="padding-left: 40px;">
+                    </div>
+                    <div class="date-wrapper">
+                        <i class="fi fi-rr-calendar" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="date" class="datepicker-input" id="filter-invoice-date" onchange="filterInvoicesRealTime()" style="padding-right: 40px; cursor: pointer;">
+                    </div>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">Faktury</h2>
+                        <button class="btn btn-action">Pobierz wszystkie</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr faktury</th>
+                                <th>Data wystawienia</th>
+                                <th>Termin płatności</th>
+                                <th>Wartość</th>
+                                <th>Status</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoices-tbody">
+                            <tr data-invoice-number="FV/2024/1234" data-date="2026-01-01">
+                                <td><strong>FV/2024/1234</strong></td>
+                                <td>01.01.2026</td>
+                                <td>14.01.2026</td>
+                                <td>11,480 PLN</td>
+                                <td><span class="status-badge info">Do zapłaty</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Pobierz PDF"><i class="fi fi-rr-download"></i></button>
+                                        <button class="icon-btn" title="Zapłać"><i class="fi fi-rr-credit-card"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-invoice-number="FV/2024/1233" data-date="2026-01-13">
+                                <td><strong>FV/2024/1233</strong></td>
+                                <td>13.01.2026</td>
+                                <td>05.01.2026</td>
+                                <td>5,000 PLN</td>
+                                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Przeterminowana</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Pobierz PDF"><i class="fi fi-rr-download"></i></button>
+                                        <button class="icon-btn" title="Zapłać"><i class="fi fi-rr-credit-card"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-invoice-number="FV/2024/1232" data-date="2026-01-12">
+                                <td><strong>FV/2024/1232</strong></td>
+                                <td>12.01.2026</td>
+                                <td>14.01.2026</td>
+                                <td>22,960 PLN</td>
+                                <td><span class="status-badge success">Zapłacona</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Pobierz PDF"><i class="fi fi-rr-download"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Raporty Tab -->
+            <div id="tab-raporty" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-chart-line-up"></i> Raporty</h1>
+                    <p class="page-subtitle">Analiza Twoich zamówień i wydatków</p>
+                </div>
+                
+                <!-- Date Range Picker -->
+                <div class="filters-bar" style="margin-bottom: 24px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <label style="font-size: 14px; font-weight: 600; color: var(--color-black);">Okres raportu:</label>
+                        <input type="date" id="report-date-from" class="filter-select" value="2025-11-01" onchange="updateReport()" style="cursor: pointer;">
+                        <span style="color: var(--color-gray);">do</span>
+                        <input type="date" id="report-date-to" class="filter-select" value="2026-01-14" onchange="updateReport()" style="cursor: pointer;">
+                        <button class="btn btn-action" onclick="updateReport()" style="margin-left: auto;"><i class="fi fi-rr-refresh"></i> Odśwież</button>
+                    </div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Wartość zamówień (okres)</div>
+                                <div class="stat-value" id="report-total-value">156,230 PLN</div>
+                                <div class="stat-detail" id="report-change">+12% vs poprzedni okres</div>
+                            </div>
+                            <div class="stat-icon blue"><i class="fi fi-rr-chart-histogram"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Średnia wartość zamówienia</div>
+                                <div class="stat-value" id="report-avg-value">6,510 PLN</div>
+                                <div class="stat-detail" id="report-orders-count">24 zamówienia</div>
+                            </div>
+                            <div class="stat-icon green"><i class="fi fi-rr-chart-pie"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Najczęściej zamawiany produkt</div>
+                                <div class="stat-value" id="report-top-product">CEM I 42,5R</div>
+                                <div class="stat-detail" id="report-top-product-detail">112 ton w tym okresie</div>
+                            </div>
+                            <div class="stat-icon orange"><i class="fi fi-rr-box"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title" id="report-month-title">Raport - Listopad 2025 - Styczeń 2026</h2>
+                        <button class="btn btn-action" onclick="exportReport()"><i class="fi fi-rr-file-pdf"></i> Eksportuj do PDF</button>
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="margin-bottom: 15px; color: var(--color-black);">Podsumowanie</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="padding: 10px; border-bottom: 1px solid var(--color-gray); display: flex; justify-content: space-between;">
+                                <span>Liczba zamówień:</span>
+                                <strong id="report-summary-orders">24</strong>
+                            </li>
+                            <li style="padding: 10px; border-bottom: 1px solid var(--color-gray); display: flex; justify-content: space-between;">
+                                <span>Wartość zamówień:</span>
+                                <strong id="report-summary-value">156,230 PLN</strong>
+                            </li>
+                            <li style="padding: 10px; border-bottom: 1px solid var(--color-gray); display: flex; justify-content: space-between;">
+                                <span>Zapłacone faktury:</span>
+                                <strong id="report-summary-paid">125,450 PLN</strong>
+                            </li>
+                            <li style="padding: 10px; display: flex; justify-content: space-between;">
+                                <span>Pozostało do zapłaty:</span>
+                                <strong id="report-summary-remaining">45,230 PLN</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Zarządzanie transportem Tab -->
+            <div id="tab-transport" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-truck"></i> Zarządzanie transportem</h1>
+                    <p class="page-subtitle">Śledź status swoich dostaw</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Dostawy w drodze</div>
+                                <div class="stat-value">2</div>
+                                <div class="stat-detail">Oczekiwane dzisiaj</div>
+                            </div>
+                            <div class="stat-icon blue"><i class="fi fi-rr-truck-side"></i></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-label">Następna dostawa</div>
+                                <div class="stat-value">Jutro</div>
+                                <div class="stat-detail">12:00 - Auto-All</div>
+                            </div>
+                            <div class="stat-icon orange"><i class="fi fi-rr-calendar-clock"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">Aktywne dostawy</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr zamówienia</th>
+                                <th>Produkt</th>
+                                <th>Ilość</th>
+                                <th>Przewoźnik</th>
+                                <th>Status</th>
+                                <th>Szacowany czas</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transport-tbody">
+                            <tr data-order-number="ZAM-1234" data-product="CEM I 42,5R">
+                                <td><strong>#ZAM-1234</strong></td>
+                                <td>CEM I 42,5R</td>
+                                <td>28 ton</td>
+                                <td>Auto-All Magazynowa</td>
+                                <td><span class="status-badge info">W drodze</span></td>
+                                <td>Jutro, 12:00</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Śledź"><i class="fi fi-rr-map-marker"></i></button>
+                                        <button class="icon-btn" title="Kontakt"><i class="fi fi-rr-phone-call"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-order-number="ZAM-1235" data-product="CEM II/B-S 42,5N">
+                                <td><strong>#ZAM-1235</strong></td>
+                                <td>CEM II/B-S 42,5N</td>
+                                <td>15 ton</td>
+                                <td>Trans-Bud Sp. z o.o.</td>
+                                <td><span class="status-badge info">Zaplanowana</span></td>
+                                <td>13.01.2026, 14:00</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Szczegóły"><i class="fi fi-rr-eye"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Dane firmy Tab -->
+            <div id="tab-dane-firmy" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-building"></i> Dane firmy</h1>
+                    <p class="page-subtitle">Zarządzaj danymi swojej firmy</p>
+                </div>
+                
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">Informacje o firmie</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-action" id="btn-edit-company" onclick="toggleEditCompany()">Edytuj</button>
+                            <button class="btn btn-action" id="btn-save-company" onclick="saveCompanyData()" style="display: none;"><i class="fi fi-rr-floppy-disk"></i> Zapisz</button>
+                            <button class="btn btn-secondary" id="btn-cancel-company" onclick="cancelEditCompany()" style="display: none;">Anuluj</button>
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">Nazwa firmy</label>
+                            <div id="company-name-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                Firma Budowlana Budowa
+                            </div>
+                            <input type="text" id="company-name-input" class="form-input" value="Firma Budowlana Budowa" style="display: none;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">NIP</label>
+                            <div id="company-nip-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                1234567890
+                            </div>
+                            <input type="text" id="company-nip-input" class="form-input" value="1234567890" style="display: none;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">Ulica i numer</label>
+                            <div id="company-street-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                ul. Przykładowa 123
+                            </div>
+                            <input type="text" id="company-street-input" class="form-input" value="ul. Przykładowa 123" style="display: none;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">Kod pocztowy i miasto</label>
+                            <div id="company-city-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                00-000 Warszawa
+                            </div>
+                            <input type="text" id="company-city-input" class="form-input" value="00-000 Warszawa" style="display: none;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">Email</label>
+                            <div id="company-email-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                kontakt@elmaspawlak.pl
+                            </div>
+                            <input type="email" id="company-email-input" class="form-input" value="kontakt@elmaspawlak.pl" style="display: none;">
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <label class="form-label">Telefon</label>
+                            <div id="company-phone-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                                +48 123 456 789
+                            </div>
+                            <input type="tel" id="company-phone-input" class="form-input" value="+48 123 456 789" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Kontakt z opiekunem Tab -->
+            <div id="tab-kontakt" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-phone-call"></i> Kontakt z opiekunem</h1>
+                    <p class="page-subtitle">Twój dedykowany opiekun handlowy</p>
+                </div>
+                
+                <div class="contact-card">
+                    <div class="contact-header">
+                        <div class="contact-avatar">JK</div>
+                        <div class="contact-info">
+                            <h4>Jan Kowalski</h4>
+                            <p>Specjalista ds. sprzedaży</p>
+                        </div>
+                    </div>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fi fi-rr-phone-call icon"></i>
+                            <span>+48 123 456 789</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fi fi-rr-envelope icon"></i>
+                            <span>j.kowalski@sohosoft.pl</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fi fi-rr-clock icon"></i>
+                            <span>Pon-Pt: 8:00 - 16:00</span>
+                        </div>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="btn btn-outline btn-sm" onclick="openCalendarModal()"><i class="fi fi-rr-calendar"></i> UMÓW SPOTKANIE</button>
+                        <button class="btn btn-action btn-sm" onclick="openMessageModal()"><i class="fi fi-rr-envelope"></i> WYŚLIJ WIADOMOŚĆ</button>
+                    </div>
+                </div>
+                
+                <div class="table-section" style="margin-top: 30px;">
+                    <h2 class="table-title">Historia kontaktów</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Typ kontaktu</th>
+                                <th>Temat</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>05.01.2026</td>
+                                <td>Email</td>
+                                <td>Pytanie o dostępność produktu</td>
+                                <td><span class="status-badge success">Odpowiedziano</span></td>
+                            </tr>
+                            <tr>
+                                <td>14.01.2026</td>
+                                <td>Telefon</td>
+                                <td>Omówienie nowej oferty</td>
+                                <td><span class="status-badge success">Zakończone</span></td>
+                            </tr>
+                            <tr>
+                                <td>10.01.2026</td>
+                                <td>Spotkanie</td>
+                                <td>Wizyta w biurze</td>
+                                <td><span class="status-badge success">Zakończone</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Reklamacje / Zgłoszenia Tab -->
+            <div id="tab-reklamacje" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-exclamation-triangle"></i> Reklamacje / Zgłoszenia</h1>
+                    <p class="page-subtitle">Zarządzaj swoimi reklamacjami i zgłoszeniami</p>
+                </div>
+                
+                <!-- Filters and Add Button -->
+                <div class="filters-bar">
+                    <div class="search-wrapper">
+                        <i class="fi fi-rr-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="text" class="search-input" id="search-complaints" placeholder="Szukaj po nr zlecenia lub nazwie klienta..." oninput="filterComplaints()" style="padding-left: 40px;">
+                    </div>
+                    <div class="date-wrapper">
+                        <i class="fi fi-rr-calendar" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #ccc; pointer-events: none;"></i>
+                        <input type="date" class="datepicker-input" id="filter-complaint-date" onchange="filterComplaints()" style="padding-right: 40px; cursor: pointer;">
+                    </div>
+                    <button class="btn btn-action" onclick="openComplaintModal()" style="margin-left: auto;"><i class="fi fi-rr-plus"></i> Nowe zgłoszenie</button>
+                </div>
+                
+                <!-- Complaints List -->
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">Wszystkie zgłoszenia</h2>
+                        <select class="filter-select" id="filter-complaint-status" onchange="filterComplaints()" style="width: auto;">
+                            <option value="all">Wszystkie statusy</option>
+                            <option value="nowe">Nowe</option>
+                            <option value="w-trakcie">W trakcie</option>
+                            <option value="zamkniete">Zamknięte</option>
+                        </select>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr zgłoszenia</th>
+                                <th>Data</th>
+                                <th>Tytuł</th>
+                                <th>Typ</th>
+                                <th>Zamówienie</th>
+                                <th>Priorytet</th>
+                                <th>Status</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="complaints-tbody">
+                            <tr data-status="w-trakcie" data-date="2026-01-12">
+                                <td><strong>#ZG-2026-001</strong></td>
+                                <td>12.01.2026</td>
+                                <td>Opóźnienie w dostawie</td>
+                                <td>Reklamacja</td>
+                                <td>#ZAM-1234</td>
+                                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Pilny</span></td>
+                                <td><span class="status-badge info">W trakcie</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('zg-001')"><i class="fi fi-rr-eye"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="nowe" data-date="2026-01-10">
+                                <td><strong>#ZG-2026-002</strong></td>
+                                <td>10.01.2026</td>
+                                <td>Pytanie o fakturę</td>
+                                <td>Zgłoszenie</td>
+                                <td>#ZAM-1233</td>
+                                <td><span class="status-badge" style="background: rgba(0, 0, 0, 0.1); color: var(--color-black);">Normalny</span></td>
+                                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('zg-002')"><i class="fi fi-rr-eye"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr data-status="zamkniete" data-date="2025-12-28">
+                                <td><strong>#ZG-2025-045</strong></td>
+                                <td>28.12.2025</td>
+                                <td>Brakujące dokumenty</td>
+                                <td>Zgłoszenie</td>
+                                <td>#ZAM-1232</td>
+                                <td><span class="status-badge" style="background: rgba(0, 0, 0, 0.1); color: var(--color-black);">Niski</span></td>
+                                <td><span class="status-badge success">Zamknięte</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('zg-045')"><i class="fi fi-rr-eye"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Complaint Modal -->
+    <div id="complaintModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-exclamation-triangle"></i> Nowe zgłoszenie</h3>
+                <button class="modal-close" onclick="closeComplaintModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="complaintForm">
+                    <div class="form-group">
+                        <label class="form-label" for="complaintType">Typ zgłoszenia *</label>
+                        <select id="complaintType" class="form-select" required>
+                            <option value="">Wybierz typ...</option>
+                            <option value="reklamacja">Reklamacja</option>
+                            <option value="pytanie">Pytanie techniczne</option>
+                            <option value="dostawa">Problem z dostawą</option>
+                            <option value="inne">Inne</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="orderRef">Zamówienie (opcjonalnie)</label>
+                        <select id="orderRef" class="form-select">
+                            <option value="">Wybierz zamówienie...</option>
+                            <option value="ZAM-1234">#ZAM-1234 - CEM I 42,5R (09.01.2026)</option>
+                            <option value="ZAM-1233">#ZAM-1233 - CEM II/B-S (05.01.2026)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Priorytet *</label>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="priority" value="low">
+                                <span>⚪ Niski</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="priority" value="normal" checked>
+                                <span>🟡 Normalny</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="priority" value="high">
+                                <span>🔴 Pilny</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="title">Tytuł *</label>
+                        <input type="text" id="title" class="form-input" placeholder="Krótki opis problemu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Opis problemu *</label>
+                        <textarea id="description" class="form-textarea" placeholder="Opisz szczegółowo problem lub pytanie..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label"><i class="fi fi-rr-paperclip"></i> Załącz pliki (zdjęcia, dokumenty)</label>
+                        <div class="file-upload">
+                            <p style="margin-bottom: 8px;"><i class="fi fi-rr-picture"></i> Przeciągnij pliki tutaj lub kliknij aby wybrać</p>
+                            <p style="font-size: 12px; color: var(--color-gray);">Maksymalnie 5 plików, do 10MB każdy</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeComplaintModal()">ANULUJ</button>
+                <button class="btn btn-action" onclick="submitComplaint()">WYŚLIJ ZGŁOSZENIE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar Modal -->
+    <div id="calendarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-calendar"></i> Umów spotkanie</h3>
+                <button class="modal-close" onclick="closeCalendarModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="calendarForm">
+                    <div class="form-group">
+                        <label class="form-label" for="meetingDate">Data spotkania *</label>
+                        <input type="date" id="meetingDate" class="form-input" required min="">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="meetingTime">Godzina *</label>
+                        <input type="time" id="meetingTime" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="meetingType">Typ spotkania *</label>
+                        <select id="meetingType" class="form-select" required>
+                            <option value="">Wybierz typ...</option>
+                            <option value="online">Online (telefon/video)</option>
+                            <option value="office">W biurze</option>
+                            <option value="onsite">Wizyta u klienta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="meetingTopic">Temat spotkania *</label>
+                        <input type="text" id="meetingTopic" class="form-input" placeholder="Np. Omówienie nowej oferty" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="meetingNotes">Uwagi (opcjonalnie)</label>
+                        <textarea id="meetingNotes" class="form-textarea" placeholder="Dodatkowe informacje..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCalendarModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="submitMeeting()"><i class="fi fi-rr-calendar-check"></i> ZAPISZ SPOTKANIE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-envelope"></i> Wyślij wiadomość</h3>
+                <button class="modal-close" onclick="closeMessageModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label class="form-label">Do:</label>
+                        <div style="padding: 12px; background: var(--color-gray); border-radius: 8px;">
+                            <strong>Jan Kowalski</strong> - j.kowalski@sohosoft.pl
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="messageSubject">Temat *</label>
+                        <input type="text" id="messageSubject" class="form-input" placeholder="Temat wiadomości" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="messageContent">Treść wiadomości *</label>
+                        <textarea id="messageContent" class="form-textarea" placeholder="Napisz wiadomość..." required style="min-height: 150px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMessageModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="submitMessage()"><i class="fi fi-rr-paper-plane"></i> WYŚLIJ WIADOMOŚĆ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userMenuDropdown');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('active');
+            if (notificationDropdown) {
+                notificationDropdown.classList.remove('active');
+            }
+        }
+
+        function toggleNotificationMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            dropdown.classList.toggle('active');
+            if (userMenuDropdown) {
+                userMenuDropdown.classList.remove('active');
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const userMenuDropdown = document.getElementById('userMenuDropdown');
+            const notificationBtn = document.querySelector('.notification-btn');
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            
+            if (userMenu && !userMenu.contains(event.target)) {
+                userMenuDropdown.classList.remove('active');
+            }
+            
+            if (notificationBtn && !notificationBtn.closest('div').contains(event.target)) {
+                notificationDropdown.classList.remove('active');
+            }
+        });
+
+        // Tab Management
+        function showTab(tabName, event) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById('tab-' + tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked menu item if event is provided
+            if (event && event.target) {
+                const link = event.target.closest('a');
+                if (link) {
+                    link.classList.add('active');
+                }
+            }
+        }
+        
+        // Carousel
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-item');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            currentSlide = index;
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
+        }
+
+        function previousSlide() {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }
+
+        // Auto-rotate carousel
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            showSlide(currentSlide);
+        }, 5000);
+
+        // Complaint Modal
+        function openComplaintModal() {
+            document.getElementById('complaintModal').classList.add('active');
+        }
+
+        function closeComplaintModal() {
+            document.getElementById('complaintModal').classList.remove('active');
+            document.getElementById('complaintForm').reset();
+        }
+
+        function showComplaintDetails(complaintId) {
+            alert(`📋 Szczegóły zgłoszenia ${complaintId}\n\nFunkcja szczegółów będzie dostępna wkrótce.`);
+        }
+
+        function filterComplaints() {
+            const searchInput = document.getElementById('search-complaints');
+            const dateFilter = document.getElementById('filter-complaint-date');
+            const statusFilter = document.getElementById('filter-complaint-status');
+            
+            if (!searchInput || !dateFilter || !statusFilter) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const dateFilterValue = dateFilter.value;
+            const statusFilterValue = statusFilter.value;
+            
+            const rows = document.querySelectorAll('#tab-reklamacje table tbody tr');
+            
+            rows.forEach(row => {
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const complaintNumber = row.querySelector('td:first-child strong')?.textContent.toLowerCase() || '';
+                    const title = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                    const order = row.querySelector('td:nth-child(5)')?.textContent.toLowerCase() || '';
+                    
+                    if (!complaintNumber.includes(searchTerm) && !title.includes(searchTerm) && !order.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Date filter
+                if (dateFilterValue) {
+                    const rowDate = row.getAttribute('data-date');
+                    if (rowDate !== dateFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                // Status filter
+                if (statusFilterValue && statusFilterValue !== 'all') {
+                    const rowStatus = row.getAttribute('data-status');
+                    if (rowStatus !== statusFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        // Order Details Functions
+        function toggleOrderDetails(orderId) {
+            const detailsElement = document.getElementById('details-' + orderId);
+            if (detailsElement) {
+                detailsElement.classList.toggle('active');
+            }
+        }
+
+        function downloadInvoice(orderId) {
+            alert('⚠️ Proforma niedostępna\n\nFaktura będzie dostępna po zrealizowaniu zamówienia.');
+        }
+
+        function repeatOrder(orderId) {
+            // Przekierowanie do wizarda zamawiania
+            window.location.href = 'zamowienie-wizard.html';
+        }
+
+        // Filter Orders
+        function filterOrdersRealTime() {
+            const searchInput = document.getElementById('search-orders');
+            const dateFilter = document.getElementById('filter-order-date');
+            const statusFilter = document.getElementById('statusFilter');
+            
+            if (!searchInput || !dateFilter || !statusFilter) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const dateFilterValue = dateFilter.value;
+            const statusFilterValue = statusFilter.value;
+            
+            const rows = document.querySelectorAll('#tab-zamowienia table tbody tr');
+            
+            rows.forEach(row => {
+                if (row.classList.contains('order-details-row')) {
+                    // Hide details rows when filtering
+                    const detailsExpanded = row.querySelector('.order-details-expanded');
+                    if (detailsExpanded) {
+                        detailsExpanded.classList.remove('active');
+                    }
+                }
+                
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const orderNumber = row.getAttribute('data-order-number')?.toLowerCase() || '';
+                    const product = row.getAttribute('data-product')?.toLowerCase() || '';
+                    const orderNumberText = row.querySelector('td:first-child strong')?.textContent.toLowerCase() || '';
+                    
+                    if (!orderNumber.includes(searchTerm) && !product.includes(searchTerm) && !orderNumberText.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Date filter
+                if (dateFilterValue) {
+                    const rowDate = row.getAttribute('data-date');
+                    if (rowDate !== dateFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                // Status filter
+                if (statusFilterValue && statusFilterValue !== 'all') {
+                    const rowStatus = row.getAttribute('data-status');
+                    if (rowStatus !== statusFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function filterOrders() {
+            filterOrdersRealTime();
+        }
+
+        function filterInvoicesRealTime() {
+            const searchInput = document.getElementById('search-invoices');
+            const dateFilter = document.getElementById('filter-invoice-date');
+            
+            if (!searchInput || !dateFilter) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const dateFilterValue = dateFilter.value;
+            
+            const rows = document.querySelectorAll('#tab-faktury table tbody tr');
+            
+            rows.forEach(row => {
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const invoiceNumber = row.getAttribute('data-invoice-number')?.toLowerCase() || '';
+                    const invoiceNumberText = row.querySelector('td:first-child strong')?.textContent.toLowerCase() || '';
+                    
+                    if (!invoiceNumber.includes(searchTerm) && !invoiceNumberText.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Date filter
+                if (dateFilterValue) {
+                    const rowDate = row.getAttribute('data-date');
+                    if (rowDate !== dateFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        function filterTransportRealTime() {
+            const searchInput = document.getElementById('search-transport');
+            const dateFilter = document.getElementById('filter-transport-date');
+            
+            if (!searchInput || !dateFilter) return;
+            
+            const searchTerm = searchInput.value.toLowerCase();
+            const dateFilterValue = dateFilter.value;
+            
+            const rows = document.querySelectorAll('#tab-transport table tbody tr');
+            
+            rows.forEach(row => {
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const orderNumber = row.getAttribute('data-order-number')?.toLowerCase() || '';
+                    const product = row.getAttribute('data-product')?.toLowerCase() || '';
+                    const orderNumberText = row.querySelector('td:first-child strong')?.textContent.toLowerCase() || '';
+                    
+                    if (!orderNumber.includes(searchTerm) && !product.includes(searchTerm) && !orderNumberText.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Date filter (if we add date attribute later)
+                if (dateFilterValue && row.getAttribute('data-date')) {
+                    const rowDate = row.getAttribute('data-date');
+                    if (rowDate !== dateFilterValue) {
+                        show = false;
+                    }
+                }
+                
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        // Calendar Modal Functions
+        function openCalendarModal() {
+            document.getElementById('calendarModal').classList.add('active');
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('meetingDate').setAttribute('min', today);
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('active');
+            document.getElementById('calendarForm').reset();
+        }
+
+        function submitMeeting() {
+            const date = document.getElementById('meetingDate').value;
+            const time = document.getElementById('meetingTime').value;
+            const type = document.getElementById('meetingType').value;
+            const topic = document.getElementById('meetingTopic').value;
+            
+            if (!date || !time || !type || !topic) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
+            }
+            
+            // Format date
+            const dateObj = new Date(date);
+            const formattedDate = dateObj.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            alert(`✅ Spotkanie zostało umówione!\n\nData: ${formattedDate}\nGodzina: ${time}\nTyp: ${type}\nTemat: ${topic}\n\nOtrzymasz potwierdzenie na email.`);
+            closeCalendarModal();
+        }
+
+        // Message Modal Functions
+        function openMessageModal() {
+            document.getElementById('messageModal').classList.add('active');
+        }
+
+        function closeMessageModal() {
+            document.getElementById('messageModal').classList.remove('active');
+            document.getElementById('messageForm').reset();
+        }
+
+        function submitMessage() {
+            const subject = document.getElementById('messageSubject').value;
+            const content = document.getElementById('messageContent').value;
+            
+            if (!subject || !content) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
+            }
+            
+            alert('✅ Wiadomość została wysłana!\n\nOtrzymasz potwierdzenie na email.\nJan Kowalski odpowie w ciągu 24h.');
+            closeMessageModal();
+        }
+
+        // Close modals on outside click
+        document.getElementById('calendarModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCalendarModal();
+            }
+        });
+
+        document.getElementById('messageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeMessageModal();
+            }
+        });
+
+        function submitComplaint() {
+            const type = document.getElementById('complaintType').value;
+            const orderRef = document.getElementById('orderRef').value;
+            const priority = document.querySelector('input[name="priority"]:checked').value;
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            
+            if (!type || !title || !description) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
+            }
+            
+            // Generate complaint number
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const dateStr = `${day}.${month}.${year}`;
+            const dateAttr = `${year}-${month}-${day}`;
+            
+            // Get next complaint number
+            const existingComplaints = document.querySelectorAll('#complaints-tbody tr');
+            let maxNum = 0;
+            existingComplaints.forEach(row => {
+                const numText = row.querySelector('td:first-child strong')?.textContent || '';
+                const match = numText.match(/#ZG-\d{4}-(\d+)/);
+                if (match) {
+                    const num = parseInt(match[1]);
+                    if (num > maxNum) maxNum = num;
+                }
+            });
+            const newNum = String(maxNum + 1).padStart(3, '0');
+            const complaintNumber = `#ZG-${year}-${newNum}`;
+            
+            // Determine status (new complaints are always "nowe")
+            const status = 'nowe';
+            
+            // Map priority values to display
+            const priorityMap = {
+                'low': { text: 'Niski', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
+                'normal': { text: 'Normalny', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
+                'high': { text: 'Pilny', style: 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);' }
+            };
+            
+            const priorityInfo = priorityMap[priority] || priorityMap['normal'];
+            
+            // Map type values
+            const typeMap = {
+                'reklamacja': 'Reklamacja',
+                'pytanie': 'Zgłoszenie',
+                'dostawa': 'Reklamacja',
+                'inne': 'Zgłoszenie'
+            };
+            const typeDisplay = typeMap[type] || 'Zgłoszenie';
+            
+            // Create new row
+            const tbody = document.getElementById('complaints-tbody');
+            const newRow = document.createElement('tr');
+            newRow.setAttribute('data-status', status);
+            newRow.setAttribute('data-date', dateAttr);
+            newRow.innerHTML = `
+                <td><strong>${complaintNumber}</strong></td>
+                <td>${dateStr}</td>
+                <td>${title}</td>
+                <td>${typeDisplay}</td>
+                <td>${orderRef ? '#' + orderRef : '-'}</td>
+                <td><span class="status-badge" style="${priorityInfo.style}">${priorityInfo.text}</span></td>
+                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
+                <td>
+                    <div class="action-btns">
+                        <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('${complaintNumber}')"><i class="fi fi-rr-eye"></i></button>
+                    </div>
+                </td>
+            `;
+            
+            // Insert at the beginning of the table
+            tbody.insertBefore(newRow, tbody.firstChild);
+            
+            // Update badge count
+            const badge = document.querySelector('.menu-badge');
+            if (badge) {
+                const currentCount = parseInt(badge.textContent) || 0;
+                badge.textContent = currentCount + 1;
+            }
+            
+            // Close modal and show success message
+            closeComplaintModal();
+            alert('✅ Zgłoszenie zostało wysłane!\n\nOtrzymasz potwierdzenie na email w ciągu 5 minut.\nNasz zespół odpowie w ciągu 24h.');
+        }
+
+        // Report Data
+        const reportData = {
+            '2025-11': {
+                totalValue: '142,180 PLN',
+                change: '+8% vs październik 2025',
+                avgValue: '6,190 PLN',
+                ordersCount: '23 zamówienia',
+                topProduct: 'CEM II/B-S 42,5N',
+                topProductDetail: '98 ton w tym miesiącu',
+                summaryOrders: 23,
+                summaryValue: '142,180 PLN',
+                summaryPaid: '118,200 PLN',
+                summaryRemaining: '38,450 PLN'
+            },
+            '2025-12': {
+                totalValue: '156,230 PLN',
+                change: '+12% vs listopad 2025',
+                avgValue: '6,510 PLN',
+                ordersCount: '24 zamówienia',
+                topProduct: 'CEM I 42,5R',
+                topProductDetail: '112 ton w tym miesiącu',
+                summaryOrders: 24,
+                summaryValue: '156,230 PLN',
+                summaryPaid: '125,450 PLN',
+                summaryRemaining: '45,230 PLN'
+            },
+            '2026-01': {
+                totalValue: '168,540 PLN',
+                change: '+8% vs grudzień 2025',
+                avgValue: '7,020 PLN',
+                ordersCount: '24 zamówienia',
+                topProduct: 'CEM II/A-S 42,5N',
+                topProductDetail: '125 ton w tym miesiącu',
+                summaryOrders: 24,
+                summaryValue: '168,540 PLN',
+                summaryPaid: '132,100 PLN',
+                summaryRemaining: '48,920 PLN'
+            }
+        };
+
+        function updateReport() {
+            const dateFrom = document.getElementById('report-date-from');
+            const dateTo = document.getElementById('report-date-to');
+            
+            if (!dateFrom || !dateTo) return;
+            
+            const fromValue = dateFrom.value;
+            const toValue = dateTo.value;
+            
+            if (!fromValue || !toValue) return;
+            
+            const fromDate = new Date(fromValue);
+            const toDate = new Date(toValue);
+            
+            // Calculate months in range
+            const months = [];
+            const current = new Date(fromDate);
+            while (current <= toDate) {
+                const monthKey = current.getFullYear() + '-' + String(current.getMonth() + 1).padStart(2, '0');
+                months.push(monthKey);
+                current.setMonth(current.getMonth() + 1);
+            }
+            
+            // Aggregate data from all months in range
+            let totalValue = 0;
+            let totalOrders = 0;
+            let totalPaid = 0;
+            let totalRemaining = 0;
+            const productCounts = {};
+            
+            months.forEach(monthKey => {
+                const data = reportData[monthKey];
+                if (data) {
+                    totalValue += parseFloat(data.summaryValue.replace(/\s/g, '').replace('PLN', '').replace(',', '.'));
+                    totalOrders += data.summaryOrders;
+                    totalPaid += parseFloat(data.summaryPaid.replace(/\s/g, '').replace('PLN', '').replace(',', '.'));
+                    totalRemaining += parseFloat(data.summaryRemaining.replace(/\s/g, '').replace('PLN', '').replace(',', '.'));
+                    
+                    // Count products
+                    const tonsMatch = data.topProductDetail.match(/\d+/);
+                    if (tonsMatch) {
+                        const tons = parseFloat(tonsMatch[0]);
+                        if (productCounts[data.topProduct]) {
+                            productCounts[data.topProduct] += tons;
+                        } else {
+                            productCounts[data.topProduct] = tons;
+                        }
+                    }
+                }
+            });
+            
+            // Find top product
+            let topProduct = 'CEM I 42,5R';
+            let topProductTons = 0;
+            for (const [product, tons] of Object.entries(productCounts)) {
+                if (tons > topProductTons) {
+                    topProduct = product;
+                    topProductTons = tons;
+                }
+            }
+            
+            // Format dates for title
+            const fromMonth = fromDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+            const toMonth = toDate.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' });
+            const title = fromMonth === toMonth ? `Raport - ${fromMonth}` : `Raport - ${fromMonth} - ${toMonth}`;
+            
+            // Update UI
+            const titleEl = document.getElementById('report-month-title');
+            if (titleEl) titleEl.textContent = title;
+            
+            const totalValueEl = document.getElementById('report-total-value');
+            if (totalValueEl) totalValueEl.textContent = totalValue.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN';
+            
+            const changeEl = document.getElementById('report-change');
+            if (changeEl) changeEl.textContent = months.length > 1 ? `Okres: ${months.length} miesiące` : '+12% vs poprzedni miesiąc';
+            
+            const avgValueEl = document.getElementById('report-avg-value');
+            if (avgValueEl) avgValueEl.textContent = (totalValue / totalOrders || 0).toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN';
+            
+            const ordersCountEl = document.getElementById('report-orders-count');
+            if (ordersCountEl) ordersCountEl.textContent = totalOrders + ' zamówień';
+            
+            const topProductEl = document.getElementById('report-top-product');
+            if (topProductEl) topProductEl.textContent = topProduct;
+            
+            const topProductDetailEl = document.getElementById('report-top-product-detail');
+            if (topProductDetailEl) topProductDetailEl.textContent = topProductTons + ' ton w tym okresie';
+            
+            const summaryOrdersEl = document.getElementById('report-summary-orders');
+            if (summaryOrdersEl) summaryOrdersEl.textContent = totalOrders;
+            
+            const summaryValueEl = document.getElementById('report-summary-value');
+            if (summaryValueEl) summaryValueEl.textContent = totalValue.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN';
+            
+            const summaryPaidEl = document.getElementById('report-summary-paid');
+            if (summaryPaidEl) summaryPaidEl.textContent = totalPaid.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN';
+            
+            const summaryRemainingEl = document.getElementById('report-summary-remaining');
+            if (summaryRemainingEl) summaryRemainingEl.textContent = totalRemaining.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN';
+        }
+
+        function exportReport() {
+            const dateFrom = document.getElementById('report-date-from').value;
+            const dateTo = document.getElementById('report-date-to').value;
+            const title = document.getElementById('report-month-title').textContent;
+            alert(`📄 Eksportowanie raportu do PDF\n\n${title}\nOkres: ${dateFrom} - ${dateTo}\n\nRaport zostanie wygenerowany i pobrany.`);
+        }
+
+        // Close modal on outside click
+        document.getElementById('complaintModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeComplaintModal();
+            }
+        });
+
+        // Company Data Edit Functions
+        let isEditingCompany = false;
+        let originalCompanyData = {};
+
+        function toggleEditCompany() {
+            isEditingCompany = !isEditingCompany;
+            
+            if (isEditingCompany) {
+                // Save original values
+                originalCompanyData = {
+                    name: document.getElementById('company-name-display').textContent.trim(),
+                    nip: document.getElementById('company-nip-display').textContent.trim(),
+                    street: document.getElementById('company-street-display').textContent.trim(),
+                    city: document.getElementById('company-city-display').textContent.trim(),
+                    email: document.getElementById('company-email-display').textContent.trim(),
+                    phone: document.getElementById('company-phone-display').textContent.trim()
+                };
+                
+                // Show inputs, hide displays
+                document.getElementById('company-name-display').style.display = 'none';
+                document.getElementById('company-name-input').style.display = 'block';
+                document.getElementById('company-nip-display').style.display = 'none';
+                document.getElementById('company-nip-input').style.display = 'block';
+                document.getElementById('company-street-display').style.display = 'none';
+                document.getElementById('company-street-input').style.display = 'block';
+                document.getElementById('company-city-display').style.display = 'none';
+                document.getElementById('company-city-input').style.display = 'block';
+                document.getElementById('company-email-display').style.display = 'none';
+                document.getElementById('company-email-input').style.display = 'block';
+                document.getElementById('company-phone-display').style.display = 'none';
+                document.getElementById('company-phone-input').style.display = 'block';
+                
+                // Show save/cancel buttons, hide edit button
+                document.getElementById('btn-edit-company').style.display = 'none';
+                document.getElementById('btn-save-company').style.display = 'flex';
+                document.getElementById('btn-cancel-company').style.display = 'flex';
+            } else {
+                cancelEditCompany();
+            }
+        }
+
+        function cancelEditCompany() {
+            isEditingCompany = false;
+            
+            // Restore original values
+            if (originalCompanyData.name) {
+                document.getElementById('company-name-input').value = originalCompanyData.name;
+                document.getElementById('company-nip-input').value = originalCompanyData.nip;
+                document.getElementById('company-street-input').value = originalCompanyData.street;
+                document.getElementById('company-city-input').value = originalCompanyData.city;
+                document.getElementById('company-email-input').value = originalCompanyData.email;
+                document.getElementById('company-phone-input').value = originalCompanyData.phone;
+            }
+            
+            // Show displays, hide inputs
+            document.getElementById('company-name-display').style.display = 'block';
+            document.getElementById('company-name-input').style.display = 'none';
+            document.getElementById('company-nip-display').style.display = 'block';
+            document.getElementById('company-nip-input').style.display = 'none';
+            document.getElementById('company-street-display').style.display = 'block';
+            document.getElementById('company-street-input').style.display = 'none';
+            document.getElementById('company-city-display').style.display = 'block';
+            document.getElementById('company-city-input').style.display = 'none';
+            document.getElementById('company-email-display').style.display = 'block';
+            document.getElementById('company-email-input').style.display = 'none';
+            document.getElementById('company-phone-display').style.display = 'block';
+            document.getElementById('company-phone-input').style.display = 'none';
+            
+            // Show edit button, hide save/cancel buttons
+            document.getElementById('btn-edit-company').style.display = 'flex';
+            document.getElementById('btn-save-company').style.display = 'none';
+            document.getElementById('btn-cancel-company').style.display = 'none';
+        }
+
+        function saveCompanyData() {
+            const name = document.getElementById('company-name-input').value;
+            const nip = document.getElementById('company-nip-input').value;
+            const street = document.getElementById('company-street-input').value;
+            const city = document.getElementById('company-city-input').value;
+            const email = document.getElementById('company-email-input').value;
+            const phone = document.getElementById('company-phone-input').value;
+            
+            // Validate
+            if (!name || !nip || !street || !city || !email || !phone) {
+                alert('Proszę wypełnić wszystkie pola.');
+                return;
+            }
+            
+            // Update display values
+            document.getElementById('company-name-display').textContent = name;
+            document.getElementById('company-nip-display').textContent = nip;
+            document.getElementById('company-street-display').textContent = street;
+            document.getElementById('company-city-display').textContent = city;
+            document.getElementById('company-email-display').textContent = email;
+            document.getElementById('company-phone-display').textContent = phone;
+            
+            // Update user name in header if it matches
+            const userNameElements = document.querySelectorAll('.user-name');
+            userNameElements.forEach(el => {
+                if (el.textContent.includes('Firma Budowlana Budowa')) {
+                    el.textContent = name;
+                }
+            });
+            
+            // Update page title
+            const pageTitle = document.querySelector('#tab-dashboard .page-title');
+            if (pageTitle && pageTitle.textContent.includes('Firma Budowlana Budowa')) {
+                pageTitle.innerHTML = `Witaj, ${name}! <i class="fi fi-rr-hand-wave"></i>`;
+            }
+            
+            // Exit edit mode
+            isEditingCompany = false;
+            document.getElementById('company-name-display').style.display = 'block';
+            document.getElementById('company-name-input').style.display = 'none';
+            document.getElementById('company-nip-display').style.display = 'block';
+            document.getElementById('company-nip-input').style.display = 'none';
+            document.getElementById('company-street-display').style.display = 'block';
+            document.getElementById('company-street-input').style.display = 'none';
+            document.getElementById('company-city-display').style.display = 'block';
+            document.getElementById('company-city-input').style.display = 'none';
+            document.getElementById('company-email-display').style.display = 'block';
+            document.getElementById('company-email-input').style.display = 'none';
+            document.getElementById('company-phone-display').style.display = 'block';
+            document.getElementById('company-phone-input').style.display = 'none';
+            
+            document.getElementById('btn-edit-company').style.display = 'flex';
+            document.getElementById('btn-save-company').style.display = 'none';
+            document.getElementById('btn-cancel-company').style.display = 'none';
+            
+            alert('✅ Dane firmy zostały zapisane pomyślnie!');
+        }
+    </script>
+</body>
+</html>

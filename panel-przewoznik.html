@@ -1,0 +1,2482 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Przewoźnika - SOHOsoft Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-white);
+            color: var(--color-black);
+        }
+
+        /* Same top nav and layout as dashboard-klient.html */
+        .top-nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .role-switcher {
+            padding: 8px 16px;
+            background: var(--color-gray);
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .role-switcher:hover {
+            background: var(--color-gray);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .user-menu:hover {
+            background: var(--color-gray);
+        }
+
+        .user-menu-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 180px;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .user-menu-dropdown.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            color: var(--color-black);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .dropdown-item:hover {
+            background: var(--color-gray);
+        }
+
+        .dropdown-item i {
+            font-size: 16px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: var(--color-gray);
+            margin: 4px 0;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--color-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--color-gray);
+        }
+
+        .main-layout {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: var(--color-white);
+            border-right: 1px solid var(--color-gray);
+            padding: 30px 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 5px;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--color-black);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .sidebar-menu a:hover {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .sidebar-menu a.active {
+            background: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-badge {
+            margin-left: auto;
+            background: var(--color-action);
+            color: var(--color-white);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .menu-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-icon i {
+            font-size: 18px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* Tab System */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Order Details Expandable */
+        .order-details-expanded {
+            display: none;
+            padding: 20px;
+            background: var(--color-gray);
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .order-details-expanded.active {
+            display: block;
+        }
+
+        .order-products-list {
+            margin-bottom: 16px;
+        }
+
+        .order-product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--color-white);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-product-name {
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .order-product-quantity {
+            font-size: 13px;
+            color: var(--color-gray);
+        }
+
+        .order-product-price {
+            font-weight: 600;
+            color: var(--color-action);
+            font-size: 16px;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--color-white);
+            border-radius: 8px;
+            border-top: 2px solid var(--color-action);
+        }
+
+        .order-total-label {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .order-total-value {
+            font-weight: 700;
+            color: var(--color-action);
+            font-size: 18px;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--color-gray);
+            margin-bottom: 24px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table thead {
+            background: var(--color-gray);
+        }
+
+        table th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--color-black);
+            border-bottom: 2px solid var(--color-gray);
+        }
+
+        table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--color-gray);
+            font-size: 14px;
+        }
+
+        table tbody tr:hover {
+            background: var(--color-gray);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            color: var(--color-black);
+            transition: all 0.2s;
+            border-radius: 6px;
+        }
+
+        .icon-btn:hover {
+            background: var(--color-gray);
+            color: var(--color-action);
+        }
+
+        .icon-btn i {
+            font-size: 16px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--color-gray);
+        }
+
+        .filters-bar {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid var(--color-gray);
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        input[type="date"].filter-select {
+            font-family: inherit;
+            color: var(--color-black);
+        }
+
+        input[type="date"].filter-select::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        input[type="date"].filter-select::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .bulk-actions input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .order-card {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--color-gray);
+            transition: all 0.3s;
+            border: 1px solid var(--color-gray);
+        }
+
+        .order-card:hover {
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            transform: translateX(4px);
+        }
+
+        .order-card.priority {
+            border-left-color: var(--color-action);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .order-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-black);
+        }
+
+        .priority-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .priority-badge.high {
+            background: rgba(239, 125, 5, 0.1);
+            color: var(--color-action);
+        }
+
+        .priority-badge.normal {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-black);
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .detail-icon {
+            color: var(--color-action);
+            font-size: 16px;
+        }
+        
+        .detail-icon i {
+            font-size: 16px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .detail-value {
+            color: var(--color-black);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: rgba(239, 125, 5, 0.1);
+            color: var(--color-action);
+        }
+
+        .status-badge.assigned {
+            background: rgba(0, 0, 0, 0.1);
+            color: var(--color-black);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-gray);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .btn-primary:hover {
+            background: #d66a04;
+        }
+
+        .btn-outline {
+            background: var(--color-white);
+            border: 2px solid var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-action);
+            color: var(--color-action);
+        }
+
+        /* Loyalty Program */
+        .loyalty-section {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        .level-card {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .level-stars {
+            font-size: 36px;
+            margin-bottom: 16px;
+        }
+
+        .level-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .points-progress {
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            height: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .points-bar {
+            background: white;
+            height: 100%;
+            border-radius: 10px;
+            width: 49%;
+            transition: width 0.5s;
+        }
+
+        .points-text {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .benefit-card {
+            background: var(--gray-50);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--success);
+        }
+
+        .benefit-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        
+        .benefit-icon i {
+            font-size: 32px;
+        }
+
+        .benefit-text {
+            font-size: 14px;
+            color: var(--color-black);
+            line-height: 1.6;
+        }
+
+        .next-level-card {
+            background: var(--color-black);
+            color: var(--color-white);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .next-level-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .next-benefits {
+            display: grid;
+            gap: 12px;
+        }
+
+        .next-benefit {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        
+        .next-benefit i {
+            font-size: 18px;
+        }
+
+        .earn-points-section {
+            background: var(--color-gray);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .earn-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 16px;
+        }
+
+        .earn-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .earn-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--color-black);
+        }
+
+        .recommend-section {
+            background: rgba(239, 125, 5, 0.1);
+            border: 2px solid var(--color-action);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .recommend-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 12px;
+        }
+
+        .recommend-text {
+            font-size: 14px;
+            color: var(--color-black);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .products-recommend {
+            display: grid;
+            gap: 16px;
+        }
+
+        .recommend-card {
+            background: var(--color-white);
+            border: 2px solid var(--color-gray);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .recommend-card:hover {
+            border-color: var(--color-action);
+            transform: translateX(4px);
+        }
+
+        .recommend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .recommend-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .recommend-badge {
+            background: var(--color-action);
+            color: var(--color-white);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .recommend-desc {
+            font-size: 13px;
+            color: var(--color-gray);
+            margin-bottom: 12px;
+        }
+
+        .recommend-stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--color-black);
+        }
+
+        .recommend-stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .recommend-stat i {
+            font-size: 16px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--color-white);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--color-gray);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--color-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--color-black);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--color-black);
+            margin-bottom: 8px;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .driver-option {
+            padding: 12px;
+            border: 2px solid var(--color-gray);
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .driver-option:hover {
+            border-color: var(--color-action);
+            background: var(--color-gray);
+        }
+
+        .driver-option.selected {
+            border-color: var(--color-action);
+            background: rgba(239, 125, 5, 0.1);
+        }
+
+        .driver-name {
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+        
+        .driver-name i {
+            margin-right: 8px;
+        }
+
+        .driver-details {
+            font-size: 13px;
+            color: var(--color-gray);
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--color-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .info-box {
+            background: rgba(239, 125, 5, 0.1);
+            border-left: 4px solid var(--color-action);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            color: var(--color-black);
+            line-height: 1.6;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <i class="fi fi-rr-factory"></i>
+                <span>SOHOsoft</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="user-menu" onclick="toggleUserMenu(event)">
+                <div class="user-avatar">TC</div>
+                <div class="user-info">
+                    <div class="user-name">Trans-Cement Sp. z o.o.</div>
+                    <div class="user-role">Przewoźnik</div>
+                </div>
+                <div class="user-menu-dropdown" id="userMenuDropdown">
+                    <button class="dropdown-item" onclick="window.location.href='index.html'">
+                        <i class="fi fi-rr-sign-out"></i>
+                        <span>Wyloguj</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" class="active" onclick="showTab('do-awizacji'); return false;"><i class="fi fi-rr-clipboard-list menu-icon"></i> Zlecenia do awizacji <span class="menu-badge">5</span></a></li>
+                <li><a href="#" onclick="showTab('w-realizacji'); return false;"><i class="fi fi-rr-check-circle menu-icon"></i> Zlecenia w realizacji <span class="menu-badge">3</span></a></li>
+                <li><a href="#" onclick="showTab('zrealizowane'); return false;"><i class="fi fi-rr-check menu-icon"></i> Zlecenia zrealizowane</a></li>
+                <li><a href="#" onclick="showTab('kierowcy'); return false;"><i class="fi fi-rr-users menu-icon"></i> Baza kierowców</a></li>
+                <li><a href="#" onclick="showTab('pojazdy'); return false;"><i class="fi fi-rr-truck-side menu-icon"></i> Baza pojazdów</a></li>
+                <li><a href="#" onclick="showTab('mapa'); return false;"><i class="fi fi-rr-map-marker menu-icon"></i> Mapa dostaw</a></li>
+                <li><a href="#" onclick="showTab('loyalty'); return false;"><i class="fi fi-rr-gift menu-icon"></i> Program lojalnościowy</a></li>
+                <li><a href="#" onclick="showTab('statystyki'); return false;"><i class="fi fi-rr-chart-line-up menu-icon"></i> Statystyki</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Zlecenia do awizacji Tab -->
+            <div id="tab-do-awizacji" class="tab-content active">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-truck"></i> Zlecenia do awizacji (5)</h1>
+                    <p class="page-subtitle">Przypisz kierowców do oczekujących zleceń</p>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="search-orders" placeholder="🔍 Szukaj po nr zlecenia lub nazwie klienta..." oninput="filterOrdersRealTime('do-awizacji')">
+                    <input type="date" class="filter-select" id="filter-date-awiz" onchange="filterOrdersRealTime('do-awizacji')" style="cursor: pointer;">
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions">
+                    <input type="checkbox" id="select-all">
+                    <label for="select-all">Zaznacz wszystkie</label>
+                    <button class="btn btn-outline" style="margin-left: auto;"><i class="fi fi-rr-bolt"></i> Awizuj zaznaczone</button>
+                </div>
+
+                <!-- Order Cards -->
+                <div class="order-card priority">
+                    <div class="order-header">
+                        <div>
+                            <input type="checkbox" style="margin-right: 12px;">
+                            <span class="order-number">#ZAM-1234</span>
+                        </div>
+                        <span class="priority-badge high">🔴 PRIORYTET: JUTRO 12:00</span>
+                    </div>
+
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-building detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Klient:</div>
+                                <div class="detail-value">Auto-All (Elmas Pawlak S.J.)</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-marker detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Dostawa:</div>
+                                <div class="detail-value">ul. Magazynowa 12, 15-950 Białystok</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Produkt:</div>
+                                <div class="detail-value">CEM II/B-S 42,5N | 24.8 tony</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Termin:</div>
+                                <div class="detail-value">12.01.2026, 12:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 16px 0;">
+                        <span class="status-badge pending">Oczekuje na awizację</span>
+                    </div>
+
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="openAwizModal()"><i class="fi fi-rr-edit"></i> AWIZUJ TERAZ</button>
+                        <button class="btn btn-outline" onclick="showOrderDetails('zam-1234')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                        <button class="btn btn-outline" onclick="contactClient('zam-1234')"><i class="fi fi-rr-phone-call"></i> Kontakt z klientem</button>
+                    </div>
+                    <div class="order-details-expanded" id="details-zam-1234">
+                        <div class="order-products-list">
+                            <div class="order-product-item">
+                                <div>
+                                    <div class="order-product-name">CEM II/B-S 42,5N</div>
+                                    <div class="order-product-quantity">24.8 ton × 410 PLN</div>
+                                </div>
+                                <div class="order-product-price">10,168 PLN</div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span class="order-total-label">Suma zlecenia:</span>
+                            <span class="order-total-value">10,168 PLN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <input type="checkbox" style="margin-right: 12px;">
+                            <span class="order-number">#ZAM-1236</span>
+                        </div>
+                        <span class="priority-badge normal">🟡 NORMALNY: 13.01.2026 08:00</span>
+                    </div>
+
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-building detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Klient:</div>
+                                <div class="detail-value">Betoniarnia Kowalski Sp. z o.o.</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-marker detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Dostawa:</div>
+                                <div class="detail-value">ul. Budowlana 88, 16-001 Kleosin</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Produkt:</div>
+                                <div class="detail-value">CEM I 42,5R | 56 ton (2 samochody)</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Termin:</div>
+                                <div class="detail-value">13.12.2024, 08:00</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin: 16px 0;">
+                        <span class="status-badge pending">Oczekuje na awizację</span>
+                    </div>
+
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="openAwizModal()"><i class="fi fi-rr-edit"></i> AWIZUJ TERAZ</button>
+                        <button class="btn btn-outline" onclick="showOrderDetails('zam-1236')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                    </div>
+                    <div class="order-details-expanded" id="details-zam-1236">
+                        <div class="order-products-list">
+                            <div class="order-product-item">
+                                <div>
+                                    <div class="order-product-name">CEM I 42,5R</div>
+                                    <div class="order-product-quantity">56 ton × 400 PLN</div>
+                                </div>
+                                <div class="order-product-price">22,400 PLN</div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span class="order-total-label">Suma zlecenia:</span>
+                            <span class="order-total-value">22,400 PLN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zlecenia w realizacji Tab -->
+            <div id="tab-w-realizacji" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-check-circle"></i> Zlecenia w realizacji (3)</h1>
+                    <p class="page-subtitle">Śledź status realizowanych dostaw</p>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="search-realizacja" placeholder="🔍 Szukaj po nr zlecenia lub nazwie klienta..." oninput="filterOrdersRealTime('w-realizacji')">
+                    <input type="date" class="filter-select" id="filter-date-realizacja" onchange="filterOrdersRealTime('w-realizacji')" style="cursor: pointer;">
+                </div>
+
+                <div class="order-card priority" data-order-number="ZAM-1234" data-client="Auto-All (Elmas Pawlak S.J.)" data-date="2026-01-12">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">#ZAM-1234</span>
+                        </div>
+                        <span class="priority-badge high">🔴 W DRODZE</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-user detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Kierowca:</div>
+                                <div class="detail-value">Marek Nowak | +48 600 123 456</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck-side detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Pojazd:</div>
+                                <div class="detail-value">WA 1234ABC + WA 5678DEF</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-building detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Klient:</div>
+                                <div class="detail-value">Auto-All (Elmas Pawlak S.J.)</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-marker detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Dostawa:</div>
+                                <div class="detail-value">ul. Magazynowa 12, 15-950 Białystok</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Produkt:</div>
+                                <div class="detail-value">CEM II/B-S 42,5N | 24.8 tony</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Termin:</div>
+                                <div class="detail-value">12.01.2026, 12:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <span class="status-badge assigned">W realizacji</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="showOrderDetails('zam-1234-real')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Kontakt z kierowcą</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-map-marker"></i> Śledź trasę</button>
+                    </div>
+                    <div class="order-details-expanded" id="details-zam-1234-real">
+                        <div class="order-products-list">
+                            <div class="order-product-item">
+                                <div>
+                                    <div class="order-product-name">CEM II/B-S 42,5N</div>
+                                    <div class="order-product-quantity">24.8 ton × 410 PLN</div>
+                                </div>
+                                <div class="order-product-price">10,168 PLN</div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span class="order-total-label">Suma zlecenia:</span>
+                            <span class="order-total-value">10,168 PLN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drugie zlecenie -->
+                <div class="order-card" data-order-number="ZAM-1237" data-client="Budowa Plus Sp. z o.o." data-date="2026-01-13">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">#ZAM-1237</span>
+                        </div>
+                        <span class="priority-badge normal">🟡 W DRODZE</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-user detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Kierowca:</div>
+                                <div class="detail-value">Tomasz Kowalski | +48 601 234 567</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck-side detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Pojazd:</div>
+                                <div class="detail-value">KR 9876XY</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-building detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Klient:</div>
+                                <div class="detail-value">Budowa Plus Sp. z o.o.</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-marker detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Dostawa:</div>
+                                <div class="detail-value">ul. Przemysłowa 45, 30-001 Kraków</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Produkt:</div>
+                                <div class="detail-value">CEM I 42,5R | 18.5 ton</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Termin:</div>
+                                <div class="detail-value">13.01.2026, 10:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <span class="status-badge assigned">W realizacji</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="showOrderDetails('zam-1237-real')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Kontakt z kierowcą</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-map-marker"></i> Śledź trasę</button>
+                    </div>
+                    <div class="order-details-expanded" id="details-zam-1237-real">
+                        <div class="order-products-list">
+                            <div class="order-product-item">
+                                <div>
+                                    <div class="order-product-name">CEM I 42,5R</div>
+                                    <div class="order-product-quantity">18.5 ton × 400 PLN</div>
+                                </div>
+                                <div class="order-product-price">7,400 PLN</div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span class="order-total-label">Suma zlecenia:</span>
+                            <span class="order-total-value">7,400 PLN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trzecie zlecenie -->
+                <div class="order-card" data-order-number="ZAM-1238" data-client="Firma Budowlana Budowa" data-date="2026-01-14">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">#ZAM-1238</span>
+                        </div>
+                        <span class="priority-badge low">🟢 W DRODZE</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-user detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Kierowca:</div>
+                                <div class="detail-value">Piotr Wiśniewski | +48 602 345 678</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck-side detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Pojazd:</div>
+                                <div class="detail-value">GD 4567AB + GD 8901CD</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-building detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Klient:</div>
+                                <div class="detail-value">Firma Budowlana Budowa</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-marker detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Dostawa:</div>
+                                <div class="detail-value">ul. Budowlana 88, 50-001 Wrocław</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Produkt:</div>
+                                <div class="detail-value">CEM II/A-S 42,5N | 32.4 tony</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Termin:</div>
+                                <div class="detail-value">14.01.2026, 14:00</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="margin: 16px 0;">
+                        <span class="status-badge assigned">W realizacji</span>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="showOrderDetails('zam-1238-real')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Kontakt z kierowcą</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-map-marker"></i> Śledź trasę</button>
+                    </div>
+                    <div class="order-details-expanded" id="details-zam-1238-real">
+                        <div class="order-products-list">
+                            <div class="order-product-item">
+                                <div>
+                                    <div class="order-product-name">CEM II/A-S 42,5N</div>
+                                    <div class="order-product-quantity">32.4 ton × 420 PLN</div>
+                                </div>
+                                <div class="order-product-price">13,608 PLN</div>
+                            </div>
+                        </div>
+                        <div class="order-total">
+                            <span class="order-total-label">Suma zlecenia:</span>
+                            <span class="order-total-value">13,608 PLN</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zlecenia zrealizowane Tab -->
+            <div id="tab-zrealizowane" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-check"></i> Zlecenia zrealizowane</h1>
+                    <p class="page-subtitle">Historia zakończonych dostaw</p>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="search-zrealizowane" placeholder="🔍 Szukaj po nr zlecenia lub nazwie klienta..." oninput="filterOrdersRealTime('zrealizowane')">
+                    <input type="date" class="filter-select" id="filter-date-zrealizowane" onchange="filterOrdersRealTime('zrealizowane')" style="cursor: pointer;">
+                </div>
+
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr zlecenia</th>
+                                <th>Data</th>
+                                <th>Klient</th>
+                                <th>Produkt</th>
+                                <th>Kierowca</th>
+                                <th>Status</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>#ZAM-1233</strong></td>
+                                <td>05.01.2026</td>
+                                <td>Betoniarnia Kowalski</td>
+                                <td>CEM II/B-S 42,5N | 56 ton</td>
+                                <td>Piotr Wiśniewski</td>
+                                <td><span class="status-badge assigned">Zrealizowane</span></td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="icon-btn" title="Szczegóły" onclick="showOrderDetails('zam-1233-real')"><i class="fi fi-rr-eye"></i></button>
+                                        <button class="icon-btn" title="Pobierz dokumenty"><i class="fi fi-rr-download"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Baza kierowców Tab -->
+            <div id="tab-kierowcy" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-users"></i> Baza kierowców</h1>
+                    <p class="page-subtitle">Zarządzaj swoimi kierowcami</p>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="search-kierowcy" placeholder="🔍 Szukaj kierowcy..." oninput="filterItemsRealTime('kierowcy')">
+                    <select class="filter-select" id="filter-status-kierowcy" onchange="filterItemsRealTime('kierowcy')">
+                        <option>Wszyscy</option>
+                        <option>Dostępni</option>
+                        <option>W trasie</option>
+                        <option>Niedostępni</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddDriverModal()"><i class="fi fi-rr-user-add"></i> Dodaj kierowcę</button>
+                </div>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">Marek Nowak</span>
+                        </div>
+                        <span class="priority-badge normal">Dostępny</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-phone-call detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Telefon:</div>
+                                <div class="detail-value">+48 600 123 456</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-id-card detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Prawo jazdy:</div>
+                                <div class="detail-value">Kat. C+E | Ważne do: 15.06.2028</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Ostatnia trasa:</div>
+                                <div class="detail-value">10.01.2026</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-chart-line-up detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Statystyki:</div>
+                                <div class="detail-value">45 dostaw w tym miesiącu</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Baza pojazdów Tab -->
+            <div id="tab-pojazdy" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-truck-side"></i> Baza pojazdów</h1>
+                    <p class="page-subtitle">Zarządzaj flotą pojazdów</p>
+                </div>
+
+                <div class="filters-bar">
+                    <input type="text" class="search-input" id="search-pojazdy" placeholder="🔍 Szukaj pojazdu..." oninput="filterItemsRealTime('pojazdy')">
+                    <select class="filter-select" id="filter-status-pojazdy" onchange="filterItemsRealTime('pojazdy')">
+                        <option>Wszystkie</option>
+                        <option>Dostępne</option>
+                        <option>W trasie</option>
+                        <option>W serwisie</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openAddVehicleModal()"><i class="fi fi-rr-truck-add"></i> Dodaj pojazd</button>
+                </div>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">WA 1234ABC - Volvo FH16</span>
+                        </div>
+                        <span class="priority-badge normal">Dostępny</span>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck-side detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Typ:</div>
+                                <div class="detail-value">Ciągnik siodłowy</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Przegląd:</div>
+                                <div class="detail-value">Następny: 15.02.2026</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-chart-line-up detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Przebieg:</div>
+                                <div class="detail-value">450,230 km</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                        <button class="btn btn-outline"><i class="fi fi-rr-settings"></i> Historia serwisów</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mapa dostaw Tab -->
+            <div id="tab-mapa" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-map-marker"></i> Mapa dostaw</h1>
+                    <p class="page-subtitle">Śledź lokalizacje wszystkich zleceń</p>
+                </div>
+
+                <div style="background: var(--color-gray); border-radius: 12px; padding: 200px 20px; text-align: center; color: var(--color-black); border: 2px solid var(--color-action);">
+                    <i class="fi fi-rr-map-marker" style="font-size: 64px; color: var(--color-action); margin-bottom: 16px;"></i>
+                    <h3 style="font-size: 20px; margin-bottom: 8px;">Mapa dostaw</h3>
+                    <p style="font-size: 14px;">Integracja z mapą będzie dostępna wkrótce</p>
+                </div>
+            </div>
+
+            <!-- Statystyki Tab -->
+            <div id="tab-statystyki" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-chart-line-up"></i> Statystyki</h1>
+                    <p class="page-subtitle">Analiza wydajności i wyników</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px;">
+                    <div class="order-card">
+                        <div style="font-size: 14px; color: var(--color-gray); margin-bottom: 8px;">Dostawy w tym miesiącu</div>
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-action);">156</div>
+                    </div>
+                    <div class="order-card">
+                        <div style="font-size: 14px; color: var(--color-gray); margin-bottom: 8px;">Średnia terminowość</div>
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-action);">98.5%</div>
+                    </div>
+                    <div class="order-card">
+                        <div style="font-size: 14px; color: var(--color-gray); margin-bottom: 8px;">Przychód w tym miesiącu</div>
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-action);">245,600 PLN</div>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <h2 class="table-title">Top kierowcy (miesiąc)</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kierowca</th>
+                                <th>Liczba dostaw</th>
+                                <th>Terminowość</th>
+                                <th>Ocena</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Marek Nowak</strong></td>
+                                <td>45</td>
+                                <td>100%</td>
+                                <td>⭐⭐⭐⭐⭐</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Piotr Wiśniewski</strong></td>
+                                <td>42</td>
+                                <td>98%</td>
+                                <td>⭐⭐⭐⭐⭐</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Program lojalnościowy Tab -->
+            <div id="tab-loyalty" class="tab-content">
+                <div class="page-header">
+                    <h1 class="page-title"><i class="fi fi-rr-gift"></i> Program Lojalnościowy Trans-Cement</h1>
+                    <p class="page-subtitle">Zdobywaj punkty i zyskuj więcej z każdą dostawą</p>
+                </div>
+
+                <div class="loyalty-section">
+                    <!-- Current Level -->
+                    <div class="level-card">
+                        <div class="level-stars"><i class="fi fi-rr-star"></i><i class="fi fi-rr-star"></i><i class="fi fi-rr-star"></i></div>
+                        <div class="level-name">SREBRNY PARTNER</div>
+                        <div class="points-progress">
+                            <div class="points-bar"></div>
+                        </div>
+                        <div class="points-text">
+                            Punkty: 2,450 / 5,000 do poziomu ZŁOTY<br>
+                            <i class="fi fi-rr-lightbulb"></i> Jeszcze 2,550 pkt do następnego poziomu! (≈ 90 dostaw)
+                        </div>
+                    </div>
+
+                    <!-- Current Benefits -->
+                    <h3 style="font-size: 20px; margin-bottom: 20px;"><i class="fi fi-rr-check-circle"></i> Twoje korzyści na poziomie SREBRNY:</h3>
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="benefit-icon"><i class="fi fi-rr-money-bill-wave" style="font-size: 32px;"></i></div>
+                            <div class="benefit-text"><strong>+2% prowizji</strong> za każdą dostawę</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon"><i class="fi fi-rr-target" style="font-size: 32px;"></i></div>
+                            <div class="benefit-text"><strong>Priorytetowy dostęp</strong> do zleceń wysokomarżowych</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon"><i class="fi fi-rr-soap" style="font-size: 32px;"></i></div>
+                            <div class="benefit-text"><strong>Bezpłatne mycie</strong> cysterny co 10 dostaw</div>
+                        </div>
+                        <div class="benefit-card">
+                            <div class="benefit-icon"><i class="fi fi-rr-user" style="font-size: 32px;"></i></div>
+                            <div class="benefit-text"><strong>Dedykowany opiekun</strong> logistyczny</div>
+                        </div>
+                    </div>
+
+                    <!-- Next Level -->
+                    <div class="next-level-card">
+                        <div class="next-level-title"><i class="fi fi-rr-trophy"></i> Co zyskasz na poziomie ZŁOTY?</div>
+                        <div class="next-benefits">
+                            <div class="next-benefit">
+                                <i class="fi fi-rr-money-bill-wave"></i>
+                                <span><strong>+5% prowizji</strong> za każdą dostawę</span>
+                            </div>
+                            <div class="next-benefit">
+                                <i class="fi fi-rr-chart-histogram"></i>
+                                <span><strong>Gwarancja min. 50 zleceń/miesiąc</strong></span>
+                            </div>
+                            <div class="next-benefit">
+                                <i class="fi fi-rr-settings"></i>
+                                <span><strong>Bezpłatne serwisy techniczne</strong></span>
+                            </div>
+                            <div class="next-benefit">
+                                <i class="fi fi-rr-star"></i>
+                                <span><strong>Dostęp do ekskluzywnych tras premium</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- How to Earn Points -->
+                    <div class="earn-points-section">
+                        <div class="earn-title"><i class="fi fi-rr-chart-line-up"></i> Zdobywaj punkty:</div>
+                        <div class="earn-list">
+                            <div class="earn-item">
+                                <span>•</span>
+                                <span><strong>+25 pkt</strong> za każdą terminową dostawę</span>
+                            </div>
+                            <div class="earn-item">
+                                <span>•</span>
+                                <span><strong>+50 pkt</strong> bonus za 10 dostaw bez reklamacji</span>
+                            </div>
+                            <div class="earn-item">
+                                <span>•</span>
+                                <span><strong>+100 pkt</strong> za polecenie nowego przewoźnika</span>
+                            </div>
+                            <div class="earn-item">
+                                <span>•</span>
+                                <span><strong>+200 pkt</strong> za miesiąc bez opóźnień</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product Recommendations -->
+                    <div class="recommend-section">
+                        <div class="recommend-title"><i class="fi fi-rr-briefcase"></i> Rekomendacje dla klienta = bonus dla Ciebie!</div>
+                        <div class="recommend-text">
+                            <i class="fi fi-rr-lightbulb"></i> Gdy Twój klient zamawia produkt, który poleciłeś → Dostajesz <strong>+3% prowizji</strong> od tej dostawy
+                        </div>
+
+                        <div class="products-recommend">
+                            <div class="recommend-card">
+                                <div class="recommend-header">
+                                    <div>
+                                        <div class="recommend-name"><i class="fi fi-rr-target"></i> CEM V 32,5N - Cement hydrotechniczny</div>
+                                        <div class="recommend-desc">Idealny dla fundamentów w mokrym gruncie</div>
+                                    </div>
+                                    <span class="recommend-badge">+3% BONUS</span>
+                                </div>
+                                <div class="recommend-stats">
+                                    <div class="recommend-stat">
+                                        <i class="fi fi-rr-money-bill-wave"></i>
+                                        <span>Twoja prowizja: 25 PLN/tona + 3% bonus</span>
+                                    </div>
+                                    <div class="recommend-stat">
+                                        <i class="fi fi-rr-chart-histogram"></i>
+                                        <span>Średnio 2 zamówienia/miesiąc</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary"><i class="fi fi-rr-envelope"></i> WYŚLIJ REKOMENDACJĘ DO KLIENTA</button>
+                            </div>
+
+                            <div class="recommend-card">
+                                <div class="recommend-header">
+                                    <div>
+                                        <div class="recommend-name"><i class="fi fi-rr-target"></i> CEM II/B-S 42,5N - Cement z dodatkiem żużla</div>
+                                        <div class="recommend-desc">Promocja -5% do końca miesiąca!</div>
+                                    </div>
+                                    <span class="recommend-badge" style="background: var(--color-action);">+5% PROMO</span>
+                                </div>
+                                <div class="recommend-stats">
+                                    <div class="recommend-stat">
+                                        <i class="fi fi-rr-money-bill-wave"></i>
+                                        <span>Twoja prowizja: 18 PLN/tona + 5% bonus (promo)</span>
+                                    </div>
+                                </div>
+                                <button class="btn btn-primary"><i class="fi fi-rr-envelope"></i> WYŚLIJ REKOMENDACJĘ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 32px;">
+                        <button class="btn btn-outline"><i class="fi fi-rr-file"></i> ZOBACZ HISTORIĘ PUNKTÓW</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Awizacja Modal -->
+    <div class="modal" id="awizModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-edit"></i> Awizacja zlecenia #ZAM-1234</h3>
+                <button class="modal-close" onclick="closeAwizModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <!-- Order Info (Read-only) -->
+                <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; color: var(--secondary); margin-bottom: 12px;">Dane zlecenia:</h4>
+                    <div style="display: grid; gap: 8px; font-size: 14px;">
+                        <div><strong>Klient:</strong> Auto-All (Elmas Pawlak S.J.)</div>
+                        <div><strong>Adres:</strong> ul. Magazynowa 12, 15-950 Białystok</div>
+                        <div><strong>Produkt:</strong> CEM II/B-S 42,5N | 24.8 tony</div>
+                        <div><strong>Termin:</strong> 12.01.2026, 12:00</div>
+                    </div>
+                </div>
+
+                <form>
+                    <div class="form-group">
+                        <label class="form-label"><i class="fi fi-rr-user"></i> Kierowca: *</label>
+                        <div class="driver-option selected">
+                            <div class="driver-name"><i class="fi fi-rr-user"></i> Marek Nowak | +48 600 123 456</div>
+                            <div class="driver-details">Dostępny | Ostatnia trasa: 10.12.2024</div>
+                        </div>
+                        <div class="driver-option">
+                            <div class="driver-name"><i class="fi fi-rr-user"></i> Piotr Wiśniewski | +48 601 234 567</div>
+                            <div class="driver-details">Dostępny | Ostatnia trasa: 09.12.2024</div>
+                        </div>
+                        <button type="button" class="btn-add" style="margin-top: 12px;">+ Dodaj nowego kierowcę</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="truck"><i class="fi fi-rr-truck-side"></i> Ciągnik: *</label>
+                        <select id="truck" class="form-select" required>
+                            <option value="">Wybierz ciągnik...</option>
+                            <option selected>WA 1234ABC - Volvo FH16</option>
+                            <option>WA 5678DEF - Scania R450</option>
+                            <option>WA 9012GHI - MAN TGX</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="trailer"><i class="fi fi-rr-truck"></i> Naczepa: *</label>
+                        <select id="trailer" class="form-select" required>
+                            <option value="">Wybierz naczepę...</option>
+                            <option selected>WA 5678DEF - Cysterna 28t</option>
+                            <option>WA 1357JKL - Cysterna 32t</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="notes"><i class="fi fi-rr-comment"></i> Uwagi wewnętrzne (opcjonalnie):</label>
+                        <textarea id="notes" class="form-select" style="min-height: 80px; resize: vertical;" placeholder="Dodatkowe informacje dla kierowcy..."></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fi fi-rr-check-circle"></i> <strong>Po zatwierdzeniu:</strong><br>
+                        • Kierowca otrzyma SMS z PIN-em do bramy<br>
+                        • Dane pojazdu zostaną przekazane do cementowni<br>
+                        • Zlecenie przejdzie do statusu "W realizacji"
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAwizModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="submitAwiz()"><i class="fi fi-rr-floppy-disk"></i> ZAPISZ I WYŚLIJ SMS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Driver Modal -->
+    <div class="modal" id="addDriverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-user-add"></i> Dodaj nowego kierowcę</h3>
+                <button class="modal-close" onclick="closeAddDriverModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addDriverForm" onsubmit="saveDriver(event)">
+                    <div class="form-group">
+                        <label class="form-label">Imię i nazwisko *</label>
+                        <input type="text" class="form-select" id="driver-name" placeholder="np. Jan Kowalski" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Telefon *</label>
+                        <input type="tel" class="form-select" id="driver-phone" placeholder="+48 600 123 456" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-select" id="driver-email" placeholder="jan.kowalski@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Kategoria prawa jazdy *</label>
+                        <select class="form-select" id="driver-license" required>
+                            <option value="">Wybierz kategorię...</option>
+                            <option value="C">Kat. C</option>
+                            <option value="C+E" selected>Kat. C+E</option>
+                            <option value="D">Kat. D</option>
+                            <option value="D+E">Kat. D+E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data ważności prawa jazdy *</label>
+                        <input type="date" class="form-select" id="driver-license-expiry" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="driver-status">
+                            <option value="available" selected>Dostępny</option>
+                            <option value="unavailable">Niedostępny</option>
+                            <option value="on-route">W trasie</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Uwagi (opcjonalnie)</label>
+                        <textarea class="form-select" id="driver-notes" style="min-height: 80px; resize: vertical;" placeholder="Dodatkowe informacje o kierowcy..."></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fi fi-rr-lightbulb"></i> <strong>Po dodaniu:</strong><br>
+                        • Kierowca zostanie dodany do bazy<br>
+                        • Będzie dostępny do przypisania do zleceń<br>
+                        • Otrzyma dostęp do aplikacji mobilnej
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddDriverModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addDriverForm').dispatchEvent(new Event('submit'))"><i class="fi fi-rr-floppy-disk"></i> ZAPISZ KIEROWCĘ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Vehicle Modal -->
+    <div class="modal" id="addVehicleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-truck-add"></i> Dodaj nowy pojazd</h3>
+                <button class="modal-close" onclick="closeAddVehicleModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addVehicleForm" onsubmit="saveVehicle(event)">
+                    <div class="form-group">
+                        <label class="form-label">Typ pojazdu *</label>
+                        <select class="form-select" id="vehicle-type" required>
+                            <option value="">Wybierz typ...</option>
+                            <option value="tractor">Ciągnik siodłowy</option>
+                            <option value="trailer">Naczepa</option>
+                            <option value="truck">Samochód ciężarowy</option>
+                            <option value="tank">Cysterna</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Marka i model *</label>
+                        <input type="text" class="form-select" id="vehicle-brand" placeholder="np. Volvo FH16" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Numer rejestracyjny *</label>
+                        <input type="text" class="form-select" id="vehicle-plate" placeholder="WA 1234ABC" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rok produkcji</label>
+                        <input type="number" class="form-select" id="vehicle-year" placeholder="2020" min="1990" max="2026">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Przebieg (km)</label>
+                        <input type="number" class="form-select" id="vehicle-mileage" placeholder="450000" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data następnego przeglądu *</label>
+                        <input type="date" class="form-select" id="vehicle-inspection" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Pojemność / Ładowność</label>
+                        <input type="text" class="form-select" id="vehicle-capacity" placeholder="np. 28 ton lub 30 m³">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="vehicle-status">
+                            <option value="available" selected>Dostępny</option>
+                            <option value="on-route">W trasie</option>
+                            <option value="service">W serwisie</option>
+                            <option value="unavailable">Niedostępny</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Uwagi (opcjonalnie)</label>
+                        <textarea class="form-select" id="vehicle-notes" style="min-height: 80px; resize: vertical;" placeholder="Dodatkowe informacje o pojeździe..."></textarea>
+                    </div>
+
+                    <div class="info-box">
+                        <i class="fi fi-rr-lightbulb"></i> <strong>Po dodaniu:</strong><br>
+                        • Pojazd zostanie dodany do bazy<br>
+                        • Będzie dostępny do przypisania do zleceń<br>
+                        • System przypomni o terminie przeglądu
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeAddVehicleModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="document.getElementById('addVehicleForm').dispatchEvent(new Event('submit'))"><i class="fi fi-rr-floppy-disk"></i> ZAPISZ POJAZD</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleUserMenu(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('userMenuDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userMenuDropdown');
+            if (!userMenu.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        function openAwizModal() {
+            document.getElementById('awizModal').classList.add('active');
+        }
+
+        function closeAwizModal() {
+            document.getElementById('awizModal').classList.remove('active');
+        }
+
+        function submitAwiz() {
+            alert('✅ Zlecenie awizowane!\n\nSMS z PIN-em został wysłany do kierowcy.\nZlecenie #ZAM-1234 przeszło do statusu "W realizacji".');
+            closeAwizModal();
+        }
+
+        // Tab Management
+        function showTab(tabName, event) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all menu items
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Show selected tab
+            const selectedTab = document.getElementById('tab-' + tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked menu item if event is provided
+            if (event && event.target) {
+                const link = event.target.closest('a');
+                if (link) {
+                    link.classList.add('active');
+                }
+            } else {
+                // Fallback for when no event is passed
+                const correspondingSidebarLink = document.querySelector(`.sidebar-menu a[onclick*="showTab('${tabName}')"]`);
+                if (correspondingSidebarLink) {
+                    correspondingSidebarLink.classList.add('active');
+                }
+            }
+        }
+
+        function showOrderDetails(orderId) {
+            const detailsElement = document.getElementById('details-' + orderId);
+            if (detailsElement) {
+                detailsElement.classList.toggle('active');
+            }
+        }
+
+        function contactClient(orderId) {
+            alert('📞 Kontakt z klientem\n\nFunkcja kontaktu będzie dostępna wkrótce.\nZlecenie: ' + orderId);
+        }
+
+        // Add Driver Modal Functions
+        function openAddDriverModal() {
+            document.getElementById('addDriverModal').classList.add('active');
+        }
+
+        function closeAddDriverModal() {
+            document.getElementById('addDriverModal').classList.remove('active');
+            document.getElementById('addDriverForm').reset();
+        }
+
+        function saveDriver(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('driver-name').value;
+            const phone = document.getElementById('driver-phone').value;
+            const email = document.getElementById('driver-email').value;
+            const license = document.getElementById('driver-license').value;
+            const expiry = document.getElementById('driver-license-expiry').value;
+            const status = document.getElementById('driver-status').value;
+            const notes = document.getElementById('driver-notes').value;
+            
+            // Create new driver card
+            const tabContent = document.getElementById('tab-kierowcy');
+            const filtersBar = tabContent.querySelector('.filters-bar');
+            const existingCards = tabContent.querySelectorAll('.order-card');
+            
+            const newCard = document.createElement('div');
+            newCard.className = 'order-card';
+            newCard.innerHTML = `
+                <div class="order-header">
+                    <div>
+                        <span class="order-number">${name}</span>
+                    </div>
+                    <span class="priority-badge normal">${status === 'available' ? 'Dostępny' : status === 'on-route' ? 'W trasie' : 'Niedostępny'}</span>
+                </div>
+                <div class="order-details">
+                    <div class="detail-item">
+                        <i class="fi fi-rr-phone-call detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Telefon:</div>
+                            <div class="detail-value">${phone}</div>
+                        </div>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fi fi-rr-id-card detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Prawo jazdy:</div>
+                            <div class="detail-value">Kat. ${license} | Ważne do: ${new Date(expiry).toLocaleDateString('pl-PL')}</div>
+                        </div>
+                    </div>
+                    ${email ? `<div class="detail-item">
+                        <i class="fi fi-rr-envelope detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Email:</div>
+                            <div class="detail-value">${email}</div>
+                        </div>
+                    </div>` : ''}
+                </div>
+                <div class="order-actions">
+                    <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                    <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
+                    <button class="btn btn-outline"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
+                </div>
+            `;
+            
+            // Insert after filters bar, before existing cards
+            if (existingCards.length > 0) {
+                existingCards[0].parentNode.insertBefore(newCard, existingCards[0]);
+            } else {
+                filtersBar.parentNode.insertBefore(newCard, filtersBar.nextSibling);
+            }
+            
+            closeAddDriverModal();
+            alert('✅ Kierowca został dodany pomyślnie!');
+        }
+
+        // Add Vehicle Modal Functions
+        function openAddVehicleModal() {
+            document.getElementById('addVehicleModal').classList.add('active');
+        }
+
+        function closeAddVehicleModal() {
+            document.getElementById('addVehicleModal').classList.remove('active');
+            document.getElementById('addVehicleForm').reset();
+        }
+
+        function saveVehicle(event) {
+            event.preventDefault();
+            
+            const type = document.getElementById('vehicle-type').value;
+            const brand = document.getElementById('vehicle-brand').value;
+            const plate = document.getElementById('vehicle-plate').value;
+            const year = document.getElementById('vehicle-year').value;
+            const mileage = document.getElementById('vehicle-mileage').value;
+            const inspection = document.getElementById('vehicle-inspection').value;
+            const capacity = document.getElementById('vehicle-capacity').value;
+            const status = document.getElementById('vehicle-status').value;
+            const notes = document.getElementById('vehicle-notes').value;
+            
+            const typeNames = {
+                'tractor': 'Ciągnik siodłowy',
+                'trailer': 'Naczepa',
+                'truck': 'Samochód ciężarowy',
+                'tank': 'Cysterna'
+            };
+            
+            // Create new vehicle card
+            const tabContent = document.getElementById('tab-pojazdy');
+            const filtersBar = tabContent.querySelector('.filters-bar');
+            const existingCards = tabContent.querySelectorAll('.order-card');
+            
+            const newCard = document.createElement('div');
+            newCard.className = 'order-card';
+            newCard.innerHTML = `
+                <div class="order-header">
+                    <div>
+                        <span class="order-number">${plate} - ${brand}</span>
+                    </div>
+                    <span class="priority-badge normal">${status === 'available' ? 'Dostępny' : status === 'on-route' ? 'W trasie' : status === 'service' ? 'W serwisie' : 'Niedostępny'}</span>
+                </div>
+                <div class="order-details">
+                    <div class="detail-item">
+                        <i class="fi fi-rr-truck-side detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Typ:</div>
+                            <div class="detail-value">${typeNames[type] || type}</div>
+                        </div>
+                    </div>
+                    ${year ? `<div class="detail-item">
+                        <i class="fi fi-rr-calendar detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Rok produkcji:</div>
+                            <div class="detail-value">${year}</div>
+                        </div>
+                    </div>` : ''}
+                    <div class="detail-item">
+                        <i class="fi fi-rr-calendar detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Przegląd:</div>
+                            <div class="detail-value">Następny: ${new Date(inspection).toLocaleDateString('pl-PL')}</div>
+                        </div>
+                    </div>
+                    ${mileage ? `<div class="detail-item">
+                        <i class="fi fi-rr-chart-line-up detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Przebieg:</div>
+                            <div class="detail-value">${parseInt(mileage).toLocaleString('pl-PL')} km</div>
+                        </div>
+                    </div>` : ''}
+                    ${capacity ? `<div class="detail-item">
+                        <i class="fi fi-rr-box detail-icon"></i>
+                        <div>
+                            <div class="detail-label">Pojemność:</div>
+                            <div class="detail-value">${capacity}</div>
+                        </div>
+                    </div>` : ''}
+                </div>
+                <div class="order-actions">
+                    <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                    <button class="btn btn-outline"><i class="fi fi-rr-settings"></i> Historia serwisów</button>
+                </div>
+            `;
+            
+            // Insert after filters bar, before existing cards
+            if (existingCards.length > 0) {
+                existingCards[0].parentNode.insertBefore(newCard, existingCards[0]);
+            } else {
+                filtersBar.parentNode.insertBefore(newCard, filtersBar.nextSibling);
+            }
+            
+            closeAddVehicleModal();
+            alert('✅ Pojazd został dodany pomyślnie!');
+        }
+
+        // Close modals on outside click
+        document.getElementById('addDriverModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddDriverModal();
+            }
+        });
+
+        document.getElementById('addVehicleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddVehicleModal();
+            }
+        });
+
+        // Close modal on outside click
+        document.getElementById('awizModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAwizModal();
+            }
+        });
+
+        // Select driver
+        document.querySelectorAll('.driver-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.driver-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Real-time filtering functions
+        function filterOrdersRealTime(tabName) {
+            const tab = document.getElementById('tab-' + tabName);
+            if (!tab) return;
+
+            const searchInput = tab.querySelector('.search-input');
+            const dateFilter = tab.querySelector('input[type="date"]') || tab.querySelector('.filter-select');
+            
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const dateFilterValue = dateFilter ? dateFilter.value : '';
+            
+            const orderCards = tab.querySelectorAll('.order-card');
+            
+            orderCards.forEach(card => {
+                let show = true;
+                
+                // Search filter - search by order number OR client name
+                if (searchTerm) {
+                    const orderNumber = card.querySelector('.order-number');
+                    const orderText = orderNumber ? orderNumber.textContent.toLowerCase() : '';
+                    
+                    // Get client name
+                    const detailItems = card.querySelectorAll('.detail-item');
+                    let clientText = '';
+                    detailItems.forEach(item => {
+                        const icon = item.querySelector('.fi-rr-building');
+                        if (icon) {
+                            const clientValue = item.querySelector('.detail-value');
+                            if (clientValue) {
+                                clientText = clientValue.textContent.toLowerCase();
+                            }
+                        }
+                    });
+                    
+                    // Check if search term matches order number OR client name
+                    if (!orderText.includes(searchTerm) && !clientText.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Date filter - using datepicker
+                if (dateFilterValue && dateFilter && dateFilter.type === 'date') {
+                    const dateElements = card.querySelectorAll('.detail-item');
+                    let orderDate = '';
+                    dateElements.forEach(item => {
+                        const icon = item.querySelector('.fi-rr-calendar');
+                        if (icon) {
+                            const dateValue = item.querySelector('.detail-value');
+                            if (dateValue) {
+                                orderDate = dateValue.textContent.trim();
+                            }
+                        }
+                    });
+                    
+                    if (orderDate) {
+                        const orderDateObj = parseDate(orderDate);
+                        const filterDateObj = new Date(dateFilterValue);
+                        
+                        if (!isSameDay(orderDateObj, filterDateObj)) {
+                            show = false;
+                        }
+                    } else {
+                        show = false;
+                    }
+                } else if (dateFilterValue && dateFilter && dateFilter.tagName === 'SELECT') {
+                    // Fallback for select-based date filters in other tabs
+                    const dateElements = card.querySelectorAll('.detail-item');
+                    let orderDate = '';
+                    dateElements.forEach(item => {
+                        const icon = item.querySelector('.fi-rr-calendar');
+                        if (icon) {
+                            const dateValue = item.querySelector('.detail-value');
+                            if (dateValue) {
+                                orderDate = dateValue.textContent.trim();
+                            }
+                        }
+                    });
+                    
+                    if (orderDate) {
+                        const today = new Date();
+                        const tomorrow = new Date(today);
+                        tomorrow.setDate(tomorrow.getDate() + 1);
+                        
+                        if (dateFilterValue === 'Dzisiaj') {
+                            const orderDateObj = parseDate(orderDate);
+                            if (!isSameDay(orderDateObj, today)) {
+                                show = false;
+                            }
+                        } else if (dateFilterValue === 'Jutro') {
+                            const orderDateObj = parseDate(orderDate);
+                            if (!isSameDay(orderDateObj, tomorrow)) {
+                                show = false;
+                            }
+                        } else if (dateFilterValue === 'Ten tydzień') {
+                            const orderDateObj = parseDate(orderDate);
+                            const weekStart = new Date(today);
+                            weekStart.setDate(today.getDate() - today.getDay());
+                            const weekEnd = new Date(weekStart);
+                            weekEnd.setDate(weekStart.getDate() + 6);
+                            if (orderDateObj < weekStart || orderDateObj > weekEnd) {
+                                show = false;
+                            }
+                        }
+                    }
+                }
+                
+                card.style.display = show ? '' : 'none';
+            });
+        }
+
+        function filterItemsRealTime(tabName) {
+            const tab = document.getElementById('tab-' + tabName);
+            if (!tab) return;
+
+            const searchInput = tab.querySelector('.search-input');
+            const statusFilter = tab.querySelector('.filter-select');
+            
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            const statusFilterValue = statusFilter ? statusFilter.value : '';
+            
+            const cards = tab.querySelectorAll('.order-card');
+            
+            cards.forEach(card => {
+                let show = true;
+                
+                // Search filter
+                if (searchTerm) {
+                    const nameElement = card.querySelector('.order-number');
+                    const nameText = nameElement ? nameElement.textContent.toLowerCase() : '';
+                    if (!nameText.includes(searchTerm)) {
+                        show = false;
+                    }
+                }
+                
+                // Status filter
+                if (statusFilterValue && statusFilterValue !== 'Wszyscy' && statusFilterValue !== 'Wszystkie') {
+                    const statusBadge = card.querySelector('.priority-badge');
+                    if (statusBadge) {
+                        const statusText = statusBadge.textContent.trim();
+                        if (statusFilterValue === 'Dostępni' && statusText !== 'Dostępny') {
+                            show = false;
+                        } else if (statusFilterValue === 'W trasie' && statusText !== 'W trasie') {
+                            show = false;
+                        } else if (statusFilterValue === 'Niedostępni' && statusText !== 'Niedostępny') {
+                            show = false;
+                        } else if (statusFilterValue === 'Dostępne' && statusText !== 'Dostępny') {
+                            show = false;
+                        } else if (statusFilterValue === 'W serwisie' && statusText !== 'W serwisie') {
+                            show = false;
+                        }
+                    }
+                }
+                
+                card.style.display = show ? '' : 'none';
+            });
+        }
+
+        // Helper functions for date parsing
+        function parseDate(dateString) {
+            // Format: "12.01.2026, 12:00" or "12.01.2026"
+            const parts = dateString.split(',')[0].split('.');
+            if (parts.length === 3) {
+                return new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
+            }
+            return new Date();
+        }
+
+        function isSameDay(date1, date2) {
+            return date1.getDate() === date2.getDate() &&
+                   date1.getMonth() === date2.getMonth() &&
+                   date1.getFullYear() === date2.getFullYear();
+        }
+    </script>
+</body>
+</html>

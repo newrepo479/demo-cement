@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEM II/A-LL 42,5R - Cement Naturalny | SOHOsoft Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-white);
+            color: var(--color-black);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--color-black);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .nav-menu a:hover {
+            background: var(--color-gray);
+            color: var(--color-black);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--color-black);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--color-gray);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .product-header {
+            margin-bottom: 30px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--color-gray);
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb a {
+            color: var(--color-action);
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .product-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .product-image-section {
+            position: relative;
+        }
+
+        .product-main-image {
+            width: 100%;
+            height: 500px;
+            background-image: url('https://static.ozarow.com.pl/sg/slider%20_%20swiper%20produkty/cementyworkowane_slider_SG_800x800.webp');
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            border: 1px solid var(--color-gray);
+        }
+
+        .product-info-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .product-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 10px;
+        }
+
+        .product-subtitle {
+            font-size: 18px;
+            color: var(--color-gray);
+            margin-bottom: 20px;
+        }
+
+        .product-price-section {
+            padding: 20px;
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 50%, #ef7d05 100%);
+            border-radius: 12px;
+            color: var(--color-white);
+        }
+
+        .product-price-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .product-price-unit {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-action);
+            color: var(--color-white);
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #d66a04;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(239, 125, 5, 0.3);
+        }
+
+        .btn-outline {
+            background: var(--color-white);
+            border: 2px solid var(--color-action);
+            color: var(--color-action);
+        }
+
+        .btn-outline:hover {
+            background: var(--color-action);
+            color: var(--color-white);
+        }
+
+        .product-specs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--color-white);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .spec-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .spec-icon {
+            font-size: 28px;
+            color: var(--color-action);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: rgba(239, 125, 5, 0.1);
+            border-radius: 12px;
+        }
+
+        .spec-content {
+            flex: 1;
+        }
+
+        .spec-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .spec-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        /* Product Details Sections */
+        .product-details {
+            margin-top: 40px;
+        }
+
+        .detail-section {
+            margin-bottom: 40px;
+        }
+
+        .detail-section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--color-action);
+        }
+
+        .content-section {
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .content-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--color-black);
+        }
+
+        .content-section p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .content-section ul li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .content-section ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--color-action);
+            font-weight: 700;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: var(--color-white);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            border-left: 4px solid var(--color-action);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .feature-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-black);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--color-black);
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .product-container {
+                grid-template-columns: 1fr;
+            }
+
+            .product-main-image {
+                height: 300px;
+            }
+
+            .product-specs {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        /* Unit Selection */
+        .unit-selection {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .unit-selection-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 16px;
+        }
+
+        .unit-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .unit-option {
+            padding: 16px;
+            background: var(--color-white);
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .unit-option:hover {
+            border-color: var(--color-action);
+            background: rgba(239, 125, 5, 0.05);
+        }
+
+        .unit-option.active {
+            border-color: var(--color-action);
+            background: rgba(239, 125, 5, 0.1);
+        }
+
+        .unit-option-icon {
+            font-size: 32px;
+            color: var(--color-action);
+            margin-bottom: 8px;
+        }
+
+        .unit-option-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-black);
+            margin-bottom: 4px;
+        }
+
+        .unit-option-desc {
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="dashboard-klient.html" class="logo">
+                <i class="fi fi-rr-factory"></i>
+                <span>SOHOsoft</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="zamowienie-wizard.html">Nowe zamówienie</a></li>
+                <li><a href="dashboard-klient.html">Moje zamówienia</a></li>
+                <li><a href="dashboard-klient.html">Kontakt z opiekunem</a></li>
+                <li><a href="#">Pomoc</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="product-header">
+            <div class="breadcrumb">
+                <a href="dashboard-klient.html">Dashboard</a>
+                <span>/</span>
+                <a href="dashboard-klient.html">Produkty</a>
+                <span>/</span>
+                <span>CEM II/A-LL 42,5R</span>
+            </div>
+            <a href="dashboard-klient.html" class="back-btn">
+                <i class="fi fi-rr-arrow-left"></i>
+                Powrót do dashboardu
+            </a>
+        </div>
+
+        <div class="product-container">
+            <!-- Product Image -->
+            <div class="product-image-section">
+                <div class="product-main-image"></div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info-section">
+                <div>
+                    <h1 class="product-title">CEM II/A-LL 42,5R</h1>
+                    <p class="product-subtitle">Cement Naturalny Luzem</p>
+                </div>
+
+                <div class="product-price-section">
+                    <div class="product-price-label">Cena netto</div>
+                    <div class="product-price">410 PLN</div>
+                    <div class="product-price-unit">za tonę</div>
+                </div>
+
+                <div class="product-actions">
+                    <a href="zamowienie-wizard.html" class="btn btn-primary">
+                        <i class='bx bxs-cart-add'></i>
+                        ZAMÓW TERAZ
+                    </a>
+                    <button class="btn btn-outline">
+                        <i class='bx bxs-phone-call'></i>
+                        Skontaktuj się
+                    </button>
+                </div>
+
+                <div class="product-specs">
+                    <div class="spec-item">
+                        <div class="spec-icon">
+                            <i class='bx bxs-package'></i>
+                        </div>
+                        <div class="spec-content">
+                            <div class="spec-label">Dostępność</div>
+                            <div class="spec-value">W magazynie</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-icon">
+                            <i class='bx bxs-truck'></i>
+                        </div>
+                        <div class="spec-content">
+                            <div class="spec-label">Dostawa</div>
+                            <div class="spec-value">24-48h</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-icon">
+                            <i class='bx bxs-certification'></i>
+                        </div>
+                        <div class="spec-content">
+                            <div class="spec-label">Certyfikacja</div>
+                            <div class="spec-value">PN-EN 197-1</div>
+                        </div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="spec-icon">
+                            <i class='bx bxs-purchase-tag-alt'></i>
+                        </div>
+                        <div class="spec-content">
+                            <div class="spec-label">Minimalna ilość</div>
+                            <div class="spec-value">1 tona</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unit Selection -->
+                <div class="unit-selection">
+                    <div class="unit-selection-title">Wybierz jednostkę zamówienia:</div>
+                    <div class="unit-options">
+                        <div class="unit-option active" data-unit="tony" onclick="selectUnit('tony')">
+                            <div class="unit-option-icon">
+                                <i class='bx bxs-package'></i>
+                            </div>
+                            <div class="unit-option-label">Tony</div>
+                            <div class="unit-option-desc">Luzem</div>
+                        </div>
+                        <div class="unit-option" data-unit="worki" onclick="selectUnit('worki')">
+                            <div class="unit-option-icon">
+                                <i class='bx bxs-package'></i>
+                            </div>
+                            <div class="unit-option-label">Worki</div>
+                            <div class="unit-option-desc">25 kg</div>
+                        </div>
+                        <div class="unit-option" data-unit="palety" onclick="selectUnit('palety')">
+                            <div class="unit-option-icon">
+                                <i class='bx bxs-grid-alt'></i>
+                            </div>
+                            <div class="unit-option-label">Palety</div>
+                            <div class="unit-option-desc">40 worków</div>
+                        </div>
+                        <div class="unit-option" data-unit="samochod" onclick="selectUnit('samochod')">
+                            <div class="unit-option-icon">
+                                <i class='bx bxs-truck'></i>
+                            </div>
+                            <div class="unit-option-label">Samochód</div>
+                            <div class="unit-option-desc">20-32 tony</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details Sections -->
+        <div class="product-details">
+            <!-- Opis produktu -->
+            <div class="detail-section">
+                <h2 class="detail-section-title">Opis produktu</h2>
+                <div class="content-section">
+                    <p>
+                        <strong>CEM II/A-LL 42,5R</strong> to wysokiej jakości cement portlandzki z dodatkiem wapienia, charakteryzujący się wysoką wytrzymałością wczesną. 
+                        Produkt spełnia wymagania normy <strong>PN-EN 197-1</strong> i jest idealny do zastosowań w budownictwie ogólnym oraz przemysłowym.
+                    </p>
+                    <p>
+                        Cement ten wyróżnia się szybkim wiązaniem i wysoką wytrzymałością już po 28 dniach, co czyni go doskonałym wyborem 
+                        dla projektów wymagających szybkiego tempa realizacji. Dodatek wapienia (6-20%) nie tylko poprawia właściwości techniczne, 
+                        ale również czyni produkt bardziej ekologicznym, zmniejszając emisję CO₂ w procesie produkcji.
+                    </p>
+                    <p>
+                        Produkt dostępny jest w formie luzem (dostawa cysternami) oraz w workach 25kg, co zapewnia elastyczność w doborze 
+                        odpowiedniej formy opakowania dla różnych potrzeb budowlanych.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Zastosowanie -->
+            <div class="detail-section">
+                <h2 class="detail-section-title">Zastosowanie</h2>
+                <div class="content-section">
+                    <p><strong>CEM II/A-LL 42,5R</strong> znajduje szerokie zastosowanie w budownictwie:</p>
+                    <ul>
+                        <li><strong>Konstrukcje betonowe ogólnego przeznaczenia</strong> - idealny do budowy fundamentów, ścian, stropów i słupów</li>
+                        <li><strong>Fundamenty i ściany fundamentowe</strong> - zapewnia wysoką wytrzymałość i trwałość konstrukcji</li>
+                        <li><strong>Stropy, belki i słupy</strong> - doskonała wytrzymałość wczesna przyspiesza tempo budowy</li>
+                        <li><strong>Nawierzchnie betonowe</strong> - odporność na obciążenia i warunki atmosferyczne</li>
+                        <li><strong>Prefabrykaty betonowe</strong> - szybkie wiązanie umożliwia szybszą produkcję elementów prefabrykowanych</li>
+                        <li><strong>Zaprawy murarskie i tynkarskie</strong> - doskonała przyczepność i plastyczność</li>
+                        <li><strong>Beton towarowy</strong> - szeroko stosowany w produkcji betonu towarowego dla różnych zastosowań</li>
+                    </ul>
+                </div>
+                <div class="content-section">
+                    <h3>Zalety produktu</h3>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-bolt-circle'></i> Wysoka wytrzymałość wczesna</h4>
+                            <p>Klasa wytrzymałości 42,5R zapewnia szybkie osiągnięcie wymaganej wytrzymałości już po 2 dniach (≥20 MPa), co pozwala na szybsze tempo realizacji projektów budowlanych.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-check-circle'></i> Certyfikacja i jakość</h4>
+                            <p>Pełna zgodność z normą PN-EN 197-1 gwarantuje najwyższą jakość produktu. Wszystkie partie są regularnie kontrolowane pod kątem parametrów technicznych.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-leaf'></i> Ekologiczny skład</h4>
+                            <p>Dodatek wapienia (6-20%) zmniejsza emisję CO₂ w procesie produkcji, czyniąc produkt bardziej przyjaznym dla środowiska przy zachowaniu wysokich parametrów technicznych.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-time-five'></i> Szybkie wiązanie</h4>
+                            <p>Idealny do projektów wymagających szybkiego tempa realizacji. Czas początku wiązania ≥60 minut, czas końca wiązania ≤600 minut.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-shield-alt-2'></i> Trwałość i niezawodność</h4>
+                            <p>Wytrzymałość po 28 dniach ≥42,5 MPa zapewnia długotrwałą trwałość konstrukcji betonowych w różnych warunkach eksploatacji.</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4><i class='bx bxs-package'></i> Elastyczne opakowanie</h4>
+                            <p>Dostępność w formie luzem (cysterny) oraz worków 25kg pozwala na wybór najbardziej odpowiedniej formy dla konkretnego projektu.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parametry techniczne -->
+            <div class="detail-section">
+                <h2 class="detail-section-title">Parametry techniczne</h2>
+                <div class="content-section">
+                    <p>Poniżej przedstawiono szczegółowe parametry techniczne produktu <strong>CEM II/A-LL 42,5R</strong> zgodne z normą PN-EN 197-1:</p>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                        <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <td style="padding: 14px; font-weight: 600; width: 40%;">Norma</td>
+                            <td style="padding: 14px;">PN-EN 197-1</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 14px; font-weight: 600;">Klasa wytrzymałości</td>
+                            <td style="padding: 14px;">42,5R (wysoka wytrzymałość wczesna)</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <td style="padding: 14px; font-weight: 600;">Wytrzymałość po 2 dniach</td>
+                            <td style="padding: 14px;">≥ 20 MPa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 14px; font-weight: 600;">Wytrzymałość po 28 dniach</td>
+                            <td style="padding: 14px;">≥ 42,5 MPa</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <td style="padding: 14px; font-weight: 600;">Czas początku wiązania</td>
+                            <td style="padding: 14px;">≥ 60 minut</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 14px; font-weight: 600;">Czas końca wiązania</td>
+                            <td style="padding: 14px;">≤ 600 minut</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <td style="padding: 14px; font-weight: 600;">Dodatek LL (wapień)</td>
+                            <td style="padding: 14px;">6-20% wapienia</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 14px; font-weight: 600;">Gęstość nasypowa</td>
+                            <td style="padding: 14px;">~1,0-1,2 g/cm³</td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid #e5e7eb; background: #f9fafb;">
+                            <td style="padding: 14px; font-weight: 600;">Powierzchnia właściwa (Blaine)</td>
+                            <td style="padding: 14px;">3000-4000 cm²/g</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 14px; font-weight: 600;">Opakowanie</td>
+                            <td style="padding: 14px;">Luzem (cysterny 20-32 tony), worki 25kg (palety po 40 worków = 1 tona)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Dostawa i płatność -->
+            <div class="detail-section">
+                <h2 class="detail-section-title">Dostawa i płatność</h2>
+                <div class="content-section">
+                    <h3>Dostawa</h3>
+                    <p>Oferujemy elastyczne opcje dostawy dostosowane do potrzeb klienta:</p>
+                    <ul>
+                        <li><strong>Dostawa luzem cysternami samochodowymi</strong> - pojemność 20-32 tony, idealna dla większych projektów budowlanych</li>
+                        <li><strong>Dostawa w workach 25kg</strong> - palety po 40 worków (1 tona), wygodna dla mniejszych zamówień i miejsc trudno dostępnych</li>
+                        <li><strong>Termin dostawy</strong> - 24-48 godzin od potwierdzenia zamówienia (w zależności od lokalizacji)</li>
+                        <li><strong>Zasięg dostaw</strong> - dostawa na terenie całej Polski, możliwość negocjacji dostaw międzynarodowych</li>
+                        <li><strong>Odbiór własny</strong> - możliwość odbioru własnego z magazynu z dodatkową zniżką</li>
+                        <li><strong>Planowanie tras</strong> - optymalizacja tras dostaw dla zamówień wielopunktowych</li>
+                    </ul>
+                </div>
+                <div class="content-section">
+                    <h3>Płatność</h3>
+                    <p>Dostępne są różne formy płatności dostosowane do potrzeb klienta:</p>
+                    <ul>
+                        <li><strong>Przelew bankowy</strong> - standardowa forma płatności, termin zgodnie z umową handlową</li>
+                        <li><strong>Kredyt kupiecki</strong> - dostępny dla stałych klientów z pozytywną historią płatności</li>
+                        <li><strong>Płatność gotówką</strong> - możliwa przy odbiorze własnym z magazynu</li>
+                        <li><strong>Faktury VAT</strong> - faktury dostępne online w systemie klienta, możliwość automatycznej integracji</li>
+                        <li><strong>Programy lojalnościowe</strong> - dodatkowe korzyści dla stałych klientów</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedUnit = 'tony';
+
+        function selectUnit(unit) {
+            selectedUnit = unit;
+            
+            // Remove active class from all options
+            document.querySelectorAll('.unit-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Add active class to selected option
+            const selectedOption = document.querySelector(`[data-unit="${unit}"]`);
+            if (selectedOption) {
+                selectedOption.classList.add('active');
+            }
+            
+            // Update price display based on unit
+            updatePriceDisplay(unit);
+        }
+
+        function updatePriceDisplay(unit) {
+            const priceElement = document.querySelector('.product-price');
+            const priceUnitElement = document.querySelector('.product-price-unit');
+            
+            if (!priceElement || !priceUnitElement) return;
+            
+            const prices = {
+                'tony': { amount: '410', unit: 'za tonę' },
+                'worki': { amount: '10.25', unit: 'za worek 25kg' },
+                'palety': { amount: '410', unit: 'za paletę (1 tona)' },
+                'samochod': { amount: '12,300', unit: 'za samochód (30 ton)' }
+            };
+            
+            const price = prices[unit] || prices['tony'];
+            priceElement.textContent = price.amount + ' PLN';
+            priceUnitElement.textContent = price.unit;
+        }
+
+        // Initialize with default unit
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePriceDisplay('tony');
+        });
+    </script>
+</body>
+</html>
