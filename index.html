@@ -500,10 +500,14 @@
                         <button class="btn-demo" onclick="loginAs('zamawiajacy')">
                             <i class="fi fi-rr-shopping-cart"></i> Zamawiający
                         </button>
+                        <button class="btn-demo" onclick="loginAs('produkt')">
+                            <i class="fi fi-rr-shopping-cart"></i> Produkt Cement II
+                        </button>
                     </div>
                     <div style="font-size: 11px; color: var(--color-gray); margin-top: 6px; display: flex; gap: 16px;">
                         <span><strong>Pełny:</strong> faktury, bonusy, raporty</span>
                         <span><strong>Zamawiający:</strong> tylko zamówienia</span>
+                        <span><strong>Produkt:</strong> dostęp do konkretnego produktu</span>
                     </div>
                 </div>
                 
@@ -579,6 +583,7 @@
             const routes = {
                 'klient': 'dashboard-klient.html',
                 'zamawiajacy': 'dashboard-klient-zamawiajacy.html',
+                'produkt': 'produkt-cem-ii.html',
                 'przewoznik': 'panel-przewoznik.html',
                 'admin': 'panel-admin.html',
                 'handlowiec': 'panel-handlowiec.html'
