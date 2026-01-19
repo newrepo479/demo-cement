@@ -168,6 +168,65 @@ Wszystkie widoki działają bez backendu - dane są symulowane w JavaScript:
 
 ---
 
+## 🎯 Ścieżka Demo - Prezentacja Priorytetów
+
+### Przygotowanie:
+1. Otwórz `index.html` w przeglądarce
+2. Przygotuj dwa okna/karty do porównania
+
+### PRIORYTET 1: Bonusy i Rabaty
+
+**Krok 1: Panel Klienta**
+1. Na stronie logowania kliknij **"Pełny dostęp"** (w sekcji Klient)
+2. Na dashboardzie od razu widoczna jest sekcja **"Bonusy i rabaty"**:
+   - Saldo bonusu: **47 500 zł**
+   - Poziom: **Złoty** (progress 74%)
+   - Progi rabatowe: Srebrny 3%, Złoty 5%, Platynowy 8%
+   - Aktywne rabaty klienta
+
+**Krok 2: Panel Handlowca (podgląd bonusów klienta)**
+1. Wróć do `index.html` → kliknij **"Handlowiec"**
+2. Na liście klientów kliknij ikonę profilu dowolnego klienta
+3. W modalu "Profil klienta" widoczna sekcja **Bonusy i rabaty** z danymi klienta
+
+### PRIORYTET 2: Tony zamiast złotówek
+
+**Krok 1: Dashboard Klienta - KPI**
+1. Zaloguj jako Klient (Pełny dostęp)
+2. W sekcji Quick Stats widoczne metryki w tonach:
+   - Zamówiono YTD: **1 847 t**
+   - W tym miesiącu: **342 t**
+   - Średnie zamówienie: **38 t**
+3. PLN pozostaje tylko w:
+   - "Do zapłaty netto" (saldo należności)
+   - Sekcja Bonusy (47 500 zł)
+
+**Krok 2: Tabela zamówień**
+1. Kliknij "Moje zamówienia" w menu
+2. Kolumna "Ilość (t)" pokazuje wolumen: 21 t, 28 t, 56 t, 120 t
+
+### PRIORYTET 4: Dwa typy kont klienta
+
+**Krok 1: Porównanie na stronie logowania**
+1. Otwórz `index.html`
+2. W sekcji "Klient" widoczne dwa przyciski:
+   - **Pełny dostęp** - faktury, bonusy, raporty
+   - **Zamawiający** - tylko zamówienia
+
+**Krok 2: Widok Zamawiającego**
+1. Kliknij **"Zamawiający"**
+2. Widok uproszczony zawiera:
+   - Duży przycisk CTA "Złóż zamówienie"
+   - Status ostatniego zamówienia
+   - Mini-lista zamówień (tylko ilości, BEZ cen)
+3. **NIE MA**: bonusów, faktur, reklamacji, pełnej historii
+
+**Krok 3: Porównanie z Pełnym dostępem**
+1. Otwórz nową kartę → `index.html` → **"Pełny dostęp"**
+2. Pokaż pełny dashboard z wszystkimi funkcjami
+
+---
+
 ## 🔧 Roadmap Wdrożenia
 
 ### Faza 1: MVP (4-6 tygodni)

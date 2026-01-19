@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Zamawiającego - SOHOsoft Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--color-white);
+            color: var(--color-black);
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 12px;
+            transition: all 0.2s;
+        }
+
+        .user-menu:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--color-action);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-info {
+            text-align: left;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--color-gray);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--color-black);
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: var(--color-gray);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-action) 0%, #ff9a3c 100%);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(239, 125, 5, 0.3);
+        }
+
+        .cta-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 24px;
+        }
+
+        .cta-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .cta-description {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            color: var(--color-action);
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Status Card */
+        .status-card {
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .status-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-badge.new {
+            background: rgba(239, 125, 5, 0.1);
+            color: var(--color-action);
+        }
+
+        .status-badge.progress {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .status-badge.delivered {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .order-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .order-info-label {
+            font-size: 12px;
+            color: var(--color-gray);
+            text-transform: uppercase;
+        }
+
+        .order-info-value {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* Orders Table */
+        .orders-section {
+            background: var(--color-white);
+            border: 1px solid var(--color-gray);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--color-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .orders-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-gray);
+        }
+
+        .orders-table th {
+            background: #f8f8f8;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-gray);
+        }
+
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .orders-table tr:hover {
+            background: #fafafa;
+        }
+
+        .order-number {
+            font-weight: 600;
+            color: var(--color-black);
+        }
+
+        /* Logout button */
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--color-gray);
+            border-radius: 10px;
+            color: var(--color-black);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: var(--color-black);
+            color: white;
+            border-color: var(--color-black);
+        }
+
+        /* Info box */
+        .info-box {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 30px;
+            color: #0369a1;
+            font-size: 14px;
+        }
+
+        .info-box i {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <div class="logo">
+                <span style="color: var(--color-action);">SOHO</span>soft
+            </div>
+        </div>
+        <div class="nav-right">
+            <div class="user-menu">
+                <div class="user-avatar">JK</div>
+                <div class="user-info">
+                    <div class="user-name">Jan Kowalski</div>
+                    <div class="user-role">Zamawiający</div>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="window.location.href='index.html'">
+                <i class="fi fi-rr-sign-out"></i> Wyloguj
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Witaj, Jan! <i class="fi fi-rr-hand-wave"></i></h1>
+            <p class="page-subtitle">Panel zamawiającego - szybkie składanie zamówień</p>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <div class="cta-icon">
+                <i class="fi fi-rr-shopping-cart"></i>
+            </div>
+            <h2 class="cta-title">Złóż nowe zamówienie</h2>
+            <p class="cta-description">Szybki proces zamówienia - tylko 4 kroki do realizacji</p>
+            <a href="zamowienie-wizard.html" class="cta-btn">
+                <i class="fi fi-rr-arrow-right"></i> ROZPOCZNIJ ZAMÓWIENIE
+            </a>
+        </div>
+
+        <!-- Last Order Status -->
+        <div class="status-card">
+            <div class="status-header">
+                <div class="status-title">
+                    <i class="fi fi-rr-truck" style="color: var(--color-action);"></i>
+                    Ostatnie zamówienie
+                </div>
+                <span class="status-badge progress">W realizacji</span>
+            </div>
+            <div class="order-info">
+                <div class="order-info-item">
+                    <span class="order-info-label">Nr zamówienia</span>
+                    <span class="order-info-value">#ZAM-2026-1234</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Data złożenia</span>
+                    <span class="order-info-value">18.01.2026</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Produkt</span>
+                    <span class="order-info-value">CEM I 42,5R</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Ilość</span>
+                    <span class="order-info-value">28 t</span>
+                </div>
+                <div class="order-info-item">
+                    <span class="order-info-label">Planowana dostawa</span>
+                    <span class="order-info-value">20.01.2026, 10:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders (mini list) -->
+        <div class="orders-section">
+            <div class="orders-header">
+                <h3 class="orders-title">Moje zamówienia (ostatnie 5)</h3>
+            </div>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Nr zamówienia</th>
+                        <th>Data</th>
+                        <th>Produkt</th>
+                        <th>Ilość (t)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="order-number">#ZAM-2026-1234</td>
+                        <td>18.01.2026</td>
+                        <td>CEM I 42,5R</td>
+                        <td>28 t</td>
+                        <td><span class="status-badge progress">W realizacji</span></td>
+                    </tr>
+                    <tr>
+                        <td class="order-number">#ZAM-2026-1198</td>
+                        <td>15.01.2026</td>
+                        <td>CEM II/B-S 42,5N</td>
+                        <td>45 t</td>
+                        <td><span class="status-badge delivered">Dostarczone</span></td>
+                    </tr>
+                    <tr>
+                        <td class="order-number">#ZAM-2026-1156</td>
+                        <td>12.01.2026</td>
+                        <td>CEM II/A-S 42,5N</td>
+                        <td>120 t</td>
+                        <td><span class="status-badge delivered">Dostarczone</span></td>
+                    </tr>
+                    <tr>
+                        <td class="order-number">#ZAM-2026-1089</td>
+                        <td>08.01.2026</td>
+                        <td>CEM I 42,5R</td>
+                        <td>56 t</td>
+                        <td><span class="status-badge delivered">Dostarczone</span></td>
+                    </tr>
+                    <tr>
+                        <td class="order-number">#ZAM-2026-1045</td>
+                        <td>05.01.2026</td>
+                        <td>CEM II/B-S 42,5N</td>
+                        <td>38 t</td>
+                        <td><span class="status-badge delivered">Dostarczone</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Info box -->
+        <div class="info-box">
+            <i class="fi fi-rr-info"></i>
+            <span>Potrzebujesz dostępu do faktur, raportów lub bonusów? Skontaktuj się z administratorem konta w Twojej firmie.</span>
+        </div>
+    </main>
+</body>
+</html>

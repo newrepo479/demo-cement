@@ -489,10 +489,26 @@
             <!-- Demo Section -->
             <div class="demo-section" id="demoSection">
                 <div class="demo-title"><i class="fi fi-rr-target"></i> DEMO - Zaloguj się jako:</div>
+                
+                <!-- Klient - dwa typy kont -->
+                <div style="margin-bottom: 16px;">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--color-gray); margin-bottom: 8px; text-transform: uppercase;">Klient</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <button class="btn-demo" onclick="loginAs('klient')" style="border-color: var(--color-action); background: rgba(239, 125, 5, 0.05);">
+                            <i class="fi fi-rr-user" style="color: var(--color-action);"></i> Pełny dostęp
+                        </button>
+                        <button class="btn-demo" onclick="loginAs('zamawiajacy')">
+                            <i class="fi fi-rr-shopping-cart"></i> Zamawiający
+                        </button>
+                    </div>
+                    <div style="font-size: 11px; color: var(--color-gray); margin-top: 6px; display: flex; gap: 16px;">
+                        <span><strong>Pełny:</strong> faktury, bonusy, raporty</span>
+                        <span><strong>Zamawiający:</strong> tylko zamówienia</span>
+                    </div>
+                </div>
+                
+                <!-- Pozostałe role -->
                 <div class="demo-buttons">
-                    <button class="btn-demo" onclick="loginAs('klient')">
-                        <i class="fi fi-rr-user"></i> Klient
-                    </button>
                     <button class="btn-demo" onclick="loginAs('przewoznik')">
                         <i class="fi fi-rr-truck"></i> Przewoźnik
                     </button>
@@ -562,9 +578,10 @@
         function loginAs(role) {
             const routes = {
                 'klient': 'dashboard-klient.html',
+                'zamawiajacy': 'dashboard-klient-zamawiajacy.html',
                 'przewoznik': 'panel-przewoznik.html',
                 'admin': 'panel-admin.html',
-                'handlowiec': 'panel-handlowiec.html'
+                'handlowiec': 'panel-handlowiec-new.html'
             };
             
             // Store role in sessionStorage for role switcher

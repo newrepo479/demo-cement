@@ -20,7 +20,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #000;
+            background: #fff;
             color: #000;
             line-height: 1.6;
             min-height: 100vh;
@@ -37,8 +37,9 @@
         }
 
         .header-top {
-            background: #000;
-            color: white;
+            background: #fff;
+            color: #666;
+            border-bottom: 1px solid #eee;
             padding: 0.5rem 2rem;
             font-size: 0.75rem;
         }
@@ -3932,6 +3933,55 @@
                     </div>
                 </div>
                 
+                <!-- Bonusy i rabaty klienta -->
+                <div style="margin-bottom: 2rem; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 12px; padding: 20px; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <h4 style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                            <i class='bx bx-gift' style="color: #ef7d05;"></i> Bonusy i rabaty
+                        </h4>
+                        <span style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 12px;">ZŁOTY</span>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; text-align: center;">
+                            <div style="font-size: 11px; opacity: 0.7; text-transform: uppercase;">Saldo bonusu</div>
+                            <div style="font-size: 24px; font-weight: 700; color: #ef7d05;">47 500 zł</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; text-align: center;">
+                            <div style="font-size: 11px; opacity: 0.7; text-transform: uppercase;">Obrót YTD</div>
+                            <div style="font-size: 24px; font-weight: 700;">1 847 t</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress bar -->
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                            <span>Postęp do Platynowego</span>
+                            <span style="color: #ef7d05;">74%</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); border-radius: 6px; height: 8px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #ef7d05, #ff9a3c); height: 100%; width: 74%; border-radius: 6px;"></div>
+                        </div>
+                        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">Brakuje: 653 t do poziomu Platynowy</div>
+                    </div>
+                    
+                    <!-- Progi rabatowe mini-tabela -->
+                    <div style="font-size: 12px;">
+                        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span style="opacity: 0.7;">Srebrny (500-1000 t)</span>
+                            <span>3%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(255,215,0,0.1); margin: 0 -8px; padding-left: 8px; padding-right: 8px;">
+                            <span style="color: #FFD700;">Złoty (1000-2500 t)</span>
+                            <span style="color: #FFD700; font-weight: 600;">5%</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 6px 0;">
+                            <span style="opacity: 0.7;">Platynowy (&gt;2500 t)</span>
+                            <span>8%</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Przyciski akcji -->
                 <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #ccc;">
                     <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
@@ -4275,6 +4325,165 @@
     </div>
 
     <script>
+        // =====================================================
+        // localStorage Helper Functions
+        // =====================================================
+        const STORAGE_PREFIX = 'app:panel-handlowiec-new:';
+
+        function storageGet(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(STORAGE_PREFIX + key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+                return true;
+            } catch (e) {
+                console.error('Error writing to localStorage:', e);
+                return false;
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.random();
+        }
+
+        function upsertRecord(key, record) {
+            const records = storageGet(key, []);
+            if (!record.id) {
+                record.id = generateId();
+            }
+            const index = records.findIndex(r => r.id === record.id);
+            if (index >= 0) {
+                records[index] = record;
+            } else {
+                records.push(record);
+            }
+            storageSet(key, records);
+            return record;
+        }
+
+        function deleteRecord(key, id) {
+            const records = storageGet(key, []);
+            const filtered = records.filter(r => r.id !== id);
+            storageSet(key, filtered);
+            return filtered;
+        }
+
+        // =====================================================
+        // Render Saved Activities
+        // =====================================================
+        function renderSavedActivities() {
+            const activities = storageGet('activities', []);
+            const activityList = document.querySelector('.activity-timeline');
+            if (!activityList) return;
+
+            activityList.querySelectorAll('.activity-item[data-storage-id]').forEach(item => item.remove());
+            const firstStaticItem = activityList.querySelector('.activity-item:not([data-storage-id])');
+
+            activities.forEach(activity => {
+                const icons = {
+                    'task': 'fi fi-rr-checkbox',
+                    'visit': 'fi fi-rr-marker',
+                    'goal': 'fi fi-rr-target',
+                    'note': 'fi fi-rr-document',
+                    'call': 'fi fi-rr-phone-call',
+                    'email': 'fi fi-rr-envelope'
+                };
+                const icon = icons[activity.type] || 'fi fi-rr-document';
+
+                const newItem = document.createElement('div');
+                newItem.className = 'activity-item';
+                newItem.setAttribute('data-storage-id', activity.id);
+                newItem.innerHTML = `
+                    <div class="activity-icon"><i class="${icon}"></i></div>
+                    <div class="activity-content">
+                        <div class="activity-title">${activity.title || activity.type}</div>
+                        <div class="activity-meta">${activity.client || ''} • ${activity.dateStr || ''}</div>
+                        ${activity.description ? `<div class="activity-description">${activity.description}</div>` : ''}
+                    </div>
+                    <button onclick="deleteActivity(${activity.id})" title="Usuń" style="background: none; border: none; cursor: pointer; color: var(--color-gray);"><i class="fi fi-rr-trash"></i></button>
+                `;
+                if (firstStaticItem) {
+                    activityList.insertBefore(newItem, firstStaticItem);
+                } else {
+                    activityList.appendChild(newItem);
+                }
+            });
+        }
+
+        function deleteActivity(id) {
+            if (confirm('Czy na pewno chcesz usunąć tę aktywność?')) {
+                deleteRecord('activities', id);
+                renderSavedActivities();
+            }
+        }
+
+        // =====================================================
+        // Render Saved Tasks
+        // =====================================================
+        function renderSavedTasks() {
+            const tasks = storageGet('tasks', []);
+            const taskList = document.getElementById('taskList');
+            if (!taskList) return;
+
+            taskList.querySelectorAll('.task-item[data-storage-id]').forEach(item => item.remove());
+            const firstStaticItem = taskList.querySelector('.task-item:not([data-storage-id])');
+
+            tasks.forEach(task => {
+                const priorityColors = { 'Wysoki': '#ef4444', 'Średni': '#f59e0b', 'Niski': '#22c55e' };
+                const priorityColor = priorityColors[task.priority] || '#666';
+
+                const newItem = document.createElement('div');
+                newItem.className = 'task-item';
+                newItem.draggable = true;
+                newItem.setAttribute('data-storage-id', task.id);
+                newItem.innerHTML = `
+                    <div class="task-checkbox"><input type="checkbox" onchange="toggleTask(this)"></div>
+                    <div class="task-content">
+                        <div class="task-title">${task.title} - ${task.client || 'Brak klienta'}</div>
+                        <div class="task-meta">
+                            <span><i class="fi fi-rr-calendar"></i> ${task.dateStr || 'Brak terminu'}</span>
+                            <span style="color: ${priorityColor}"><i class="fi fi-rr-flag"></i> ${task.priority}</span>
+                        </div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="icon-btn" onclick="editTask(this)" title="Edytuj"><i class="fi fi-rr-edit"></i></button>
+                        <button class="icon-btn" onclick="deleteTaskItem(${task.id})" title="Usuń"><i class="fi fi-rr-trash"></i></button>
+                    </div>
+                `;
+                if (firstStaticItem) {
+                    taskList.insertBefore(newItem, firstStaticItem);
+                } else {
+                    taskList.appendChild(newItem);
+                }
+            });
+        }
+
+        function deleteTaskItem(id) {
+            if (confirm('Czy na pewno chcesz usunąć to zadanie?')) {
+                deleteRecord('tasks', id);
+                renderSavedTasks();
+            }
+        }
+
+        // =====================================================
+        // Initialize on DOMContentLoaded
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSavedActivities();
+            renderSavedTasks();
+        });
+
+        // =====================================================
+        // UI Functions
+        // =====================================================
         // Tab switching
         function switchTab(tabName) {
             // Hide all tabs
@@ -4350,6 +4559,64 @@
         }
 
         function saveAction() {
+            const taskForm = document.getElementById('taskForm');
+            const visitForm = document.getElementById('visitForm');
+            const noteForm = document.getElementById('noteForm');
+            const callForm = document.getElementById('callForm');
+            const emailForm = document.getElementById('emailForm');
+
+            let activityType = '';
+            let activityData = {};
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('pl-PL');
+
+            if (taskForm && taskForm.style.display !== 'none') {
+                activityType = 'task';
+                const client = taskForm.querySelector('.form-select')?.value || '';
+                const title = taskForm.querySelector('.form-input[placeholder*="Tytuł"]')?.value || 'Zadanie';
+                const date = taskForm.querySelector('input[type="date"]')?.value || '';
+                const priority = taskForm.querySelector('.form-select:last-of-type')?.value || 'Średni';
+                const description = taskForm.querySelector('.form-textarea')?.value || '';
+
+                const taskRecord = {
+                    title: title, client: client,
+                    dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr,
+                    priority: priority, description: description, createdAt: new Date().toISOString()
+                };
+                upsertRecord('tasks', taskRecord);
+                renderSavedTasks();
+                activityData = { title, client, description, dateStr };
+            } else if (visitForm && visitForm.style.display !== 'none') {
+                activityType = 'visit';
+                const client = visitForm.querySelector('.form-select')?.value || '';
+                const date = visitForm.querySelector('input[type="date"]')?.value || '';
+                const description = visitForm.querySelector('.form-textarea')?.value || '';
+                activityData = { title: 'Wizyta u klienta', client, description, dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr };
+            } else if (noteForm && noteForm.style.display !== 'none') {
+                activityType = 'note';
+                const client = noteForm.querySelector('.form-select')?.value || '';
+                const content = noteForm.querySelector('.form-textarea')?.value || '';
+                activityData = { title: 'Notatka', client, description: content, dateStr };
+            } else if (callForm && callForm.style.display !== 'none') {
+                activityType = 'call';
+                const client = callForm.querySelector('.form-select')?.value || '';
+                const date = callForm.querySelector('input[type="date"]')?.value || '';
+                const description = callForm.querySelector('.form-textarea')?.value || '';
+                activityData = { title: 'Rozmowa telefoniczna', client, description, dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr };
+            } else if (emailForm && emailForm.style.display !== 'none') {
+                activityType = 'email';
+                const client = emailForm.querySelector('.form-select')?.value || '';
+                const subject = emailForm.querySelector('input[type="text"]')?.value || 'Email';
+                const content = emailForm.querySelector('.form-textarea')?.value || '';
+                activityData = { title: subject, client, description: content, dateStr };
+            }
+
+            if (activityType) {
+                const activityRecord = { type: activityType, ...activityData, createdAt: new Date().toISOString() };
+                upsertRecord('activities', activityRecord);
+                renderSavedActivities();
+            }
+
             alert('Akcja zapisana!');
             hideModal('addModal');
         }
@@ -4377,11 +4644,55 @@
         }
 
         function saveNote() {
+            const client = document.getElementById('noteClient')?.value || '';
+            const noteType = document.querySelector('#noteModal .form-select')?.value || 'Notatka ogólna';
+            const content = document.querySelector('#noteModal .form-textarea')?.value || '';
+
+            if (!content.trim()) {
+                alert('Proszę wpisać treść notatki.');
+                return;
+            }
+
+            const dateStr = new Date().toLocaleDateString('pl-PL');
+            const activityRecord = {
+                type: 'note', title: noteType, client: client,
+                description: content, dateStr: dateStr, createdAt: new Date().toISOString()
+            };
+            upsertRecord('activities', activityRecord);
+            renderSavedActivities();
+
             alert('Notatka zapisana!');
             hideModal('noteModal');
         }
 
         function saveTask() {
+            const client = document.getElementById('taskClient')?.value || '';
+            const title = document.querySelector('#taskModal .form-input[placeholder*="Kontakt"]')?.value || 'Zadanie';
+            const description = document.querySelector('#taskModal .form-textarea')?.value || '';
+            const date = document.querySelector('#taskModal input[type="date"]')?.value || '';
+            const priority = document.querySelector('#taskModal .form-select')?.value || 'Średni';
+
+            if (!title.trim()) {
+                alert('Proszę wpisać tytuł zadania.');
+                return;
+            }
+
+            const dateStr = date ? new Date(date).toLocaleDateString('pl-PL') : new Date().toLocaleDateString('pl-PL');
+
+            const taskRecord = {
+                title: title, client: client, dateStr: dateStr,
+                priority: priority, description: description, createdAt: new Date().toISOString()
+            };
+            upsertRecord('tasks', taskRecord);
+            renderSavedTasks();
+
+            const activityRecord = {
+                type: 'task', title: title, client: client,
+                description: description, dateStr: dateStr, createdAt: new Date().toISOString()
+            };
+            upsertRecord('activities', activityRecord);
+            renderSavedActivities();
+
             alert('Zadanie zapisane!');
             hideModal('taskModal');
         }

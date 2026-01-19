@@ -650,7 +650,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="complaints-admin-tbody">
                         <tr>
                             <td>#RK-2847</td>
                             <td>BudBet Sp. z o.o.</td>
@@ -728,6 +728,96 @@
     </div>
 
     <script>
+        // =====================================================
+        // localStorage Helper Functions
+        // =====================================================
+        function storageGet(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        // =====================================================
+        // Render Shared Orders
+        // =====================================================
+        function renderSharedOrders() {
+            const orders = storageGet('app:shared:orders', []);
+            
+            // Update KPI - orders count
+            const ordersKpi = document.querySelector('.kpi-card.orders .kpi-value');
+            if (ordersKpi && orders.length > 0) {
+                const baseOrders = 1847;
+                ordersKpi.textContent = (baseOrders + orders.length).toLocaleString('pl-PL');
+            }
+            
+            // Update orders trend
+            const ordersTrend = document.querySelector('.kpi-card.orders .kpi-trend');
+            if (ordersTrend && orders.length > 0) {
+                const newPercent = ((orders.length / 1847) * 100).toFixed(1);
+                ordersTrend.innerHTML = `↑ +${newPercent}% nowych zamówień`;
+            }
+        }
+
+        // =====================================================
+        // Render Shared Complaints
+        // =====================================================
+        function renderSharedComplaints() {
+            const complaints = storageGet('app:shared:complaints', []);
+            const tbody = document.getElementById('complaints-admin-tbody');
+            
+            if (!tbody || complaints.length === 0) return;
+            
+            // Remove previously rendered storage complaints
+            tbody.querySelectorAll('tr[data-storage-id]').forEach(row => row.remove());
+            
+            // Find first static row
+            const firstStaticRow = tbody.querySelector('tr:not([data-storage-id])');
+            
+            complaints.slice(0, 5).forEach(complaint => {
+                const priorityClasses = {
+                    'wysoki': 'status-critical',
+                    'średni': 'status-pending',
+                    'niski': 'status-resolved'
+                };
+                const statusClass = priorityClasses[complaint.priority] || 'status-pending';
+                
+                const statusLabels = {
+                    'nowe': 'Nowe',
+                    'w-trakcie': 'W trakcie',
+                    'zamknięte': 'Rozwiązane'
+                };
+                const statusLabel = statusLabels[complaint.status] || 'Nowe';
+                
+                const row = document.createElement('tr');
+                row.setAttribute('data-storage-id', complaint.id);
+                row.innerHTML = `
+                    <td>${complaint.number}</td>
+                    <td>${complaint.title || 'Zgłoszenie klienta'}</td>
+                    <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                `;
+                if (firstStaticRow) {
+                    tbody.insertBefore(row, firstStaticRow);
+                } else {
+                    tbody.appendChild(row);
+                }
+            });
+            
+            // Update KPI - complaints count
+            const complaintsKpi = document.querySelector('.kpi-card.complaints .kpi-value');
+            if (complaintsKpi) {
+                const baseComplaints = 12;
+                const newCount = baseComplaints + complaints.filter(c => c.status === 'nowe').length;
+                complaintsKpi.textContent = newCount;
+            }
+        }
+
+        // =====================================================
+        // UI Functions
+        // =====================================================
         function toggleUserMenu(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('userMenuDropdown');
@@ -756,11 +846,17 @@
         function startAutoRefresh() {
             refreshTimer = setInterval(() => {
                 console.log('Auto-refresh danych (symulacja)');
-                // W produkcji: fetch API dla aktualnych danych
+                // Refresh data from localStorage
+                renderSharedOrders();
+                renderSharedComplaints();
             }, 30000);
         }
 
         window.onload = function() {
+            // Render data from shared localStorage
+            renderSharedOrders();
+            renderSharedComplaints();
+            
             startAutoRefresh();
             console.log('Panel Administratora załadowany pomyślnie');
         };

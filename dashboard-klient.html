@@ -1252,6 +1252,17 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Company fields styling */
+        .company-field-input {
+            background: #fff !important;
+            border: 2px solid var(--color-action) !important;
+        }
+        
+        .company-field-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(239, 125, 5, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -1353,14 +1364,107 @@
                 <p class="page-subtitle">Oto przegląd Twojego konta i ostatnich aktywności</p>
             </div>
 
+            <!-- Bonusy i Rabaty - Sekcja wyróżniona -->
+            <div class="bonus-section" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); border-radius: 16px; padding: 28px; margin-bottom: 30px; color: white; box-shadow: 0 8px 32px rgba(0,0,0,0.15);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 24px;">
+                    <!-- Saldo bonusu -->
+                    <div style="flex: 1; min-width: 200px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <div style="width: 48px; height: 48px; background: var(--color-action); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                                <i class="fi fi-rr-gift" style="font-size: 24px; color: white;"></i>
+                            </div>
+                            <div>
+                                <div style="font-size: 13px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px;">Twój bonus do wykorzystania</div>
+                                <div style="font-size: 36px; font-weight: 700; color: var(--color-action);">47 500 zł</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress do następnego progu -->
+                    <div style="flex: 2; min-width: 300px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-size: 14px; opacity: 0.8;">Aktualny poziom:</span>
+                                <span style="background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; margin-left: 8px;">ZŁOTY</span>
+                            </div>
+                            <div style="font-size: 14px; opacity: 0.8;">
+                                Obrót YTD: <strong style="color: white;">1 847 t</strong>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); border-radius: 10px; height: 24px; overflow: hidden; position: relative;">
+                            <div style="background: linear-gradient(90deg, var(--color-action), #ff9a3c); height: 100%; width: 74%; border-radius: 10px; transition: width 0.5s;"></div>
+                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 12px; font-weight: 600;">74% do Platynowego</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 13px;">
+                            <span style="opacity: 0.7;">Brakuje: <strong style="color: #ff9a3c;">653 t</strong> do poziomu Platynowy</span>
+                            <span style="opacity: 0.7;">Cel: 2 500 t/rok</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Progi rabatowe i typy rabatów -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.15);">
+                    <!-- Progi rabatowe -->
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fi fi-rr-chart-pie"></i> Progi rabatowe
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.08); border-radius: 8px;">
+                                <span style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="width: 10px; height: 10px; background: #C0C0C0; border-radius: 50%;"></span>
+                                    Srebrny (500-1000 t/rok)
+                                </span>
+                                <strong>3%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(255,215,0,0.15); border-radius: 8px; border: 1px solid rgba(255,215,0,0.3);">
+                                <span style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="width: 10px; height: 10px; background: #FFD700; border-radius: 50%;"></span>
+                                    Złoty (1000-2500 t/rok)
+                                </span>
+                                <strong style="color: #FFD700;">5%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(255,255,255,0.08); border-radius: 8px;">
+                                <span style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="width: 10px; height: 10px; background: linear-gradient(135deg, #E5E4E2, #B0C4DE); border-radius: 50%;"></span>
+                                    Platynowy (&gt;2500 t/rok)
+                                </span>
+                                <strong>8%</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Twoje aktywne rabaty -->
+                    <div>
+                        <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                            <i class="fi fi-rr-badge-percent"></i> Twoje aktywne rabaty
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(34, 197, 94, 0.15); border-radius: 8px;">
+                                <span>Rabat kwartalny</span>
+                                <strong style="color: #22c55e;">2%</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(59, 130, 246, 0.15); border-radius: 8px;">
+                                <span>Rabat roczny</span>
+                                <strong style="color: #3b82f6;">naliczany</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 8px 12px; background: rgba(239, 125, 5, 0.15); border-radius: 8px;">
+                                <span>Rabat asortymentowy (CEM I)</span>
+                                <strong style="color: var(--color-action);">1,5%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Quick Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Saldo</div>
-                            <div class="stat-value">45,230 PLN</div>
-                            <div class="stat-detail">z 100,000 PLN limitu</div>
+                            <div class="stat-label">Do zapłaty netto</div>
+                            <div class="stat-value">45 230 PLN</div>
+                            <div class="stat-detail">z 100 000 PLN limitu</div>
                         </div>
                         <div class="stat-icon blue"><i class="fi fi-rr-money-bill-wave"></i></div>
                     </div>
@@ -1369,9 +1473,9 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Zamówienia</div>
-                            <div class="stat-value">3</div>
-                            <div class="stat-detail">w realizacji | 24 w tym miesiącu</div>
+                            <div class="stat-label">Zamówiono YTD</div>
+                            <div class="stat-value">1 847 t</div>
+                            <div class="stat-detail">+12% vs rok poprzedni</div>
                         </div>
                         <div class="stat-icon green"><i class="fi fi-rr-box"></i></div>
                     </div>
@@ -1380,9 +1484,9 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Następna dostawa</div>
-                            <div class="stat-value">Jutro</div>
-                            <div class="stat-detail">12:00 - Auto-All Magazynowa</div>
+                            <div class="stat-label">W tym miesiącu</div>
+                            <div class="stat-value">342 t</div>
+                            <div class="stat-detail">24 zamówienia</div>
                         </div>
                         <div class="stat-icon orange"><i class="fi fi-rr-calendar-clock"></i></div>
                     </div>
@@ -1391,11 +1495,11 @@
                 <div class="stat-card">
                     <div class="stat-header">
                         <div>
-                            <div class="stat-label">Faktury</div>
-                            <div class="stat-value">1</div>
-                            <div class="stat-detail">przeterminowana (5,000 PLN)</div>
+                            <div class="stat-label">Średnie zamówienie</div>
+                            <div class="stat-value">38 t</div>
+                            <div class="stat-detail">ostatnie 30 dni</div>
                         </div>
-                        <div class="stat-icon red"><i class="fi fi-rr-file-invoice"></i></div>
+                        <div class="stat-icon purple" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;"><i class="fi fi-rr-chart-histogram"></i></div>
                     </div>
                 </div>
             </div>
@@ -1519,7 +1623,7 @@
                             <td><strong>#ZAM-1236</strong></td>
                             <td>12.01.2026</td>
                             <td>CEM II/A-S 42,5N</td>
-                            <td>21 ton</td>
+                            <td>21 t</td>
                             <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
                             <td>
                                 <div class="action-btns">
@@ -1549,7 +1653,7 @@
                             <td><strong>#ZAM-1234</strong></td>
                             <td>09.01.2026</td>
                             <td>CEM I 42,5R</td>
-                            <td>28 ton</td>
+                            <td>28 t</td>
                             <td><span class="status-badge info">W realizacji</span></td>
                             <td>
                                 <div class="action-btns">
@@ -1579,7 +1683,7 @@
                             <td><strong>#ZAM-1233</strong></td>
                             <td>05.01.2026</td>
                             <td>CEM II/B-S 42,5N</td>
-                            <td>56 ton</td>
+                            <td>56 t</td>
                             <td><span class="status-badge success">Dostarczone</span></td>
                             <td>
                                 <div class="action-btns">
@@ -1610,7 +1714,7 @@
                             <td><strong>#ZAM-1232</strong></td>
                             <td>01.01.2026</td>
                             <td>CEM I 42,5R</td>
-                            <td>28 ton</td>
+                            <td>28 t</td>
                             <td><span class="status-badge success">Dostarczone</span></td>
                             <td>
                                 <div class="action-btns">
@@ -1706,8 +1810,8 @@
                                 <th>Nr zamówienia</th>
                                 <th>Data</th>
                                 <th>Produkt</th>
-                                <th>Ilość</th>
-                                <th>Wartość</th>
+                                <th>Ilość (t)</th>
+                                <th>Wartość netto</th>
                                 <th>Status</th>
                                 <th>Akcje</th>
                             </tr>
@@ -1717,8 +1821,8 @@
                                 <td><strong>#ZAM-1236</strong></td>
                                 <td>12.01.2026</td>
                                 <td>CEM II/A-S 42,5N</td>
-                                <td>21 ton</td>
-                                <td>8,820 PLN</td>
+                                <td>21 t</td>
+                                <td>8 820 PLN</td>
                                 <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
                                 <td>
                                     <div class="action-btns">
@@ -1748,8 +1852,8 @@
                                 <td><strong>#ZAM-1234</strong></td>
                                 <td>09.01.2026</td>
                                 <td>CEM I 42,5R</td>
-                                <td>28 ton</td>
-                                <td>11,480 PLN</td>
+                                <td>28 t</td>
+                                <td>11 480 PLN</td>
                                 <td><span class="status-badge info">W realizacji</span></td>
                                 <td>
                                     <div class="action-btns">
@@ -1779,8 +1883,8 @@
                                 <td><strong>#ZAM-1233</strong></td>
                                 <td>05.01.2026</td>
                                 <td>CEM II/B-S 42,5N</td>
-                                <td>56 ton</td>
-                                <td>22,960 PLN</td>
+                                <td>56 t</td>
+                                <td>22 960 PLN</td>
                                 <td><span class="status-badge success">Dostarczone</span></td>
                                 <td>
                                     <div class="action-btns">
@@ -1811,8 +1915,8 @@
                                 <td><strong>#ZAM-1232</strong></td>
                                 <td>01.01.2026</td>
                                 <td>CEM I 42,5R</td>
-                                <td>28 ton</td>
-                                <td>11,480 PLN</td>
+                                <td>28 t</td>
+                                <td>11 480 PLN</td>
                                 <td><span class="status-badge success">Dostarczone</span></td>
                                 <td>
                                     <div class="action-btns">
@@ -1843,7 +1947,7 @@
                                 <td><strong>#ZAM-1231</strong></td>
                                 <td>14.01.2026</td>
                                 <td>CEM V 32,5N</td>
-                                <td>15 ton</td>
+                                <td>15 t</td>
                                 <td>7,200 PLN</td>
                                 <td><span class="status-badge success">Dostarczone</span></td>
                                 <td>
@@ -2010,8 +2114,8 @@
                     <div class="stat-card">
                         <div class="stat-header">
                             <div>
-                                <div class="stat-label">Wartość zamówień (okres)</div>
-                                <div class="stat-value" id="report-total-value">156,230 PLN</div>
+                                <div class="stat-label">Wolumen zamówień (okres)</div>
+                                <div class="stat-value" id="report-total-value">342 t</div>
                                 <div class="stat-detail" id="report-change">+12% vs poprzedni okres</div>
                             </div>
                             <div class="stat-icon blue"><i class="fi fi-rr-chart-histogram"></i></div>
@@ -2020,8 +2124,8 @@
                     <div class="stat-card">
                         <div class="stat-header">
                             <div>
-                                <div class="stat-label">Średnia wartość zamówienia</div>
-                                <div class="stat-value" id="report-avg-value">6,510 PLN</div>
+                                <div class="stat-label">Średnia wielkość zamówienia</div>
+                                <div class="stat-value" id="report-avg-value">38 t</div>
                                 <div class="stat-detail" id="report-orders-count">24 zamówienia</div>
                             </div>
                             <div class="stat-icon green"><i class="fi fi-rr-chart-pie"></i></div>
@@ -2032,7 +2136,7 @@
                             <div>
                                 <div class="stat-label">Najczęściej zamawiany produkt</div>
                                 <div class="stat-value" id="report-top-product">CEM I 42,5R</div>
-                                <div class="stat-detail" id="report-top-product-detail">112 ton w tym okresie</div>
+                                <div class="stat-detail" id="report-top-product-detail">112 t w tym okresie</div>
                             </div>
                             <div class="stat-icon orange"><i class="fi fi-rr-box"></i></div>
                         </div>
@@ -2052,16 +2156,16 @@
                                 <strong id="report-summary-orders">24</strong>
                             </li>
                             <li style="padding: 10px; border-bottom: 1px solid var(--color-gray); display: flex; justify-content: space-between;">
-                                <span>Wartość zamówień:</span>
-                                <strong id="report-summary-value">156,230 PLN</strong>
+                                <span>Wolumen zamówień:</span>
+                                <strong id="report-summary-value">342 t</strong>
                             </li>
                             <li style="padding: 10px; border-bottom: 1px solid var(--color-gray); display: flex; justify-content: space-between;">
                                 <span>Zapłacone faktury:</span>
-                                <strong id="report-summary-paid">125,450 PLN</strong>
+                                <strong id="report-summary-paid">125 450 PLN</strong>
                             </li>
                             <li style="padding: 10px; display: flex; justify-content: space-between;">
-                                <span>Pozostało do zapłaty:</span>
-                                <strong id="report-summary-remaining">45,230 PLN</strong>
+                                <span>Pozostało do zapłaty netto:</span>
+                                <strong id="report-summary-remaining">45 230 PLN</strong>
                             </li>
                         </ul>
                     </div>
@@ -2118,7 +2222,7 @@
                             <tr data-order-number="ZAM-1234" data-product="CEM I 42,5R">
                                 <td><strong>#ZAM-1234</strong></td>
                                 <td>CEM I 42,5R</td>
-                                <td>28 ton</td>
+                                <td>28 t</td>
                                 <td>Auto-All Magazynowa</td>
                                 <td><span class="status-badge info">W drodze</span></td>
                                 <td>Jutro, 12:00</td>
@@ -2132,7 +2236,7 @@
                             <tr data-order-number="ZAM-1235" data-product="CEM II/B-S 42,5N">
                                 <td><strong>#ZAM-1235</strong></td>
                                 <td>CEM II/B-S 42,5N</td>
-                                <td>15 ton</td>
+                                <td>15 t</td>
                                 <td>Trans-Bud Sp. z o.o.</td>
                                 <td><span class="status-badge info">Zaplanowana</span></td>
                                 <td>13.01.2026, 14:00</td>
@@ -2166,45 +2270,45 @@
                     <div style="padding: 20px;">
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">Nazwa firmy</label>
-                            <div id="company-name-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-name-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 Firma Budowlana Budowa
                             </div>
-                            <input type="text" id="company-name-input" class="form-input" value="Firma Budowlana Budowa" style="display: none;">
+                            <input type="text" id="company-name-input" class="form-input company-field-input" value="Firma Budowlana Budowa" style="display: none;">
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">NIP</label>
-                            <div id="company-nip-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-nip-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 1234567890
                             </div>
-                            <input type="text" id="company-nip-input" class="form-input" value="1234567890" style="display: none;">
+                            <input type="text" id="company-nip-input" class="form-input company-field-input" value="1234567890" style="display: none;">
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">Ulica i numer</label>
-                            <div id="company-street-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-street-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 ul. Przykładowa 123
                             </div>
-                            <input type="text" id="company-street-input" class="form-input" value="ul. Przykładowa 123" style="display: none;">
+                            <input type="text" id="company-street-input" class="form-input company-field-input" value="ul. Przykładowa 123" style="display: none;">
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">Kod pocztowy i miasto</label>
-                            <div id="company-city-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-city-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 00-000 Warszawa
                             </div>
-                            <input type="text" id="company-city-input" class="form-input" value="00-000 Warszawa" style="display: none;">
+                            <input type="text" id="company-city-input" class="form-input company-field-input" value="00-000 Warszawa" style="display: none;">
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">Email</label>
-                            <div id="company-email-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-email-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 kontakt@elmaspawlak.pl
                             </div>
-                            <input type="email" id="company-email-input" class="form-input" value="kontakt@elmaspawlak.pl" style="display: none;">
+                            <input type="email" id="company-email-input" class="form-input company-field-input" value="kontakt@elmaspawlak.pl" style="display: none;">
                         </div>
                         <div style="margin-bottom: 20px;">
                             <label class="form-label">Telefon</label>
-                            <div id="company-phone-display" style="padding: 12px; background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 8px;">
+                            <div id="company-phone-display" class="company-field-display" style="padding: 12px; background: #f0f0f0; border: 1px solid var(--color-gray); border-radius: 8px; color: #333;">
                                 +48 123 456 789
                             </div>
-                            <input type="tel" id="company-phone-input" class="form-input" value="+48 123 456 789" style="display: none;">
+                            <input type="tel" id="company-phone-input" class="form-input company-field-input" value="+48 123 456 789" style="display: none;">
                         </div>
                     </div>
                 </div>
@@ -2256,7 +2360,7 @@
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="contacts-history-tbody">
                             <tr>
                                 <td>05.01.2026</td>
                                 <td>Email</td>
@@ -2523,6 +2627,384 @@
     </div>
 
     <script>
+        // =====================================================
+        // localStorage Helper Functions
+        // =====================================================
+        const STORAGE_PREFIX = 'app:shared:';
+
+        function storageGet(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(STORAGE_PREFIX + key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+                return true;
+            } catch (e) {
+                console.error('Error writing to localStorage:', e);
+                return false;
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.random();
+        }
+
+        function upsertRecord(key, record) {
+            const records = storageGet(key, []);
+            if (!record.id) {
+                record.id = generateId();
+            }
+            const index = records.findIndex(r => r.id === record.id);
+            if (index >= 0) {
+                records[index] = record;
+            } else {
+                records.push(record);
+            }
+            storageSet(key, records);
+            return record;
+        }
+
+        function deleteRecord(key, id) {
+            const records = storageGet(key, []);
+            const filtered = records.filter(r => r.id !== id);
+            storageSet(key, filtered);
+            return filtered;
+        }
+
+        // =====================================================
+        // Render Saved Complaints
+        // =====================================================
+        function renderSavedComplaints() {
+            const complaints = storageGet('complaints', []);
+            const tbody = document.getElementById('complaints-tbody');
+            if (!tbody) return;
+
+            // Remove previously rendered localStorage complaints
+            tbody.querySelectorAll('tr[data-storage-id]').forEach(row => row.remove());
+
+            // Render each saved complaint at the beginning of the table
+            const firstStaticRow = tbody.querySelector('tr:not([data-storage-id])');
+
+            complaints.forEach(complaint => {
+                const priorityMap = {
+                    'low': { text: 'Niski', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
+                    'normal': { text: 'Normalny', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
+                    'high': { text: 'Pilny', style: 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);' }
+                };
+                const priorityInfo = priorityMap[complaint.priority] || priorityMap['normal'];
+
+                const newRow = document.createElement('tr');
+                newRow.setAttribute('data-storage-id', complaint.id);
+                newRow.setAttribute('data-status', complaint.status);
+                newRow.setAttribute('data-date', complaint.dateAttr);
+                newRow.innerHTML = `
+                    <td><strong>${complaint.number}</strong></td>
+                    <td>${complaint.dateStr}</td>
+                    <td>${complaint.title}</td>
+                    <td>${complaint.typeDisplay}</td>
+                    <td>${complaint.orderRef ? '#' + complaint.orderRef : '-'}</td>
+                    <td><span class="status-badge" style="${priorityInfo.style}">${priorityInfo.text}</span></td>
+                    <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('${complaint.number}')"><i class="fi fi-rr-eye"></i></button>
+                            <button class="icon-btn" title="Usuń" onclick="deleteComplaint(${complaint.id})" style="color: var(--color-gray);"><i class="fi fi-rr-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                if (firstStaticRow) {
+                    tbody.insertBefore(newRow, firstStaticRow);
+                } else {
+                    tbody.appendChild(newRow);
+                }
+            });
+        }
+
+        function deleteComplaint(id) {
+            if (confirm('Czy na pewno chcesz usunąć to zgłoszenie?')) {
+                deleteRecord('complaints', id);
+                renderSavedComplaints();
+            }
+        }
+
+        // =====================================================
+        // Load and Save Company Data
+        // =====================================================
+        function loadCompanyData() {
+            const companyData = storageGet('companyData', null);
+            if (companyData) {
+                if (companyData.name) {
+                    document.getElementById('company-name-display').textContent = companyData.name;
+                    document.getElementById('company-name-input').value = companyData.name;
+                }
+                if (companyData.nip) {
+                    document.getElementById('company-nip-display').textContent = companyData.nip;
+                    document.getElementById('company-nip-input').value = companyData.nip;
+                }
+                if (companyData.street) {
+                    document.getElementById('company-street-display').textContent = companyData.street;
+                    document.getElementById('company-street-input').value = companyData.street;
+                }
+                if (companyData.city) {
+                    document.getElementById('company-city-display').textContent = companyData.city;
+                    document.getElementById('company-city-input').value = companyData.city;
+                }
+                if (companyData.email) {
+                    document.getElementById('company-email-display').textContent = companyData.email;
+                    document.getElementById('company-email-input').value = companyData.email;
+                }
+                if (companyData.phone) {
+                    document.getElementById('company-phone-display').textContent = companyData.phone;
+                    document.getElementById('company-phone-input').value = companyData.phone;
+                }
+            }
+        }
+
+        // =====================================================
+        // Render Contact History from localStorage
+        // =====================================================
+        function renderContactHistory() {
+            const contacts = JSON.parse(localStorage.getItem('app:shared:contacts') || '[]');
+            const tbody = document.getElementById('contacts-history-tbody');
+            
+            if (!tbody) return;
+            
+            // Remove previously rendered storage contacts
+            tbody.querySelectorAll('tr[data-storage-id]').forEach(row => row.remove());
+            
+            if (contacts.length === 0) return;
+            
+            // Find first static row
+            const firstStaticRow = tbody.querySelector('tr:not([data-storage-id])');
+            
+            contacts.forEach(contact => {
+                const statusStyles = {
+                    'Zaplanowane': 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;',
+                    'Wysłano': 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);',
+                    'Odpowiedziano': 'background: rgba(34, 197, 94, 0.1); color: #22c55e;',
+                    'Zakończone': 'background: rgba(34, 197, 94, 0.1); color: #22c55e;'
+                };
+                const statusStyle = statusStyles[contact.status] || statusStyles['Wysłano'];
+                
+                const row = document.createElement('tr');
+                row.setAttribute('data-storage-id', contact.id);
+                row.innerHTML = `
+                    <td>${contact.dateStr}</td>
+                    <td>${contact.type}${contact.typeDetail ? ' (' + contact.typeDetail + ')' : ''}</td>
+                    <td>${contact.topic}</td>
+                    <td>
+                        <span class="status-badge" style="${statusStyle}">${contact.status}</span>
+                    </td>
+                `;
+                if (firstStaticRow) {
+                    tbody.insertBefore(row, firstStaticRow);
+                } else {
+                    tbody.appendChild(row);
+                }
+            });
+        }
+
+        // =====================================================
+        // Render Shared Orders from localStorage
+        // =====================================================
+        function renderSharedOrders() {
+            const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            
+            // Render to main dashboard table (Ostatnie zamówienia)
+            const mainTbody = document.querySelector('.table-section:not(#tab-zamowienia .table-section) table tbody');
+            
+            // Render to full orders tab table
+            const ordersTbody = document.getElementById('orders-tbody');
+            
+            if (orders.length === 0) return;
+            
+            // Render to main dashboard (first 4 orders)
+            if (mainTbody) {
+                // Remove previously rendered storage orders
+                mainTbody.querySelectorAll('tr[data-storage-id]').forEach(row => row.remove());
+                
+                const firstStaticRow = mainTbody.querySelector('tr:not([data-storage-id]):not(.order-details-row)');
+                
+                orders.slice(0, 4).forEach(order => {
+                    const unitLabels = { 'tons': 'ton', 'pallets': 'palet', 'trucks': 'sam.' };
+                    const unitLabel = unitLabels[order.unit] || order.unit;
+                    
+                    const statusStyles = {
+                        'Nowe': 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);',
+                        'W realizacji': 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;',
+                        'Dostarczone': 'background: rgba(34, 197, 94, 0.1); color: #22c55e;'
+                    };
+                    const statusStyle = statusStyles[order.status] || statusStyles['Nowe'];
+                    
+                    const orderId = 'dash-order-' + order.id;
+                    
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-storage-id', order.id);
+                    row.setAttribute('data-status', order.status);
+                    row.innerHTML = `
+                        <td><strong>${order.number}</strong></td>
+                        <td>${new Date(order.date).toLocaleDateString('pl-PL')}</td>
+                        <td>${order.product}</td>
+                        <td>${order.quantity} ${unitLabel}</td>
+                        <td><span class="status-badge" style="${statusStyle}">${order.status}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('${orderId}')"><i class="fi fi-rr-eye"></i></button>
+                                <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('${orderId}')"><i class="fi fi-rr-download"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    // Details row for dashboard
+                    const detailsRow = document.createElement('tr');
+                    detailsRow.className = 'order-details-row';
+                    detailsRow.setAttribute('data-storage-id', order.id + '-details');
+                    detailsRow.setAttribute('data-status', order.status);
+                    detailsRow.innerHTML = `
+                        <td colspan="6" class="order-details-expanded" id="details-${orderId}">
+                            <div class="order-products-list">
+                                <div class="order-product-item">
+                                    <div>
+                                        <div class="order-product-name">${order.product}</div>
+                                        <div class="order-product-quantity">${order.quantity} ${unitLabel} × ${order.pricePerTon || 420} PLN</div>
+                                    </div>
+                                    <div class="order-product-price">${order.priceNet}</div>
+                                </div>
+                            </div>
+                            <div class="order-total">
+                                <span class="order-total-label">Suma zamówienia:</span>
+                                <span class="order-total-value">${order.priceNet}</span>
+                            </div>
+                        </td>
+                    `;
+                    
+                    if (firstStaticRow) {
+                        mainTbody.insertBefore(detailsRow, firstStaticRow);
+                        mainTbody.insertBefore(row, detailsRow);
+                    } else {
+                        mainTbody.appendChild(row);
+                        mainTbody.appendChild(detailsRow);
+                    }
+                });
+            }
+            
+            // Render to full orders tab
+            if (ordersTbody) {
+                // Remove previously rendered storage orders
+                ordersTbody.querySelectorAll('tr[data-storage-id]').forEach(row => row.remove());
+                
+                const firstStaticRow = ordersTbody.querySelector('tr:not([data-storage-id]):not(.order-details-row)');
+                
+                orders.forEach(order => {
+                    const unitLabels = { 'tons': 'ton', 'pallets': 'palet', 'trucks': 'sam.' };
+                    const unitLabel = unitLabels[order.unit] || order.unit;
+                    
+                    const statusStyles = {
+                        'Nowe': 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);',
+                        'W realizacji': 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;',
+                        'Dostarczone': 'background: rgba(34, 197, 94, 0.1); color: #22c55e;'
+                    };
+                    const statusStyle = statusStyles[order.status] || statusStyles['Nowe'];
+                    
+                    const orderId = 'order-' + order.id;
+                    
+                    // Main row
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-storage-id', order.id);
+                    row.setAttribute('data-status', order.status);
+                    row.setAttribute('data-date', order.date.split('T')[0]);
+                    row.setAttribute('data-order-number', order.number.replace('#', ''));
+                    row.setAttribute('data-product', order.product);
+                    row.innerHTML = `
+                        <td><strong>${order.number}</strong></td>
+                        <td>${new Date(order.date).toLocaleDateString('pl-PL')}</td>
+                        <td>${order.product}</td>
+                        <td>${order.quantity} ${unitLabel}</td>
+                        <td>${order.priceNet}</td>
+                        <td><span class="status-badge" style="${statusStyle}">${order.status}</span></td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="icon-btn" title="Zobacz szczegóły" onclick="toggleOrderDetails('${orderId}')"><i class="fi fi-rr-eye"></i></button>
+                                <button class="icon-btn" title="Pobierz fakturę" onclick="downloadInvoice('${orderId}')"><i class="fi fi-rr-download"></i></button>
+                                <button class="icon-btn" title="Edytuj zamówienie" onclick="editOrder(${order.id})"><i class="fi fi-rr-edit"></i></button>
+                                <button class="icon-btn" title="Usuń" onclick="deleteOrder(${order.id})" style="color: var(--color-gray);"><i class="fi fi-rr-trash"></i></button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    // Details row
+                    const detailsRow = document.createElement('tr');
+                    detailsRow.className = 'order-details-row';
+                    detailsRow.setAttribute('data-storage-id', order.id + '-details');
+                    detailsRow.setAttribute('data-status', order.status);
+                    detailsRow.innerHTML = `
+                        <td colspan="7" class="order-details-expanded" id="details-${orderId}">
+                            <div class="order-products-list">
+                                <div class="order-product-item">
+                                    <div>
+                                        <div class="order-product-name">${order.product}</div>
+                                        <div class="order-product-quantity">${order.quantity} ${unitLabel} × ${order.pricePerTon || 420} PLN</div>
+                                    </div>
+                                    <div class="order-product-price">${order.priceNet}</div>
+                                </div>
+                            </div>
+                            <div class="order-total">
+                                <span class="order-total-label">Suma zamówienia:</span>
+                                <span class="order-total-value">${order.priceNet}</span>
+                            </div>
+                        </td>
+                    `;
+                    
+                    if (firstStaticRow) {
+                        ordersTbody.insertBefore(detailsRow, firstStaticRow);
+                        ordersTbody.insertBefore(row, detailsRow);
+                    } else {
+                        ordersTbody.appendChild(row);
+                        ordersTbody.appendChild(detailsRow);
+                    }
+                });
+            }
+        }
+        
+        function editOrder(id) {
+            window.location.href = 'zamowienie-wizard.html?edit=' + id;
+        }
+        
+        function deleteOrder(id) {
+            if (confirm('Czy na pewno chcesz usunąć to zamówienie?')) {
+                const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+                const filtered = orders.filter(o => o.id !== id);
+                localStorage.setItem('app:shared:orders', JSON.stringify(filtered));
+                renderSharedOrders();
+            }
+        }
+
+        // =====================================================
+        // Initialize on DOMContentLoaded
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSavedComplaints();
+            renderSharedOrders();
+            renderContactHistory();
+            loadCompanyData();
+            
+            // Load tab from URL on page load
+            const tabFromUrl = getTabFromUrl();
+            if (tabFromUrl && tabFromUrl !== 'dashboard') {
+                showTab(tabFromUrl, null, false);
+            }
+        });
+
+        // =====================================================
+        // UI Functions
+        // =====================================================
         function toggleUserMenu(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('userMenuDropdown');
@@ -2549,18 +3031,40 @@
             const userMenuDropdown = document.getElementById('userMenuDropdown');
             const notificationBtn = document.querySelector('.notification-btn');
             const notificationDropdown = document.getElementById('notificationDropdown');
-            
+
             if (userMenu && !userMenu.contains(event.target)) {
                 userMenuDropdown.classList.remove('active');
             }
-            
+
             if (notificationBtn && !notificationBtn.closest('div').contains(event.target)) {
                 notificationDropdown.classList.remove('active');
             }
         });
 
-        // Tab Management
-        function showTab(tabName, event) {
+        // Tab Management with URL support
+        const tabSlugMap = {
+            'dashboard': 'dashboard',
+            'zamowienia': 'zamowienia',
+            'faktury': 'faktury',
+            'raporty': 'raporty',
+            'transport': 'transport',
+            'reklamacje': 'reklamacje',
+            'dane-firmy': 'dane-firmy',
+            'kontakt': 'kontakt'
+        };
+        
+        function getTabFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('tab') || 'dashboard';
+        }
+        
+        function updateUrlWithTab(tabName) {
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.pushState({tab: tabName}, '', url);
+        }
+        
+        function showTab(tabName, event, updateUrl = true) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -2583,8 +3087,29 @@
                 if (link) {
                     link.classList.add('active');
                 }
+            } else {
+                // Find and activate the corresponding sidebar link
+                const sidebarLink = document.querySelector(`.sidebar-menu a[onclick*="showTab('${tabName}'"]`);
+                if (sidebarLink) {
+                    sidebarLink.classList.add('active');
+                }
+            }
+            
+            // Update URL with tab parameter
+            if (updateUrl) {
+                updateUrlWithTab(tabName);
             }
         }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.tab) {
+                showTab(event.state.tab, null, false);
+            } else {
+                const tab = getTabFromUrl();
+                showTab(tab, null, false);
+            }
+        });
         
         // Carousel
         let currentSlide = 0;
@@ -2845,6 +3370,7 @@
             const time = document.getElementById('meetingTime').value;
             const type = document.getElementById('meetingType').value;
             const topic = document.getElementById('meetingTopic').value;
+            const notes = document.getElementById('meetingNotes')?.value || '';
             
             if (!date || !time || !type || !topic) {
                 alert('Proszę wypełnić wszystkie wymagane pola.');
@@ -2854,6 +3380,28 @@
             // Format date
             const dateObj = new Date(date);
             const formattedDate = dateObj.toLocaleDateString('pl-PL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const shortDate = dateObj.toLocaleDateString('pl-PL');
+            
+            // Save to localStorage
+            const contact = {
+                id: Date.now() + Math.random(),
+                type: 'Spotkanie',
+                typeDetail: type,
+                date: date,
+                dateStr: shortDate,
+                time: time,
+                topic: topic,
+                notes: notes,
+                status: 'Zaplanowane',
+                createdAt: new Date().toISOString()
+            };
+            
+            const contacts = JSON.parse(localStorage.getItem('app:shared:contacts') || '[]');
+            contacts.unshift(contact);
+            localStorage.setItem('app:shared:contacts', JSON.stringify(contacts));
+            
+            // Render updated history
+            renderContactHistory();
             
             alert(`✅ Spotkanie zostało umówione!\n\nData: ${formattedDate}\nGodzina: ${time}\nTyp: ${type}\nTemat: ${topic}\n\nOtrzymasz potwierdzenie na email.`);
             closeCalendarModal();
@@ -2878,6 +3426,26 @@
                 return;
             }
             
+            // Save to localStorage
+            const today = new Date();
+            const contact = {
+                id: Date.now() + Math.random(),
+                type: 'Email',
+                date: today.toISOString().split('T')[0],
+                dateStr: today.toLocaleDateString('pl-PL'),
+                topic: subject,
+                content: content,
+                status: 'Wysłano',
+                createdAt: new Date().toISOString()
+            };
+            
+            const contacts = JSON.parse(localStorage.getItem('app:shared:contacts') || '[]');
+            contacts.unshift(contact);
+            localStorage.setItem('app:shared:contacts', JSON.stringify(contacts));
+            
+            // Render updated history
+            renderContactHistory();
+            
             alert('✅ Wiadomość została wysłana!\n\nOtrzymasz potwierdzenie na email.\nJan Kowalski odpowie w ciągu 24h.');
             closeMessageModal();
         }
@@ -2899,14 +3467,14 @@
             const type = document.getElementById('complaintType').value;
             const orderRef = document.getElementById('orderRef').value;
             const priority = document.querySelector('input[name="priority"]:checked').value;
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            
+            const title = document.getElementById('title').value.trim();
+            const description = document.getElementById('description').value.trim();
+
             if (!type || !title || !description) {
                 alert('Proszę wypełnić wszystkie wymagane pola.');
                 return;
             }
-            
+
             // Generate complaint number
             const today = new Date();
             const year = today.getFullYear();
@@ -2914,8 +3482,8 @@
             const day = String(today.getDate()).padStart(2, '0');
             const dateStr = `${day}.${month}.${year}`;
             const dateAttr = `${year}-${month}-${day}`;
-            
-            // Get next complaint number
+
+            // Get next complaint number (check both DOM and localStorage)
             const existingComplaints = document.querySelectorAll('#complaints-tbody tr');
             let maxNum = 0;
             existingComplaints.forEach(row => {
@@ -2926,21 +3494,21 @@
                     if (num > maxNum) maxNum = num;
                 }
             });
+            // Also check localStorage
+            const storedComplaints = storageGet('complaints', []);
+            storedComplaints.forEach(c => {
+                const match = c.number.match(/#ZG-\d{4}-(\d+)/);
+                if (match) {
+                    const num = parseInt(match[1]);
+                    if (num > maxNum) maxNum = num;
+                }
+            });
             const newNum = String(maxNum + 1).padStart(3, '0');
             const complaintNumber = `#ZG-${year}-${newNum}`;
-            
+
             // Determine status (new complaints are always "nowe")
             const status = 'nowe';
-            
-            // Map priority values to display
-            const priorityMap = {
-                'low': { text: 'Niski', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
-                'normal': { text: 'Normalny', style: 'background: rgba(0, 0, 0, 0.1); color: var(--color-black);' },
-                'high': { text: 'Pilny', style: 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);' }
-            };
-            
-            const priorityInfo = priorityMap[priority] || priorityMap['normal'];
-            
+
             // Map type values
             const typeMap = {
                 'reklamacja': 'Reklamacja',
@@ -2949,37 +3517,33 @@
                 'inne': 'Zgłoszenie'
             };
             const typeDisplay = typeMap[type] || 'Zgłoszenie';
-            
-            // Create new row
-            const tbody = document.getElementById('complaints-tbody');
-            const newRow = document.createElement('tr');
-            newRow.setAttribute('data-status', status);
-            newRow.setAttribute('data-date', dateAttr);
-            newRow.innerHTML = `
-                <td><strong>${complaintNumber}</strong></td>
-                <td>${dateStr}</td>
-                <td>${title}</td>
-                <td>${typeDisplay}</td>
-                <td>${orderRef ? '#' + orderRef : '-'}</td>
-                <td><span class="status-badge" style="${priorityInfo.style}">${priorityInfo.text}</span></td>
-                <td><span class="status-badge" style="background: rgba(239, 125, 5, 0.1); color: var(--color-action);">Nowe</span></td>
-                <td>
-                    <div class="action-btns">
-                        <button class="icon-btn" title="Zobacz szczegóły" onclick="showComplaintDetails('${complaintNumber}')"><i class="fi fi-rr-eye"></i></button>
-                    </div>
-                </td>
-            `;
-            
-            // Insert at the beginning of the table
-            tbody.insertBefore(newRow, tbody.firstChild);
-            
+
+            // Save to localStorage
+            const complaintRecord = {
+                number: complaintNumber,
+                type: type,
+                typeDisplay: typeDisplay,
+                orderRef: orderRef,
+                priority: priority,
+                title: title,
+                description: description,
+                status: status,
+                dateStr: dateStr,
+                dateAttr: dateAttr,
+                createdAt: new Date().toISOString()
+            };
+            upsertRecord('complaints', complaintRecord);
+
+            // Re-render complaints from localStorage
+            renderSavedComplaints();
+
             // Update badge count
             const badge = document.querySelector('.menu-badge');
             if (badge) {
                 const currentCount = parseInt(badge.textContent) || 0;
                 badge.textContent = currentCount + 1;
             }
-            
+
             // Close modal and show success message
             closeComplaintModal();
             alert('✅ Zgłoszenie zostało wysłane!\n\nOtrzymasz potwierdzenie na email w ciągu 5 minut.\nNasz zespół odpowie w ciągu 24h.');
@@ -3215,19 +3779,31 @@
         }
 
         function saveCompanyData() {
-            const name = document.getElementById('company-name-input').value;
-            const nip = document.getElementById('company-nip-input').value;
-            const street = document.getElementById('company-street-input').value;
-            const city = document.getElementById('company-city-input').value;
-            const email = document.getElementById('company-email-input').value;
-            const phone = document.getElementById('company-phone-input').value;
-            
+            const name = document.getElementById('company-name-input').value.trim();
+            const nip = document.getElementById('company-nip-input').value.trim();
+            const street = document.getElementById('company-street-input').value.trim();
+            const city = document.getElementById('company-city-input').value.trim();
+            const email = document.getElementById('company-email-input').value.trim();
+            const phone = document.getElementById('company-phone-input').value.trim();
+
             // Validate
             if (!name || !nip || !street || !city || !email || !phone) {
                 alert('Proszę wypełnić wszystkie pola.');
                 return;
             }
-            
+
+            // Save to localStorage
+            const companyData = {
+                name: name,
+                nip: nip,
+                street: street,
+                city: city,
+                email: email,
+                phone: phone,
+                updatedAt: new Date().toISOString()
+            };
+            storageSet('companyData', companyData);
+
             // Update display values
             document.getElementById('company-name-display').textContent = name;
             document.getElementById('company-nip-display').textContent = nip;
@@ -3235,7 +3811,7 @@
             document.getElementById('company-city-display').textContent = city;
             document.getElementById('company-email-display').textContent = email;
             document.getElementById('company-phone-display').textContent = phone;
-            
+
             // Update user name in header if it matches
             const userNameElements = document.querySelectorAll('.user-name');
             userNameElements.forEach(el => {
@@ -3243,13 +3819,13 @@
                     el.textContent = name;
                 }
             });
-            
+
             // Update page title
             const pageTitle = document.querySelector('#tab-dashboard .page-title');
             if (pageTitle && pageTitle.textContent.includes('Firma Budowlana Budowa')) {
                 pageTitle.innerHTML = `Witaj, ${name}! <i class="fi fi-rr-hand-wave"></i>`;
             }
-            
+
             // Exit edit mode
             isEditingCompany = false;
             document.getElementById('company-name-display').style.display = 'block';
@@ -3264,11 +3840,11 @@
             document.getElementById('company-email-input').style.display = 'none';
             document.getElementById('company-phone-display').style.display = 'block';
             document.getElementById('company-phone-input').style.display = 'none';
-            
+
             document.getElementById('btn-edit-company').style.display = 'flex';
             document.getElementById('btn-save-company').style.display = 'none';
             document.getElementById('btn-cancel-company').style.display = 'none';
-            
+
             alert('✅ Dane firmy zostały zapisane pomyślnie!');
         }
     </script>

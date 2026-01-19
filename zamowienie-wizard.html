@@ -1203,8 +1203,8 @@
     <div class="modal" id="successModal">
         <div class="modal-content">
             <div class="success-icon"><i class="fi fi-rr-check-circle" style="font-size: 72px; color: var(--color-action);"></i></div>
-            <h2 class="modal-title">Zamówienie złożone!</h2>
-            <p class="modal-text">
+            <h2 class="modal-title" id="successModalTitle">Zamówienie złożone!</h2>
+            <p class="modal-text" id="successModalText">
                 Dziękujemy! Twoje zamówienie zostało pomyślnie przyjęte do realizacji.<br><br>
                 <i class="fi fi-rr-envelope"></i> Potwierdzenie wysłane na email<br>
                 <i class="fi fi-rr-mobile"></i> SMS wysłany do spedytora
@@ -1212,14 +1212,201 @@
             <div class="order-number">Numer zamówienia: #ZAM-2024-1235</div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="window.location.href='dashboard-klient.html'">WRÓĆ DO DASHBOARDU</button>
-                <button class="btn btn-primary" onclick="alert('Przekierowanie do szczegółów zamówienia...')">ZOBACZ ZAMÓWIENIE</button>
+                <button class="btn btn-primary" onclick="window.location.href='dashboard-klient.html?tab=zamowienia'">ZOBACZ ZAMÓWIENIE</button>
             </div>
         </div>
     </div>
 
     <script>
+        // =====================================================
+        // localStorage Helper Functions
+        // =====================================================
+        const STORAGE_PREFIX = 'app:shared:';
+
+        function storageGet(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(STORAGE_PREFIX + key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+                return true;
+            } catch (e) {
+                console.error('Error writing to localStorage:', e);
+                return false;
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.random();
+        }
+
+        function upsertRecord(key, record) {
+            const records = storageGet(key, []);
+            if (!record.id) {
+                record.id = generateId();
+            }
+            const index = records.findIndex(r => r.id === record.id);
+            if (index >= 0) {
+                records[index] = record;
+            } else {
+                records.push(record);
+            }
+            storageSet(key, records);
+            return record;
+        }
+
+        function deleteRecord(key, id) {
+            const records = storageGet(key, []);
+            const filtered = records.filter(r => r.id !== id);
+            storageSet(key, filtered);
+            return filtered;
+        }
+
+        // =====================================================
+        // Render Saved Addresses
+        // =====================================================
+        function renderSavedAddresses() {
+            const addresses = storageGet('addresses', []);
+            const addButton = document.querySelector('.btn-add');
+            if (!addButton) return;
+
+            // Remove previously rendered localStorage addresses
+            document.querySelectorAll('.location-card[data-storage-id]').forEach(card => card.remove());
+
+            // Render each saved address
+            addresses.forEach(addr => {
+                const newCard = document.createElement('div');
+                newCard.className = 'location-card';
+                newCard.setAttribute('data-storage-id', addr.id);
+                newCard.onclick = function(e) {
+                    if (!e.target.closest('.delete-address-btn')) {
+                        selectLocation(0);
+                    }
+                };
+                newCard.innerHTML = `
+                    <div class="location-name"><i class="fi fi-rr-marker"></i> ${addr.name}
+                        <button class="delete-address-btn" onclick="deleteAddress(${addr.id})" title="Usuń" style="float: right; background: none; border: none; cursor: pointer; color: var(--color-gray); font-size: 16px;">
+                            <i class="fi fi-rr-trash"></i>
+                        </button>
+                    </div>
+                    <div class="location-address">${addr.street}, ${addr.postal} ${addr.city}</div>
+                    <div class="location-products"><i class="fi fi-rr-settings"></i> Dostępne produkty: ${addr.productsText || 'Brak produktów'}</div>
+                `;
+                addButton.parentNode.insertBefore(newCard, addButton);
+            });
+        }
+
+        function deleteAddress(id) {
+            if (confirm('Czy na pewno chcesz usunąć ten punkt odbioru?')) {
+                deleteRecord('addresses', id);
+                renderSavedAddresses();
+            }
+        }
+
+        // =====================================================
+        // Wizard State
+        // =====================================================
         let currentStep = 1;
         const totalSteps = 4;
+        let editOrderId = null;
+        let editOrderData = null;
+        
+        // Check for edit mode on page load
+        function checkEditMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const editId = urlParams.get('edit');
+            
+            if (editId) {
+                const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+                const order = orders.find(o => o.id == editId);
+                
+                if (order) {
+                    editOrderId = order.id;
+                    editOrderData = order;
+                    loadOrderForEdit(order);
+                }
+            }
+        }
+        
+        function loadOrderForEdit(order) {
+            // Update title
+            const titleEl = document.querySelector('.wizard-title');
+            if (titleEl) {
+                titleEl.innerHTML = '<i class="fi fi-rr-edit"></i> Edytuj zamówienie ' + order.number;
+            }
+            
+            // Set product selection
+            const productNameToId = {
+                'CEM I 42,5R': 1,
+                'CEM II/B-S 42,5N': 2,
+                'CEM II/A-S 42,5N': 3
+            };
+            const productId = productNameToId[order.product] || 2;
+            
+            // Select product card
+            document.querySelectorAll('.product-card').forEach((card, index) => {
+                if (index + 1 === productId) {
+                    card.classList.add('selected');
+                    selectedProductId = productId;
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+            
+            // Set quantity and unit
+            if (order.quantity) {
+                document.getElementById('quantity').value = order.quantity;
+            }
+            
+            if (order.unit) {
+                selectedUnit = order.unit;
+                document.querySelectorAll('.unit-btn').forEach(btn => {
+                    if (btn.getAttribute('data-unit') === order.unit) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+            
+            // Update calculation
+            updateCalculation();
+            
+            // Set delivery date and time
+            if (order.deliveryDate) {
+                document.getElementById('delivery-date').value = order.deliveryDate;
+            }
+            if (order.deliveryTime) {
+                document.getElementById('delivery-time').value = order.deliveryTime;
+            }
+            
+            // Set location
+            if (order.location) {
+                const selectedLocationEl = document.getElementById('selected-location');
+                if (selectedLocationEl) {
+                    selectedLocationEl.textContent = order.location;
+                }
+            }
+            
+            // Set notes
+            if (order.notes) {
+                const notesEl = document.getElementById('notes');
+                if (notesEl) {
+                    notesEl.value = order.notes;
+                }
+            }
+            
+            // Update button text
+            const btnNext = document.getElementById('btnNext');
+            // Will be updated in updateStepUI based on step
+        }
 
         function updateStepUI() {
             // Hide all steps
@@ -1261,7 +1448,11 @@
             }
             
             if (currentStep === totalSteps) {
-                btnNext.innerHTML = '<i class="fi fi-rr-check-circle"></i> ZATWIERDŹ ZAMÓWIENIE';
+                if (editOrderId) {
+                    btnNext.innerHTML = '<i class="fi fi-rr-check-circle"></i> ZAPISZ ZMIANY';
+                } else {
+                    btnNext.innerHTML = '<i class="fi fi-rr-check-circle"></i> ZATWIERDŹ ZAMÓWIENIE';
+                }
                 btnNext.classList.remove('btn-primary');
                 btnNext.classList.add('btn-success');
             } else {
@@ -1271,11 +1462,133 @@
             }
         }
 
+        // =====================================================
+        // Save Order to Shared Storage
+        // =====================================================
+        function saveOrderToStorage() {
+            const productNames = {
+                1: 'CEM I 42,5R',
+                2: 'CEM II/B-S 42,5N',
+                3: 'CEM II/A-S 42,5N'
+            };
+            
+            const quantity = parseFloat(document.getElementById('quantity').value) || 0;
+            const pricePerTon = productPrices[selectedProductId] || 410;
+            
+            // Convert to tons for price calculation
+            let tons = 0;
+            if (selectedUnit === 'tons') {
+                tons = quantity;
+            } else if (selectedUnit === 'pallets') {
+                tons = quantity * CONVERSION_RATES.palletToTon;
+            } else if (selectedUnit === 'trucks') {
+                tons = quantity * CONVERSION_RATES.truckToTon;
+            }
+            
+            const netPrice = tons * pricePerTon;
+            const vat = netPrice * 0.23;
+            const total = netPrice + vat;
+            
+            // Get orders from storage
+            const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            
+            // Check if editing existing order
+            if (editOrderId && editOrderData) {
+                // Find and update existing order
+                const orderIndex = orders.findIndex(o => o.id == editOrderId);
+                if (orderIndex >= 0) {
+                    // Preserve original data, update changed fields
+                    orders[orderIndex] = {
+                        ...orders[orderIndex],
+                        product: productNames[selectedProductId] || 'CEM II/B-S 42,5N',
+                        quantity: quantity,
+                        unit: selectedUnit,
+                        tons: tons.toFixed(1),
+                        pricePerTon: pricePerTon,
+                        priceNet: netPrice.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                        priceVat: vat.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                        priceTotal: total.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                        deliveryDate: document.getElementById('delivery-date').value,
+                        deliveryTime: document.getElementById('delivery-time').value,
+                        transport: document.querySelector('.transport-card.selected .transport-name')?.textContent || 'Transport GEO',
+                        location: document.getElementById('selected-location')?.textContent || 'Magazyn Centralny',
+                        notes: document.getElementById('notes')?.value || '',
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('app:shared:orders', JSON.stringify(orders));
+                    
+                    // Update order number in success modal
+                    const orderNumberEl = document.querySelector('.order-number');
+                    if (orderNumberEl) {
+                        orderNumberEl.textContent = 'Numer zamówienia: ' + orders[orderIndex].number;
+                    }
+                    
+                    return orders[orderIndex];
+                }
+            }
+            
+            // Create new order
+            const year = new Date().getFullYear();
+            const randomNum = String(Math.floor(Math.random() * 9000) + 1000);
+            const orderNumber = '#ZAM-' + year + '-' + randomNum;
+            
+            const order = {
+                id: Date.now() + Math.random(),
+                number: orderNumber,
+                date: new Date().toISOString(),
+                product: productNames[selectedProductId] || 'CEM II/B-S 42,5N',
+                quantity: quantity,
+                unit: selectedUnit,
+                tons: tons.toFixed(1),
+                pricePerTon: pricePerTon,
+                priceNet: netPrice.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                priceVat: vat.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                priceTotal: total.toLocaleString('pl-PL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' PLN',
+                deliveryDate: document.getElementById('delivery-date').value,
+                deliveryTime: document.getElementById('delivery-time').value,
+                transport: document.querySelector('.transport-card.selected .transport-name')?.textContent || 'Transport GEO',
+                location: document.getElementById('selected-location')?.textContent || 'Magazyn Centralny',
+                status: 'Nowe',
+                notes: document.getElementById('notes')?.value || '',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save new order to shared localStorage
+            orders.unshift(order);
+            localStorage.setItem('app:shared:orders', JSON.stringify(orders));
+            
+            // Update order number in success modal
+            const orderNumberEl = document.querySelector('.order-number');
+            if (orderNumberEl) {
+                orderNumberEl.textContent = 'Numer zamówienia: ' + order.number;
+            }
+            
+            return order;
+        }
+
         function nextStep() {
             if (currentStep === totalSteps) {
                 // Update summary before showing
                 updateSummary();
-                // Submit order
+                // Save order to shared localStorage
+                saveOrderToStorage();
+                
+                // Update success modal text for edit mode
+                if (editOrderId) {
+                    document.getElementById('successModalTitle').textContent = 'Zamówienie zaktualizowane!';
+                    document.getElementById('successModalText').innerHTML = 
+                        'Zmiany w zamówieniu zostały zapisane pomyślnie.<br><br>' +
+                        '<i class="fi fi-rr-check"></i> Dane zamówienia zaktualizowane';
+                } else {
+                    document.getElementById('successModalTitle').textContent = 'Zamówienie złożone!';
+                    document.getElementById('successModalText').innerHTML = 
+                        'Dziękujemy! Twoje zamówienie zostało pomyślnie przyjęte do realizacji.<br><br>' +
+                        '<i class="fi fi-rr-envelope"></i> Potwierdzenie wysłane na email<br>' +
+                        '<i class="fi fi-rr-mobile"></i> SMS wysłany do spedytora';
+                }
+                
+                // Submit order - show success modal
                 document.getElementById('successModal').classList.add('active');
             } else {
                 currentStep++;
@@ -1381,48 +1694,58 @@
 
         function saveNewAddress(event) {
             event.preventDefault();
-            
-            const name = document.getElementById('address-name').value;
-            const street = document.getElementById('address-street').value;
-            const postal = document.getElementById('address-postal').value;
-            const city = document.getElementById('address-city').value;
-            const notes = document.getElementById('address-notes').value;
-            
+
+            const name = document.getElementById('address-name').value.trim();
+            const street = document.getElementById('address-street').value.trim();
+            const postal = document.getElementById('address-postal').value.trim();
+            const city = document.getElementById('address-city').value.trim();
+            const notes = document.getElementById('address-notes').value.trim();
+
+            // Validation
+            if (!name || !street || !postal || !city) {
+                alert('Proszę wypełnić wszystkie wymagane pola (nazwa, ulica, kod pocztowy, miasto).');
+                return;
+            }
+
             const selectedProducts = Array.from(document.querySelectorAll('input[name="products"]:checked')).map(cb => cb.value);
-            const productsText = selectedProducts.length > 0 
+            const productsText = selectedProducts.length > 0
                 ? selectedProducts.join(', ') + ` (${selectedProducts.length} ${selectedProducts.length === 1 ? 'produkt' : 'produkty'})`
                 : 'Brak produktów';
-            
-            // Create new location card
-            const locationCardsContainer = document.querySelector('.form-group');
-            const newCard = document.createElement('div');
-            newCard.className = 'location-card';
-            newCard.onclick = function() { selectLocation(0); };
-            newCard.innerHTML = `
-                <div class="location-name"><i class="fi fi-rr-marker"></i> ${name}</div>
-                <div class="location-address">${street}, ${postal} ${city}</div>
-                <div class="location-products"><i class="fi fi-rr-settings"></i> Dostępne produkty: ${productsText}</div>
-            `;
-            
-            // Insert before the "Add" button
-            const addButton = document.querySelector('.btn-add');
-            locationCardsContainer.insertBefore(newCard, addButton);
-            
+
+            // Save to localStorage
+            const addressRecord = {
+                name: name,
+                street: street,
+                postal: postal,
+                city: city,
+                notes: notes,
+                products: selectedProducts,
+                productsText: productsText,
+                createdAt: new Date().toISOString()
+            };
+            const savedRecord = upsertRecord('addresses', addressRecord);
+
+            // Re-render addresses from localStorage
+            renderSavedAddresses();
+
             // Select the new location
             document.querySelectorAll('.location-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            newCard.classList.add('selected');
-            
+            const newCard = document.querySelector(`.location-card[data-storage-id="${savedRecord.id}"]`);
+            if (newCard) {
+                newCard.classList.add('selected');
+            }
+
             // Update selected location in step 2 if visible
             const selectedLocationEl = document.getElementById('selected-location');
             if (selectedLocationEl) {
                 selectedLocationEl.textContent = name + ' - ' + street + ', ' + city;
             }
-            
+
             // Close modal
             closeAddAddressModal();
-            
+
             // Show success message
             alert('Nowy punkt odbioru został dodany pomyślnie!');
         }
@@ -1561,12 +1884,21 @@
             updateQuantity();
         }
 
+        // Initialize on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved addresses from localStorage
+            renderSavedAddresses();
+            
+            // Check if we're in edit mode
+            checkEditMode();
+        });
+
         // Initialize
         updateStepUI();
-        
+
         // Select first location by default
         document.querySelector('.location-card').classList.add('selected');
-        
+
         // Initialize quantity calculation
         updateQuantity();
     </script>

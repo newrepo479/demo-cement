@@ -1539,8 +1539,8 @@
                     </div>
                     <div class="order-actions">
                         <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
-                        <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
-                        <button class="btn btn-outline"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
+                        <button class="btn btn-outline" onclick="callDriver(0, 'Marek Nowak', '+48 600 123 456')"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
+                        <button class="btn btn-outline" onclick="showDriverStats(0, 'Marek Nowak')"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
                     </div>
                 </div>
             </div>
@@ -2030,7 +2030,609 @@
         </div>
     </div>
 
+    <!-- Edit Driver Modal -->
+    <div class="modal" id="editDriverModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-user-pen"></i> Edytuj kierowcę</h3>
+                <button class="modal-close" onclick="closeEditDriverModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editDriverForm" onsubmit="updateDriver(event)">
+                    <input type="hidden" id="edit-driver-id">
+                    <div class="form-group">
+                        <label class="form-label">Imię i nazwisko *</label>
+                        <input type="text" class="form-select" id="edit-driver-name" placeholder="np. Jan Kowalski" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Telefon *</label>
+                        <input type="tel" class="form-select" id="edit-driver-phone" placeholder="+48 600 123 456" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-select" id="edit-driver-email" placeholder="jan.kowalski@example.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Kategoria prawa jazdy *</label>
+                        <select class="form-select" id="edit-driver-license" required>
+                            <option value="">Wybierz kategorię...</option>
+                            <option value="C">Kat. C</option>
+                            <option value="C+E">Kat. C+E</option>
+                            <option value="D">Kat. D</option>
+                            <option value="D+E">Kat. D+E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data ważności prawa jazdy *</label>
+                        <input type="date" class="form-select" id="edit-driver-license-expiry" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="edit-driver-status">
+                            <option value="available">Dostępny</option>
+                            <option value="unavailable">Niedostępny</option>
+                            <option value="on-route">W trasie</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Uwagi (opcjonalnie)</label>
+                        <textarea class="form-select" id="edit-driver-notes" style="min-height: 80px; resize: vertical;" placeholder="Dodatkowe informacje o kierowcy..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditDriverModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="document.getElementById('editDriverForm').dispatchEvent(new Event('submit'))"><i class="fi fi-rr-floppy-disk"></i> ZAPISZ ZMIANY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Vehicle Modal -->
+    <div class="modal" id="editVehicleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-truck-pen"></i> Edytuj pojazd</h3>
+                <button class="modal-close" onclick="closeEditVehicleModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editVehicleForm" onsubmit="updateVehicle(event)">
+                    <input type="hidden" id="edit-vehicle-id">
+                    <div class="form-group">
+                        <label class="form-label">Typ pojazdu *</label>
+                        <select class="form-select" id="edit-vehicle-type" required>
+                            <option value="">Wybierz typ...</option>
+                            <option value="tractor">Ciągnik siodłowy</option>
+                            <option value="trailer">Naczepa</option>
+                            <option value="truck">Samochód ciężarowy</option>
+                            <option value="tank">Cysterna</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Marka i model *</label>
+                        <input type="text" class="form-select" id="edit-vehicle-brand" placeholder="np. Volvo FH16" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Numer rejestracyjny *</label>
+                        <input type="text" class="form-select" id="edit-vehicle-plate" placeholder="WA 1234ABC" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Rok produkcji</label>
+                        <input type="number" class="form-select" id="edit-vehicle-year" placeholder="2020" min="1990" max="2026">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Przebieg (km)</label>
+                        <input type="number" class="form-select" id="edit-vehicle-mileage" placeholder="450000" min="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Data następnego przeglądu *</label>
+                        <input type="date" class="form-select" id="edit-vehicle-inspection" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Pojemność / Ładowność</label>
+                        <input type="text" class="form-select" id="edit-vehicle-capacity" placeholder="np. 28 ton lub 30 m³">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="edit-vehicle-status">
+                            <option value="available">Dostępny</option>
+                            <option value="on-route">W trasie</option>
+                            <option value="service">W serwisie</option>
+                            <option value="unavailable">Niedostępny</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Uwagi (opcjonalnie)</label>
+                        <textarea class="form-select" id="edit-vehicle-notes" style="min-height: 80px; resize: vertical;" placeholder="Dodatkowe informacje o pojeździe..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeEditVehicleModal()">ANULUJ</button>
+                <button class="btn btn-primary" onclick="document.getElementById('editVehicleForm').dispatchEvent(new Event('submit'))"><i class="fi fi-rr-floppy-disk"></i> ZAPISZ ZMIANY</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service History Modal -->
+    <div class="modal" id="serviceHistoryModal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-time-past"></i> Historia serwisów</h3>
+                <button class="modal-close" onclick="closeServiceHistoryModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="serviceHistoryVehicleInfo" style="margin-bottom: 20px; padding: 12px; background: rgba(239, 125, 5, 0.1); border-radius: 8px;">
+                    <!-- Vehicle info will be inserted here -->
+                </div>
+                <table class="data-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Typ serwisu</th>
+                            <th>Opis</th>
+                            <th>Koszt</th>
+                            <th>Przebieg</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceHistoryTbody">
+                        <!-- Service history will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeServiceHistoryModal()">ZAMKNIJ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Driver Modal -->
+    <div class="modal" id="callDriverModal">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+                <h3 class="modal-title" style="width: 100%; text-align: center;"><i class="fi fi-rr-phone-call"></i> Połączenie</h3>
+            </div>
+            <div class="modal-body" style="padding: 40px 30px;">
+                <div id="callDriverAvatar" style="width: 100px; height: 100px; background: linear-gradient(135deg, var(--color-action), #ff9a3c); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; color: white; animation: pulse-call 1.5s infinite;">
+                    <i class="fi fi-rr-user"></i>
+                </div>
+                <div id="callDriverName" style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Jan Kowalski</div>
+                <div id="callDriverPhone" style="font-size: 16px; color: var(--color-gray); margin-bottom: 24px;">+48 600 123 456</div>
+                <div id="callStatus" style="font-size: 18px; color: var(--color-action); margin-bottom: 30px;">
+                    <span class="call-dots">Dzwonię</span>
+                </div>
+                <div id="callTimer" style="font-size: 32px; font-weight: 300; color: var(--color-black); display: none; margin-bottom: 20px;">00:00</div>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <button class="btn" id="callAnswerBtn" onclick="answerCall()" style="background: #22c55e; color: white; width: 70px; height: 70px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fi fi-rr-phone-call"></i>
+                    </button>
+                    <button class="btn" onclick="endCall()" style="background: #ef4444; color: white; width: 70px; height: 70px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fi fi-rr-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Driver Stats Modal -->
+    <div class="modal" id="driverStatsModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fi fi-rr-chart-line-up"></i> Statystyki kierowcy</h3>
+                <button class="modal-close" onclick="closeDriverStatsModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="statsDriverName" style="font-size: 20px; font-weight: 700; margin-bottom: 24px; padding: 16px; background: rgba(239, 125, 5, 0.1); border-radius: 12px; text-align: center;">
+                    <i class="fi fi-rr-user" style="color: var(--color-action); margin-right: 8px;"></i>
+                    <span>Jan Kowalski</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-action);" id="statDeliveriesMonth">0</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Dostawy w tym miesiącu</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-action);" id="statDeliveriesYear">0</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Dostawy w tym roku</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: #22c55e;" id="statPunctuality">0%</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Punktualność</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: #3b82f6;" id="statAvgTime">0h</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Śr. czas dostawy</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: var(--color-black);" id="statKilometers">0</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Przejechane km</div>
+                    </div>
+                    <div class="stat-card" style="background: var(--color-white); border: 1px solid var(--color-gray); border-radius: 12px; padding: 20px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: 700; color: #ef4444;" id="statComplaints">0</div>
+                        <div style="font-size: 13px; color: var(--color-gray);">Reklamacje</div>
+                    </div>
+                </div>
+                <div style="margin-top: 24px; padding: 16px; background: #f8fafc; border-radius: 12px;">
+                    <div style="font-weight: 600; margin-bottom: 12px;"><i class="fi fi-rr-trophy" style="color: var(--color-action);"></i> Osiągnięcia</div>
+                    <div id="statsAchievements" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <!-- Achievements will be inserted here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDriverStatsModal()">ZAMKNIJ</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pulse-call {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 125, 5, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(239, 125, 5, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 125, 5, 0); }
+        }
+        .call-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+    </style>
+
     <script>
+        // =====================================================
+        // localStorage Helper Functions
+        // =====================================================
+        const STORAGE_PREFIX = 'app:panel-przewoznik:';
+
+        function storageGet(key, defaultValue = []) {
+            try {
+                const data = localStorage.getItem(STORAGE_PREFIX + key);
+                return data ? JSON.parse(data) : defaultValue;
+            } catch (e) {
+                console.error('Error reading from localStorage:', e);
+                return defaultValue;
+            }
+        }
+
+        function storageSet(key, value) {
+            try {
+                localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+                return true;
+            } catch (e) {
+                console.error('Error writing to localStorage:', e);
+                return false;
+            }
+        }
+
+        function generateId() {
+            return Date.now() + Math.random();
+        }
+
+        function upsertRecord(key, record) {
+            const records = storageGet(key, []);
+            if (!record.id) {
+                record.id = generateId();
+            }
+            const index = records.findIndex(r => r.id === record.id);
+            if (index >= 0) {
+                records[index] = record;
+            } else {
+                records.push(record);
+            }
+            storageSet(key, records);
+            return record;
+        }
+
+        function deleteRecord(key, id) {
+            const records = storageGet(key, []);
+            const filtered = records.filter(r => r.id !== id);
+            storageSet(key, filtered);
+            return filtered;
+        }
+
+        // =====================================================
+        // Render Saved Drivers
+        // =====================================================
+        function renderSavedDrivers() {
+            const drivers = storageGet('drivers', []);
+            const tabContent = document.getElementById('tab-kierowcy');
+            if (!tabContent) return;
+
+            // Remove previously rendered localStorage drivers
+            tabContent.querySelectorAll('.order-card[data-storage-id]').forEach(card => card.remove());
+
+            const filtersBar = tabContent.querySelector('.filters-bar');
+            const existingCards = tabContent.querySelectorAll('.order-card:not([data-storage-id])');
+            const insertPoint = existingCards.length > 0 ? existingCards[0] : filtersBar.nextSibling;
+
+            drivers.forEach(driver => {
+                const newCard = document.createElement('div');
+                newCard.className = 'order-card';
+                newCard.setAttribute('data-storage-id', driver.id);
+                newCard.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">${driver.name}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="priority-badge normal">${driver.status === 'available' ? 'Dostępny' : driver.status === 'on-route' ? 'W trasie' : 'Niedostępny'}</span>
+                            <button onclick="deleteDriver(${driver.id})" title="Usuń" style="background: none; border: none; cursor: pointer; color: var(--color-gray); font-size: 16px;">
+                                <i class="fi fi-rr-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-phone-call detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Telefon:</div>
+                                <div class="detail-value">${driver.phone}</div>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fi fi-rr-id-card detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Prawo jazdy:</div>
+                                <div class="detail-value">Kat. ${driver.license} | Ważne do: ${new Date(driver.expiry).toLocaleDateString('pl-PL')}</div>
+                            </div>
+                        </div>
+                        ${driver.email ? `<div class="detail-item">
+                            <i class="fi fi-rr-envelope detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Email:</div>
+                                <div class="detail-value">${driver.email}</div>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="openEditDriverModal(${driver.id})"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                        <button class="btn btn-outline" onclick="callDriver(${driver.id}, '${driver.name}', '${driver.phone}')"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
+                        <button class="btn btn-outline" onclick="showDriverStats(${driver.id}, '${driver.name}')"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
+                    </div>
+                `;
+                if (insertPoint) {
+                    insertPoint.parentNode.insertBefore(newCard, insertPoint);
+                }
+            });
+        }
+
+        function deleteDriver(id) {
+            if (confirm('Czy na pewno chcesz usunąć tego kierowcę?')) {
+                deleteRecord('drivers', id);
+                renderSavedDrivers();
+            }
+        }
+
+        // =====================================================
+        // Render Saved Vehicles
+        // =====================================================
+        function renderSavedVehicles() {
+            const vehicles = storageGet('vehicles', []);
+            const tabContent = document.getElementById('tab-pojazdy');
+            if (!tabContent) return;
+
+            // Remove previously rendered localStorage vehicles
+            tabContent.querySelectorAll('.order-card[data-storage-id]').forEach(card => card.remove());
+
+            const filtersBar = tabContent.querySelector('.filters-bar');
+            const existingCards = tabContent.querySelectorAll('.order-card:not([data-storage-id])');
+            const insertPoint = existingCards.length > 0 ? existingCards[0] : filtersBar.nextSibling;
+
+            const typeNames = {
+                'tractor': 'Ciągnik siodłowy',
+                'trailer': 'Naczepa',
+                'truck': 'Samochód ciężarowy',
+                'tank': 'Cysterna'
+            };
+
+            vehicles.forEach(vehicle => {
+                const newCard = document.createElement('div');
+                newCard.className = 'order-card';
+                newCard.setAttribute('data-storage-id', vehicle.id);
+                newCard.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <span class="order-number">${vehicle.plate} - ${vehicle.brand}</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="priority-badge normal">${vehicle.status === 'available' ? 'Dostępny' : vehicle.status === 'on-route' ? 'W trasie' : vehicle.status === 'service' ? 'W serwisie' : 'Niedostępny'}</span>
+                            <button onclick="deleteVehicle(${vehicle.id})" title="Usuń" style="background: none; border: none; cursor: pointer; color: var(--color-gray); font-size: 16px;">
+                                <i class="fi fi-rr-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <i class="fi fi-rr-truck-side detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Typ:</div>
+                                <div class="detail-value">${typeNames[vehicle.type] || vehicle.type}</div>
+                            </div>
+                        </div>
+                        ${vehicle.year ? `<div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Rok produkcji:</div>
+                                <div class="detail-value">${vehicle.year}</div>
+                            </div>
+                        </div>` : ''}
+                        <div class="detail-item">
+                            <i class="fi fi-rr-calendar detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Przegląd:</div>
+                                <div class="detail-value">Następny: ${new Date(vehicle.inspection).toLocaleDateString('pl-PL')}</div>
+                            </div>
+                        </div>
+                        ${vehicle.mileage ? `<div class="detail-item">
+                            <i class="fi fi-rr-chart-line-up detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Przebieg:</div>
+                                <div class="detail-value">${parseInt(vehicle.mileage).toLocaleString('pl-PL')} km</div>
+                            </div>
+                        </div>` : ''}
+                        ${vehicle.capacity ? `<div class="detail-item">
+                            <i class="fi fi-rr-box detail-icon"></i>
+                            <div>
+                                <div class="detail-label">Pojemność:</div>
+                                <div class="detail-value">${vehicle.capacity}</div>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                    <div class="order-actions">
+                        <button class="btn btn-primary" onclick="openEditVehicleModal(${vehicle.id})"><i class="fi fi-rr-edit"></i> Edytuj</button>
+                        <button class="btn btn-outline" onclick="showServiceHistory(${vehicle.id})"><i class="fi fi-rr-settings"></i> Historia serwisów</button>
+                    </div>
+                `;
+                if (insertPoint) {
+                    insertPoint.parentNode.insertBefore(newCard, insertPoint);
+                }
+            });
+        }
+
+        function deleteVehicle(id) {
+            if (confirm('Czy na pewno chcesz usunąć ten pojazd?')) {
+                deleteRecord('vehicles', id);
+                renderSavedVehicles();
+            }
+        }
+
+        // =====================================================
+        // Render Shared Orders from localStorage
+        // =====================================================
+        function renderSharedOrders() {
+            const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            
+            // Filter only new orders that need to be advised
+            const newOrders = orders.filter(o => o.status === 'Nowe');
+            const inProgressOrders = orders.filter(o => o.status === 'W realizacji');
+            
+            // Render to "Nowe zlecenia" tab
+            const noweTab = document.getElementById('tab-nowe');
+            if (noweTab && newOrders.length > 0) {
+                const container = noweTab.querySelector('.content-area') || noweTab;
+                
+                // Remove previously rendered storage orders
+                container.querySelectorAll('.order-card[data-storage-id]').forEach(card => card.remove());
+                
+                // Find insert point (before first static card)
+                const firstStaticCard = container.querySelector('.order-card:not([data-storage-id])');
+                
+                newOrders.forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = 'order-card priority';
+                    card.setAttribute('data-storage-id', order.id);
+                    card.setAttribute('data-order-number', order.number.replace('#', ''));
+                    card.setAttribute('data-client', 'Klient');
+                    card.setAttribute('data-date', order.deliveryDate);
+                    card.innerHTML = `
+                        <div class="order-header">
+                            <div class="order-title">
+                                <span class="order-number">${order.number}</span>
+                                <span class="priority-badge">Do awizacji</span>
+                            </div>
+                        </div>
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <i class="fi fi-rr-box detail-icon"></i>
+                                <div>
+                                    <div class="detail-label">Produkt:</div>
+                                    <div class="detail-value">${order.product}</div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fi fi-rr-weight detail-icon"></i>
+                                <div>
+                                    <div class="detail-label">Ilość:</div>
+                                    <div class="detail-value">${order.tons} ton</div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fi fi-rr-calendar detail-icon"></i>
+                                <div>
+                                    <div class="detail-label">Data dostawy:</div>
+                                    <div class="detail-value">${order.deliveryDate ? new Date(order.deliveryDate).toLocaleDateString('pl-PL') : 'Nieokreślona'}</div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fi fi-rr-clock detail-icon"></i>
+                                <div>
+                                    <div class="detail-label">Godzina:</div>
+                                    <div class="detail-value">${order.deliveryTime || 'Do uzgodnienia'}</div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fi fi-rr-marker detail-icon"></i>
+                                <div>
+                                    <div class="detail-label">Lokalizacja:</div>
+                                    <div class="detail-value">${order.location || 'Brak danych'}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn btn-primary" onclick="openAwizModalForOrder('${order.number}')"><i class="fi fi-rr-check"></i> Awizuj</button>
+                            <button class="btn btn-outline" onclick="showOrderDetails('${order.id}')"><i class="fi fi-rr-eye"></i> Szczegóły</button>
+                        </div>
+                    `;
+                    if (firstStaticCard) {
+                        container.insertBefore(card, firstStaticCard);
+                    } else {
+                        container.appendChild(card);
+                    }
+                });
+            }
+            
+            // Update counters in sidebar
+            const noweCount = document.querySelector('.sidebar-menu .menu-badge');
+            if (noweCount) {
+                const totalNewOrders = newOrders.length + (parseInt(noweCount.dataset.staticCount) || 2);
+                noweCount.textContent = totalNewOrders;
+            }
+        }
+        
+        function openAwizModalForOrder(orderNumber) {
+            // Update modal with order number
+            const modalTitle = document.querySelector('#awizModal .modal-title');
+            if (modalTitle) {
+                modalTitle.innerHTML = '<i class="fi fi-rr-edit"></i> Awizacja zlecenia ' + orderNumber;
+            }
+            openAwizModal();
+        }
+
+        // =====================================================
+        // Initialize on DOMContentLoaded
+        // =====================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSavedDrivers();
+            renderSavedVehicles();
+            renderSharedOrders();
+            
+            // Load tab from URL on page load
+            const tabFromUrl = getTabFromUrl();
+            if (tabFromUrl && tabFromUrl !== 'nowe') {
+                showTab(tabFromUrl, null, false);
+            }
+        });
+
+        // =====================================================
+        // UI Functions
+        // =====================================================
         function toggleUserMenu(event) {
             event.stopPropagation();
             const dropdown = document.getElementById('userMenuDropdown');
@@ -2055,12 +2657,79 @@
         }
 
         function submitAwiz() {
-            alert('✅ Zlecenie awizowane!\n\nSMS z PIN-em został wysłany do kierowcy.\nZlecenie #ZAM-1234 przeszło do statusu "W realizacji".');
+            // Get selected driver
+            const selectedDriver = document.querySelector('.driver-option.selected .driver-name');
+            const driverName = selectedDriver ? selectedDriver.textContent : 'Nieprzypisany';
+            
+            // Get form values
+            const vehicle = document.getElementById('awiz-vehicle')?.value || '';
+            const date = document.getElementById('awiz-date')?.value || '';
+            const time = document.getElementById('awiz-time')?.value || '';
+            const notes = document.getElementById('awiz-notes')?.value || '';
+            
+            // Get order number from modal context (from data attribute or static)
+            const orderNumberEl = document.querySelector('#awizModal .order-number, #awizModal .modal-title');
+            let orderNumber = '#ZAM-1234';
+            if (orderNumberEl) {
+                const match = orderNumberEl.textContent.match(/#ZAM-\d{4}-\d+/);
+                if (match) orderNumber = match[0];
+            }
+            
+            // Generate PIN
+            const pin = Math.floor(1000 + Math.random() * 9000);
+            
+            // Create advisory record
+            const advisory = {
+                id: Date.now() + Math.random(),
+                orderNumber: orderNumber,
+                driver: driverName,
+                vehicle: vehicle,
+                date: date,
+                time: time,
+                pin: pin,
+                notes: notes,
+                status: 'Awizowane',
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to shared localStorage
+            const advisories = JSON.parse(localStorage.getItem('app:shared:advisories') || '[]');
+            advisories.push(advisory);
+            localStorage.setItem('app:shared:advisories', JSON.stringify(advisories));
+            
+            // Update order status in shared storage
+            const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            const orderIndex = orders.findIndex(o => o.number === orderNumber);
+            if (orderIndex >= 0) {
+                orders[orderIndex].status = 'W realizacji';
+                orders[orderIndex].driver = driverName;
+                orders[orderIndex].vehicle = vehicle;
+                orders[orderIndex].advisoryDate = date;
+                orders[orderIndex].advisoryTime = time;
+                orders[orderIndex].pin = pin;
+                localStorage.setItem('app:shared:orders', JSON.stringify(orders));
+            }
+            
+            alert('✅ Zlecenie awizowane!\n\nPIN: ' + pin + '\nKierowca: ' + driverName + '\nSMS z PIN-em został wysłany do kierowcy.\nZlecenie ' + orderNumber + ' przeszło do statusu "W realizacji".');
             closeAwizModal();
+            
+            // Refresh orders display
+            renderSharedOrders();
         }
 
-        // Tab Management
-        function showTab(tabName, event) {
+        // Tab Management with URL support
+        function getTabFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('tab') || 'nowe';
+        }
+        
+        function updateUrlWithTab(tabName) {
+            const url = new URL(window.location);
+            url.searchParams.set('tab', tabName);
+            window.history.pushState({tab: tabName}, '', url);
+        }
+        
+        function showTab(tabName, event, updateUrl = true) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -2090,7 +2759,22 @@
                     correspondingSidebarLink.classList.add('active');
                 }
             }
+            
+            // Update URL with tab parameter
+            if (updateUrl) {
+                updateUrlWithTab(tabName);
+            }
         }
+        
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', function(event) {
+            if (event.state && event.state.tab) {
+                showTab(event.state.tab, null, false);
+            } else {
+                const tab = getTabFromUrl();
+                showTab(tab, null, false);
+            }
+        });
 
         function showOrderDetails(orderId) {
             const detailsElement = document.getElementById('details-' + orderId);
@@ -2115,66 +2799,37 @@
 
         function saveDriver(event) {
             event.preventDefault();
-            
-            const name = document.getElementById('driver-name').value;
-            const phone = document.getElementById('driver-phone').value;
-            const email = document.getElementById('driver-email').value;
+
+            const name = document.getElementById('driver-name').value.trim();
+            const phone = document.getElementById('driver-phone').value.trim();
+            const email = document.getElementById('driver-email').value.trim();
             const license = document.getElementById('driver-license').value;
             const expiry = document.getElementById('driver-license-expiry').value;
             const status = document.getElementById('driver-status').value;
-            const notes = document.getElementById('driver-notes').value;
-            
-            // Create new driver card
-            const tabContent = document.getElementById('tab-kierowcy');
-            const filtersBar = tabContent.querySelector('.filters-bar');
-            const existingCards = tabContent.querySelectorAll('.order-card');
-            
-            const newCard = document.createElement('div');
-            newCard.className = 'order-card';
-            newCard.innerHTML = `
-                <div class="order-header">
-                    <div>
-                        <span class="order-number">${name}</span>
-                    </div>
-                    <span class="priority-badge normal">${status === 'available' ? 'Dostępny' : status === 'on-route' ? 'W trasie' : 'Niedostępny'}</span>
-                </div>
-                <div class="order-details">
-                    <div class="detail-item">
-                        <i class="fi fi-rr-phone-call detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Telefon:</div>
-                            <div class="detail-value">${phone}</div>
-                        </div>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fi fi-rr-id-card detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Prawo jazdy:</div>
-                            <div class="detail-value">Kat. ${license} | Ważne do: ${new Date(expiry).toLocaleDateString('pl-PL')}</div>
-                        </div>
-                    </div>
-                    ${email ? `<div class="detail-item">
-                        <i class="fi fi-rr-envelope detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Email:</div>
-                            <div class="detail-value">${email}</div>
-                        </div>
-                    </div>` : ''}
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
-                    <button class="btn btn-outline"><i class="fi fi-rr-phone-call"></i> Zadzwoń</button>
-                    <button class="btn btn-outline"><i class="fi fi-rr-chart-line-up"></i> Statystyki</button>
-                </div>
-            `;
-            
-            // Insert after filters bar, before existing cards
-            if (existingCards.length > 0) {
-                existingCards[0].parentNode.insertBefore(newCard, existingCards[0]);
-            } else {
-                filtersBar.parentNode.insertBefore(newCard, filtersBar.nextSibling);
+            const notes = document.getElementById('driver-notes').value.trim();
+
+            // Validation
+            if (!name || !phone || !license || !expiry) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
             }
-            
+
+            // Save to localStorage
+            const driverRecord = {
+                name: name,
+                phone: phone,
+                email: email,
+                license: license,
+                expiry: expiry,
+                status: status,
+                notes: notes,
+                createdAt: new Date().toISOString()
+            };
+            upsertRecord('drivers', driverRecord);
+
+            // Re-render drivers from localStorage
+            renderSavedDrivers();
+
             closeAddDriverModal();
             alert('✅ Kierowca został dodany pomyślnie!');
         }
@@ -2191,90 +2846,377 @@
 
         function saveVehicle(event) {
             event.preventDefault();
-            
+
             const type = document.getElementById('vehicle-type').value;
-            const brand = document.getElementById('vehicle-brand').value;
-            const plate = document.getElementById('vehicle-plate').value;
+            const brand = document.getElementById('vehicle-brand').value.trim();
+            const plate = document.getElementById('vehicle-plate').value.trim();
             const year = document.getElementById('vehicle-year').value;
             const mileage = document.getElementById('vehicle-mileage').value;
             const inspection = document.getElementById('vehicle-inspection').value;
-            const capacity = document.getElementById('vehicle-capacity').value;
+            const capacity = document.getElementById('vehicle-capacity').value.trim();
             const status = document.getElementById('vehicle-status').value;
-            const notes = document.getElementById('vehicle-notes').value;
-            
-            const typeNames = {
-                'tractor': 'Ciągnik siodłowy',
-                'trailer': 'Naczepa',
-                'truck': 'Samochód ciężarowy',
-                'tank': 'Cysterna'
-            };
-            
-            // Create new vehicle card
-            const tabContent = document.getElementById('tab-pojazdy');
-            const filtersBar = tabContent.querySelector('.filters-bar');
-            const existingCards = tabContent.querySelectorAll('.order-card');
-            
-            const newCard = document.createElement('div');
-            newCard.className = 'order-card';
-            newCard.innerHTML = `
-                <div class="order-header">
-                    <div>
-                        <span class="order-number">${plate} - ${brand}</span>
-                    </div>
-                    <span class="priority-badge normal">${status === 'available' ? 'Dostępny' : status === 'on-route' ? 'W trasie' : status === 'service' ? 'W serwisie' : 'Niedostępny'}</span>
-                </div>
-                <div class="order-details">
-                    <div class="detail-item">
-                        <i class="fi fi-rr-truck-side detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Typ:</div>
-                            <div class="detail-value">${typeNames[type] || type}</div>
-                        </div>
-                    </div>
-                    ${year ? `<div class="detail-item">
-                        <i class="fi fi-rr-calendar detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Rok produkcji:</div>
-                            <div class="detail-value">${year}</div>
-                        </div>
-                    </div>` : ''}
-                    <div class="detail-item">
-                        <i class="fi fi-rr-calendar detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Przegląd:</div>
-                            <div class="detail-value">Następny: ${new Date(inspection).toLocaleDateString('pl-PL')}</div>
-                        </div>
-                    </div>
-                    ${mileage ? `<div class="detail-item">
-                        <i class="fi fi-rr-chart-line-up detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Przebieg:</div>
-                            <div class="detail-value">${parseInt(mileage).toLocaleString('pl-PL')} km</div>
-                        </div>
-                    </div>` : ''}
-                    ${capacity ? `<div class="detail-item">
-                        <i class="fi fi-rr-box detail-icon"></i>
-                        <div>
-                            <div class="detail-label">Pojemność:</div>
-                            <div class="detail-value">${capacity}</div>
-                        </div>
-                    </div>` : ''}
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-primary"><i class="fi fi-rr-edit"></i> Edytuj</button>
-                    <button class="btn btn-outline"><i class="fi fi-rr-settings"></i> Historia serwisów</button>
-                </div>
-            `;
-            
-            // Insert after filters bar, before existing cards
-            if (existingCards.length > 0) {
-                existingCards[0].parentNode.insertBefore(newCard, existingCards[0]);
-            } else {
-                filtersBar.parentNode.insertBefore(newCard, filtersBar.nextSibling);
+            const notes = document.getElementById('vehicle-notes').value.trim();
+
+            // Validation
+            if (!type || !brand || !plate || !inspection) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
             }
-            
+
+            // Save to localStorage
+            const vehicleRecord = {
+                type: type,
+                brand: brand,
+                plate: plate,
+                year: year,
+                mileage: mileage,
+                inspection: inspection,
+                capacity: capacity,
+                status: status,
+                notes: notes,
+                createdAt: new Date().toISOString()
+            };
+            upsertRecord('vehicles', vehicleRecord);
+
+            // Re-render vehicles from localStorage
+            renderSavedVehicles();
+
             closeAddVehicleModal();
             alert('✅ Pojazd został dodany pomyślnie!');
+        }
+
+        // =====================================================
+        // Edit Driver Modal Functions
+        // =====================================================
+        function openEditDriverModal(driverId) {
+            const drivers = storageGet('drivers', []);
+            const driver = drivers.find(d => d.id == driverId);
+            if (!driver) {
+                alert('Nie znaleziono kierowcy.');
+                return;
+            }
+            
+            document.getElementById('edit-driver-id').value = driver.id;
+            document.getElementById('edit-driver-name').value = driver.name || '';
+            document.getElementById('edit-driver-phone').value = driver.phone || '';
+            document.getElementById('edit-driver-email').value = driver.email || '';
+            document.getElementById('edit-driver-license').value = driver.license || '';
+            document.getElementById('edit-driver-license-expiry').value = driver.expiry || '';
+            document.getElementById('edit-driver-status').value = driver.status || 'available';
+            document.getElementById('edit-driver-notes').value = driver.notes || '';
+            
+            document.getElementById('editDriverModal').classList.add('active');
+        }
+        
+        function closeEditDriverModal() {
+            document.getElementById('editDriverModal').classList.remove('active');
+            document.getElementById('editDriverForm').reset();
+        }
+        
+        function updateDriver(event) {
+            event.preventDefault();
+            
+            const id = parseFloat(document.getElementById('edit-driver-id').value);
+            const name = document.getElementById('edit-driver-name').value.trim();
+            const phone = document.getElementById('edit-driver-phone').value.trim();
+            const email = document.getElementById('edit-driver-email').value.trim();
+            const license = document.getElementById('edit-driver-license').value;
+            const expiry = document.getElementById('edit-driver-license-expiry').value;
+            const status = document.getElementById('edit-driver-status').value;
+            const notes = document.getElementById('edit-driver-notes').value.trim();
+            
+            if (!name || !phone || !license || !expiry) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
+            }
+            
+            const driverRecord = {
+                id: id,
+                name: name,
+                phone: phone,
+                email: email,
+                license: license,
+                expiry: expiry,
+                status: status,
+                notes: notes,
+                updatedAt: new Date().toISOString()
+            };
+            upsertRecord('drivers', driverRecord);
+            
+            renderSavedDrivers();
+            closeEditDriverModal();
+            alert('✅ Kierowca został zaktualizowany!');
+        }
+        
+        // =====================================================
+        // Edit Vehicle Modal Functions
+        // =====================================================
+        function openEditVehicleModal(vehicleId) {
+            const vehicles = storageGet('vehicles', []);
+            const vehicle = vehicles.find(v => v.id == vehicleId);
+            if (!vehicle) {
+                alert('Nie znaleziono pojazdu.');
+                return;
+            }
+            
+            document.getElementById('edit-vehicle-id').value = vehicle.id;
+            document.getElementById('edit-vehicle-type').value = vehicle.type || '';
+            document.getElementById('edit-vehicle-brand').value = vehicle.brand || '';
+            document.getElementById('edit-vehicle-plate').value = vehicle.plate || '';
+            document.getElementById('edit-vehicle-year').value = vehicle.year || '';
+            document.getElementById('edit-vehicle-mileage').value = vehicle.mileage || '';
+            document.getElementById('edit-vehicle-inspection').value = vehicle.inspection || '';
+            document.getElementById('edit-vehicle-capacity').value = vehicle.capacity || '';
+            document.getElementById('edit-vehicle-status').value = vehicle.status || 'available';
+            document.getElementById('edit-vehicle-notes').value = vehicle.notes || '';
+            
+            document.getElementById('editVehicleModal').classList.add('active');
+        }
+        
+        function closeEditVehicleModal() {
+            document.getElementById('editVehicleModal').classList.remove('active');
+            document.getElementById('editVehicleForm').reset();
+        }
+        
+        function updateVehicle(event) {
+            event.preventDefault();
+            
+            const id = parseFloat(document.getElementById('edit-vehicle-id').value);
+            const type = document.getElementById('edit-vehicle-type').value;
+            const brand = document.getElementById('edit-vehicle-brand').value.trim();
+            const plate = document.getElementById('edit-vehicle-plate').value.trim();
+            const year = document.getElementById('edit-vehicle-year').value;
+            const mileage = document.getElementById('edit-vehicle-mileage').value;
+            const inspection = document.getElementById('edit-vehicle-inspection').value;
+            const capacity = document.getElementById('edit-vehicle-capacity').value.trim();
+            const status = document.getElementById('edit-vehicle-status').value;
+            const notes = document.getElementById('edit-vehicle-notes').value.trim();
+            
+            if (!type || !brand || !plate || !inspection) {
+                alert('Proszę wypełnić wszystkie wymagane pola.');
+                return;
+            }
+            
+            const vehicleRecord = {
+                id: id,
+                type: type,
+                brand: brand,
+                plate: plate,
+                year: year,
+                mileage: mileage,
+                inspection: inspection,
+                capacity: capacity,
+                status: status,
+                notes: notes,
+                updatedAt: new Date().toISOString()
+            };
+            upsertRecord('vehicles', vehicleRecord);
+            
+            renderSavedVehicles();
+            closeEditVehicleModal();
+            alert('✅ Pojazd został zaktualizowany!');
+        }
+        
+        // =====================================================
+        // Service History Modal Functions
+        // =====================================================
+        function showServiceHistory(vehicleId) {
+            const vehicles = storageGet('vehicles', []);
+            const vehicle = vehicles.find(v => v.id == vehicleId);
+            
+            let vehicleName = 'Pojazd';
+            let vehiclePlate = '';
+            if (vehicle) {
+                vehicleName = vehicle.brand || 'Pojazd';
+                vehiclePlate = vehicle.plate || '';
+            }
+            
+            // Display vehicle info
+            document.getElementById('serviceHistoryVehicleInfo').innerHTML = `
+                <strong><i class="fi fi-rr-truck"></i> ${vehicleName}</strong> 
+                <span style="color: var(--color-gray);">(${vehiclePlate})</span>
+            `;
+            
+            // Generate random service history
+            const serviceTypes = [
+                'Przegląd techniczny',
+                'Wymiana oleju',
+                'Wymiana klocków hamulcowych',
+                'Serwis klimatyzacji',
+                'Wymiana opon',
+                'Naprawa zawieszenia',
+                'Diagnostyka komputerowa',
+                'Wymiana filtrów',
+                'Napełnienie AdBlue',
+                'Naprawa układu wydechowego'
+            ];
+            
+            const serviceDescriptions = [
+                'Wykonano pełny przegląd wszystkich układów',
+                'Wymieniono olej silnikowy i filtr oleju',
+                'Wymieniono przednie i tylne klocki hamulcowe',
+                'Czyszczenie i napełnienie klimatyzacji',
+                'Wymiana kompletu opon na sezon zimowy',
+                'Wymiana amortyzatorów przednich',
+                'Pełna diagnostyka systemów pojazdu',
+                'Wymiana filtrów powietrza i kabinowego',
+                'Napełniono zbiornik AdBlue do pełna',
+                'Spawanie i naprawa układu wydechowego'
+            ];
+            
+            const tbody = document.getElementById('serviceHistoryTbody');
+            tbody.innerHTML = '';
+            
+            // Generate 5-10 random service entries
+            const numEntries = Math.floor(Math.random() * 6) + 5;
+            let currentMileage = parseInt(vehicle?.mileage) || 450000;
+            
+            for (let i = 0; i < numEntries; i++) {
+                const daysAgo = Math.floor(Math.random() * 365 * 2) + 30; // Random date within last 2 years
+                const date = new Date();
+                date.setDate(date.getDate() - daysAgo);
+                
+                const typeIndex = Math.floor(Math.random() * serviceTypes.length);
+                const cost = Math.floor(Math.random() * 4000) + 200;
+                const mileageAtService = currentMileage - Math.floor(Math.random() * 50000);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${date.toLocaleDateString('pl-PL')}</td>
+                    <td><span style="font-weight: 500;">${serviceTypes[typeIndex]}</span></td>
+                    <td style="color: var(--color-gray); font-size: 13px;">${serviceDescriptions[typeIndex]}</td>
+                    <td style="font-weight: 600; color: var(--color-action);">${cost.toLocaleString('pl-PL')} zł</td>
+                    <td>${mileageAtService.toLocaleString('pl-PL')} km</td>
+                `;
+                tbody.appendChild(row);
+            }
+            
+            // Sort by date (newest first) - already sorted by daysAgo logic
+            
+            document.getElementById('serviceHistoryModal').classList.add('active');
+        }
+        
+        function closeServiceHistoryModal() {
+            document.getElementById('serviceHistoryModal').classList.remove('active');
+        }
+
+        // =====================================================
+        // Call Driver Modal Functions
+        // =====================================================
+        let callTimerInterval = null;
+        let callSeconds = 0;
+        let isCallConnected = false;
+        
+        function callDriver(driverId, name, phone) {
+            // Reset state
+            isCallConnected = false;
+            callSeconds = 0;
+            if (callTimerInterval) {
+                clearInterval(callTimerInterval);
+                callTimerInterval = null;
+            }
+            
+            // Set driver info
+            document.getElementById('callDriverName').textContent = name || 'Kierowca';
+            document.getElementById('callDriverPhone').textContent = phone || '+48 XXX XXX XXX';
+            
+            // Reset UI
+            document.getElementById('callStatus').style.display = 'block';
+            document.getElementById('callStatus').innerHTML = '<span class="call-dots">Dzwonię</span>';
+            document.getElementById('callTimer').style.display = 'none';
+            document.getElementById('callTimer').textContent = '00:00';
+            document.getElementById('callAnswerBtn').style.display = 'flex';
+            document.getElementById('callDriverAvatar').style.animation = 'pulse-call 1.5s infinite';
+            
+            document.getElementById('callDriverModal').classList.add('active');
+        }
+        
+        function answerCall() {
+            isCallConnected = true;
+            document.getElementById('callStatus').innerHTML = '<span style="color: #22c55e;">Połączono</span>';
+            document.getElementById('callTimer').style.display = 'block';
+            document.getElementById('callAnswerBtn').style.display = 'none';
+            document.getElementById('callDriverAvatar').style.animation = 'none';
+            
+            // Start timer
+            callTimerInterval = setInterval(function() {
+                callSeconds++;
+                const mins = Math.floor(callSeconds / 60).toString().padStart(2, '0');
+                const secs = (callSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('callTimer').textContent = mins + ':' + secs;
+            }, 1000);
+        }
+        
+        function endCall() {
+            if (callTimerInterval) {
+                clearInterval(callTimerInterval);
+                callTimerInterval = null;
+            }
+            
+            if (isCallConnected) {
+                const mins = Math.floor(callSeconds / 60).toString().padStart(2, '0');
+                const secs = (callSeconds % 60).toString().padStart(2, '0');
+                alert('📞 Połączenie zakończone\n\nCzas rozmowy: ' + mins + ':' + secs);
+            }
+            
+            document.getElementById('callDriverModal').classList.remove('active');
+        }
+        
+        function closeCallDriverModal() {
+            endCall();
+        }
+        
+        // =====================================================
+        // Driver Stats Modal Functions
+        // =====================================================
+        function showDriverStats(driverId, name) {
+            // Set driver name
+            document.querySelector('#statsDriverName span').textContent = name || 'Kierowca';
+            
+            // Generate random stats
+            const deliveriesMonth = Math.floor(Math.random() * 50) + 15;
+            const deliveriesYear = Math.floor(Math.random() * 400) + 100;
+            const punctuality = Math.floor(Math.random() * 15) + 85; // 85-100%
+            const avgTime = (Math.random() * 2 + 1.5).toFixed(1); // 1.5-3.5h
+            const kilometers = Math.floor(Math.random() * 50000) + 10000;
+            const complaints = Math.floor(Math.random() * 5); // 0-4
+            
+            // Update stats display
+            document.getElementById('statDeliveriesMonth').textContent = deliveriesMonth;
+            document.getElementById('statDeliveriesYear').textContent = deliveriesYear;
+            document.getElementById('statPunctuality').textContent = punctuality + '%';
+            document.getElementById('statAvgTime').textContent = avgTime + 'h';
+            document.getElementById('statKilometers').textContent = kilometers.toLocaleString('pl-PL');
+            document.getElementById('statComplaints').textContent = complaints;
+            
+            // Generate achievements
+            const allAchievements = [
+                { icon: '🏆', text: 'Top kierowca miesiąca' },
+                { icon: '⭐', text: '100 dostaw bez reklamacji' },
+                { icon: '🚀', text: 'Najszybsza dostawa' },
+                { icon: '📍', text: '10 000 km bez incydentów' },
+                { icon: '💯', text: '100% punktualności (tydzień)' },
+                { icon: '🎯', text: '50 dostaw w miesiącu' },
+                { icon: '🛡️', text: 'Bezpieczny kierowca' },
+                { icon: '📦', text: 'Specjalista cement luzem' }
+            ];
+            
+            // Pick 2-4 random achievements
+            const numAchievements = Math.floor(Math.random() * 3) + 2;
+            const shuffled = allAchievements.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, numAchievements);
+            
+            const achievementsHtml = selected.map(a => 
+                `<span style="background: rgba(239, 125, 5, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 13px;">${a.icon} ${a.text}</span>`
+            ).join('');
+            
+            document.getElementById('statsAchievements').innerHTML = achievementsHtml;
+            
+            document.getElementById('driverStatsModal').classList.add('active');
+        }
+        
+        function closeDriverStatsModal() {
+            document.getElementById('driverStatsModal').classList.remove('active');
         }
 
         // Close modals on outside click
@@ -2287,6 +3229,36 @@
         document.getElementById('addVehicleModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeAddVehicleModal();
+            }
+        });
+
+        document.getElementById('editDriverModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditDriverModal();
+            }
+        });
+
+        document.getElementById('editVehicleModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditVehicleModal();
+            }
+        });
+
+        document.getElementById('serviceHistoryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeServiceHistoryModal();
+            }
+        });
+
+        document.getElementById('callDriverModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                endCall();
+            }
+        });
+
+        document.getElementById('driverStatsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDriverStatsModal();
             }
         });
 
