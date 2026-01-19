@@ -3459,53 +3459,53 @@
                 <button class="modal-close" onclick="hideModal('goalModal')">&times;</button>
             </div>
 
-            <form>
+            <form id="goalModalForm" onsubmit="return saveGoalFromModal(event)">
                 <div class="form-group">
                     <label class="form-label">Nazwa celu</label>
-                    <input type="text" class="form-input" placeholder="np. Przychód Styczeń 2026">
+                    <input type="text" id="goalModalTitle" class="form-input" placeholder="np. Przychód Styczeń 2026" required>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Typ celu</label>
-                    <select class="form-select">
-                        <option>Liczbowy</option>
-                        <option>Jakościowy</option>
+                    <select id="goalModalType" class="form-select">
+                        <option value="Liczbowy">Liczbowy</option>
+                        <option value="Jakościowy">Jakościowy</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Kategoria</label>
-                    <select class="form-select">
-                        <option>Przychody/Sprzedaż</option>
-                        <option>Rejestracje</option>
-                        <option>Wizyty u klientów</option>
-                        <option>Retencja klientów</option>
-                        <option>Standardy pracy</option>
-                        <option>Jakość CRM</option>
-                        <option>Raportowanie</option>
-                        <option>Inne</option>
+                    <select id="goalModalCategory" class="form-select">
+                        <option value="Przychody/Sprzedaż">Przychody/Sprzedaż</option>
+                        <option value="Rejestracje">Rejestracje</option>
+                        <option value="Wizyty u klientów">Wizyty u klientów</option>
+                        <option value="Retencja klientów">Retencja klientów</option>
+                        <option value="Standardy pracy">Standardy pracy</option>
+                        <option value="Jakość CRM">Jakość CRM</option>
+                        <option value="Raportowanie">Raportowanie</option>
+                        <option value="Inne">Inne</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Wartość docelowa</label>
-                    <input type="text" class="form-input" placeholder="np. 300000 PLN lub 25 rejestracji">
+                    <input type="text" id="goalModalTarget" class="form-input" placeholder="np. 300000 PLN lub 25 rejestracji">
                 </div>
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
                         <label class="form-label">Data rozpoczęcia</label>
-                        <input type="date" class="form-input">
+                        <input type="date" id="goalModalStartDate" class="form-input">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Termin realizacji</label>
-                        <input type="date" class="form-input">
+                        <input type="date" id="goalModalDeadline" class="form-input">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-label">Opis</label>
-                    <textarea class="form-textarea" placeholder="Opcjonalny opis celu..."></textarea>
+                    <textarea id="goalModalDescription" class="form-textarea" placeholder="Opcjonalny opis celu..."></textarea>
                 </div>
 
                 <div class="modal-footer">
@@ -3581,6 +3581,125 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="hideModal('taskModal')">Anuluj</button>
                 <button class="btn btn-primary" onclick="saveTask()">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Edit Modal -->
+    <div id="taskEditModal" class="modal">
+        <div class="modal-content" style="max-width: 720px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edytuj zadanie</h3>
+                <button class="modal-close" onclick="hideModal('taskEditModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editTaskId">
+                <div class="form-group">
+                    <label class="form-label">Tytuł</label>
+                    <input type="text" id="editTaskTitle" class="form-input" placeholder="Np. Kontakt z klientem">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Klient</label>
+                    <input type="text" id="editTaskClient" class="form-input" placeholder="Np. Firma Budowlana Budowa">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Data</label>
+                        <input type="date" id="editTaskDateIso" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priorytet</label>
+                        <select id="editTaskPriority" class="form-select">
+                            <option>Wysoki</option>
+                            <option>Średni</option>
+                            <option>Niski</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Opis</label>
+                    <textarea id="editTaskDescription" class="form-textarea" placeholder="Szczegóły..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('taskEditModal')">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveTaskEdits()">Zapisz zmiany</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Edit Modal -->
+    <div id="goalEditModal" class="modal">
+        <div class="modal-content" style="max-width: 760px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edytuj cel</h3>
+                <button class="modal-close" onclick="hideModal('goalEditModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editGoalId">
+                <div class="form-group">
+                    <label class="form-label">Nazwa celu</label>
+                    <input type="text" id="editGoalTitle" class="form-input" placeholder="Np. Przychód Styczeń 2026">
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Typ celu</label>
+                        <select id="editGoalType" class="form-select">
+                            <option>Liczbowy</option>
+                            <option>Jakościowy</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Jednostka</label>
+                        <input type="text" id="editGoalUnit" class="form-input" placeholder="Np. PLN, %, szt.">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Wartość docelowa</label>
+                        <input type="number" id="editGoalTarget" class="form-input" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Aktualna wartość</label>
+                        <input type="number" id="editGoalCurrent" class="form-input" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Termin</label>
+                    <input type="date" id="editGoalDeadline" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Opis</label>
+                    <textarea id="editGoalDescription" class="form-textarea" placeholder="Szczegóły..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('goalEditModal')">Anuluj</button>
+                <button class="btn btn-primary" onclick="saveGoalEdits()">Zapisz zmiany</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Progress Modal -->
+    <div id="taskProgressModal" class="modal">
+        <div class="modal-content" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Realizacja zadania</h3>
+                <button class="modal-close" onclick="closeTaskProgressModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="font-weight:600; margin-bottom: 8px;" id="progressTaskTitle">Przetwarzanie...</div>
+                <div style="color:#666; font-size: 0.875rem; margin-bottom: 18px;" id="progressTaskHint">Trwa wykonywanie akcji. Proszę czekać…</div>
+                <div style="background:#eee; border-radius: 8px; height: 14px; overflow:hidden; border: 1px solid #ddd;">
+                    <div id="progressBarFill" style="height: 100%; width: 0%; background: #ef7d05; transition: width 0.2s;"></div>
+                </div>
+                <div style="margin-top: 10px; display:flex; justify-content: space-between; align-items:center;">
+                    <span style="color:#666; font-size: 0.875rem;" id="progressStepText">Inicjalizacja…</span>
+                    <span style="font-weight:600;" id="progressPercentText">0%</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTaskProgressModal()">Zamknij</button>
             </div>
         </div>
     </div>
@@ -4332,41 +4451,45 @@
         // =====================================================
         function renderSavedActivities() {
             const activities = storageGet('activities', []);
-            const activityList = document.querySelector('.activity-timeline');
+            const activityList = document.querySelector('.activity-feed');
             if (!activityList) return;
 
             // Remove previously rendered localStorage activities
             activityList.querySelectorAll('.activity-item[data-storage-id]').forEach(item => item.remove());
 
-            // Insert at the beginning
+            // Insert at the beginning (before static items)
             const firstStaticItem = activityList.querySelector('.activity-item:not([data-storage-id])');
 
+            // Icons matching boxicons used in static HTML
+            const icons = {
+                'task': 'bx bx-check-circle',
+                'visit': 'bx bx-car',
+                'goal': 'bx bx-target-lock',
+                'note': 'bx bx-edit',
+                'call': 'bx bx-phone-call',
+                'email': 'bx bx-envelope'
+            };
+
             activities.forEach(activity => {
-                const icons = {
-                    'task': 'fi fi-rr-checkbox',
-                    'visit': 'fi fi-rr-marker',
-                    'goal': 'fi fi-rr-target',
-                    'note': 'fi fi-rr-document',
-                    'call': 'fi fi-rr-phone-call',
-                    'email': 'fi fi-rr-envelope'
-                };
-                const icon = icons[activity.type] || 'fi fi-rr-document';
+                const icon = icons[activity.type] || 'bx bx-file';
+                const clientName = activity.client || 'Nieznany klient';
 
                 const newItem = document.createElement('div');
                 newItem.className = 'activity-item';
                 newItem.setAttribute('data-storage-id', activity.id);
+                newItem.setAttribute('onclick', 'showActivityActions(this)');
                 newItem.innerHTML = `
-                    <div class="activity-icon">
-                        <i class="${icon}"></i>
-                    </div>
+                    <div class="activity-icon"><i class='${icon}'></i></div>
                     <div class="activity-content">
                         <div class="activity-title">${activity.title || activity.type}</div>
-                        <div class="activity-meta">${activity.client || ''} • ${activity.dateStr || ''}</div>
-                        ${activity.description ? `<div class="activity-description">${activity.description}</div>` : ''}
+                        <div class="activity-meta">${clientName}${activity.description ? ' • ' + activity.description.substring(0, 50) + (activity.description.length > 50 ? '...' : '') : ''}</div>
+                        <div class="activity-actions" style="display: none;">
+                            <button class="btn btn-secondary" onclick="event.stopPropagation(); showNoteModal('${clientName.replace(/'/g, "\\'")}')">+ Notatka</button>
+                            <button class="btn btn-primary" onclick="event.stopPropagation(); showTaskModal('${clientName.replace(/'/g, "\\'")}')">+ Zadanie</button>
+                            <button class="btn btn-danger" onclick="event.stopPropagation(); deleteActivity(${activity.id})" style="background: #ef4444; color: white;">Usuń</button>
+                        </div>
                     </div>
-                    <button onclick="deleteActivity(${activity.id})" title="Usuń" style="background: none; border: none; cursor: pointer; color: var(--color-gray);">
-                        <i class="fi fi-rr-trash"></i>
-                    </button>
+                    <div class="activity-time">${activity.dateStr || 'Teraz'}</div>
                 `;
                 if (firstStaticItem) {
                     activityList.insertBefore(newItem, firstStaticItem);
@@ -4394,35 +4517,51 @@
             // Remove previously rendered localStorage tasks
             taskList.querySelectorAll('.task-item[data-storage-id]').forEach(item => item.remove());
 
-            // Insert at the beginning
+            // Insert at the beginning (before static items)
             const firstStaticItem = taskList.querySelector('.task-item:not([data-storage-id])');
 
+            // Priority class mapping
+            const priorityClasses = {
+                'Wysoki': 'high',
+                'Średni': 'medium',
+                'Niski': 'low'
+            };
+
+            // Icons for task types
+            const taskIcons = {
+                'task': 'bx bx-check-circle',
+                'visit': 'bx bx-car',
+                'call': 'bx bx-phone-call',
+                'email': 'bx bx-envelope',
+                'note': 'bx bx-edit',
+                'goal': 'bx bx-target-lock'
+            };
+
             tasks.forEach(task => {
-                const priorityColors = {
-                    'Wysoki': '#ef4444',
-                    'Średni': '#f59e0b',
-                    'Niski': '#22c55e'
-                };
-                const priorityColor = priorityColors[task.priority] || '#666';
+                const priorityClass = priorityClasses[task.priority] || 'medium';
+                const icon = taskIcons[task.type] || 'bx bx-check-circle';
+                const clientName = task.client || 'Brak klienta';
 
                 const newItem = document.createElement('div');
                 newItem.className = 'task-item';
                 newItem.draggable = true;
                 newItem.setAttribute('data-storage-id', task.id);
                 newItem.innerHTML = `
-                    <div class="task-checkbox">
-                        <input type="checkbox" onchange="toggleTask(this)">
-                    </div>
+                    <div class="task-drag-handle">⋮⋮</div>
+                    <input type="checkbox" class="task-checkbox" onchange="toggleTask(this)">
                     <div class="task-content">
-                        <div class="task-title">${task.title} - ${task.client || 'Brak klienta'}</div>
-                        <div class="task-meta">
-                            <span><i class="fi fi-rr-calendar"></i> ${task.dateStr || 'Brak terminu'}</span>
-                            <span style="color: ${priorityColor}"><i class="fi fi-rr-flag"></i> ${task.priority}</span>
+                        <div class="task-icon"><i class='${icon}'></i></div>
+                        <div class="task-details">
+                            <div class="task-title">${task.title} - ${clientName}
+                                <span class="task-priority ${priorityClass}">${task.priority || 'Średni'}</span>
+                            </div>
+                            <div class="task-meta">${task.dateStr || 'Brak terminu'}${task.description ? ' • ' + task.description.substring(0, 60) + (task.description.length > 60 ? '...' : '') : ''}</div>
                         </div>
                     </div>
                     <div class="task-actions">
-                        <button class="icon-btn" onclick="editTask(this)" title="Edytuj"><i class="fi fi-rr-edit"></i></button>
-                        <button class="icon-btn" onclick="deleteTaskItem(${task.id})" title="Usuń"><i class="fi fi-rr-trash"></i></button>
+                        <button class="btn btn-secondary" onclick="editTask(this)">Edytuj</button>
+                        <button class="btn btn-success" onclick="startTask(this)">Rozpocznij</button>
+                        <button class="btn btn-danger" onclick="deleteTaskItem(${task.id})" style="background: #ef4444; color: white;">Usuń</button>
                     </div>
                 `;
                 if (firstStaticItem) {
@@ -4441,11 +4580,345 @@
         }
 
         // =====================================================
+        // Render Saved Goals
+        // =====================================================
+        function renderSavedGoals() {
+            const goals = storageGet('goals', []);
+            
+            // Render to all goals-grid containers
+            document.querySelectorAll('.goals-grid').forEach(goalsGrid => {
+                // Remove previously rendered localStorage goals
+                goalsGrid.querySelectorAll('.goal-item[data-storage-id]').forEach(item => item.remove());
+
+                // Insert at the beginning (before static items)
+                const firstStaticItem = goalsGrid.querySelector('.goal-item:not([data-storage-id])');
+
+                goals.forEach(goal => {
+                    const badgeClass = goal.goalType === 'Liczbowy' ? 'liczbowy' : 'jakosciowy';
+                    const progress = goal.targetValue > 0 ? Math.round((goal.currentValue / goal.targetValue) * 100) : 0;
+                    const progressCapped = Math.min(progress, 100);
+                    const dataType = goal.goalType === 'Liczbowy' ? 'numeric' : 'qualitative';
+                    const dataStatus = progressCapped >= 100 ? 'completed' : 'in-progress';
+
+                    const newItem = document.createElement('div');
+                    newItem.className = 'goal-item';
+                    newItem.setAttribute('data-storage-id', goal.id);
+                    newItem.setAttribute('data-type', dataType);
+                    newItem.setAttribute('data-status', dataStatus);
+                    newItem.setAttribute('onclick', 'toggleGoalActions(this)');
+                    newItem.innerHTML = `
+                        <div class="goal-header">
+                            <div>
+                                <div class="goal-title">${goal.title}</div>
+                                <div class="goal-meta">${goal.deadlineStr ? 'Do ' + goal.deadlineStr : 'Bez terminu'}</div>
+                            </div>
+                            <span class="goal-badge ${badgeClass}">${goal.goalType}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill${progressCapped >= 100 ? ' complete' : ''}" style="width: ${progressCapped}%"></div>
+                        </div>
+                        <div class="progress-label">${goal.currentValue.toLocaleString('pl-PL')} / ${goal.targetValue.toLocaleString('pl-PL')} ${goal.unit} (${progress}%)</div>
+                        <div class="goal-actions">
+                            <div class="goal-action-item">
+                                <span class="goal-action-text">${goal.description || 'Brak opisu'}</span>
+                                <div style="display:flex; gap: 8px; align-items:center;">
+                                    <button class="goal-action-button" onclick="event.stopPropagation(); openGoalEditModal(${goal.id})">Edytuj</button>
+                                    <button class="goal-action-button" onclick="event.stopPropagation(); deleteGoalItem(${goal.id})" style="background: #ef4444;">Usuń cel</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    if (firstStaticItem) {
+                        goalsGrid.insertBefore(newItem, firstStaticItem);
+                    } else {
+                        goalsGrid.appendChild(newItem);
+                    }
+                });
+            });
+        }
+
+        function deleteGoalItem(id) {
+            if (confirm('Czy na pewno chcesz usunąć ten cel?')) {
+                deleteRecord('goals', id);
+                renderSavedGoals();
+            }
+        }
+
+        // =====================================================
+        // Save Goal from goalModal (+ Nowy cel button)
+        // =====================================================
+        function saveGoalFromModal(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('goalModalTitle')?.value || '';
+            const goalType = document.getElementById('goalModalType')?.value || 'Liczbowy';
+            const category = document.getElementById('goalModalCategory')?.value || 'Inne';
+            const targetText = document.getElementById('goalModalTarget')?.value || '';
+            const startDate = document.getElementById('goalModalStartDate')?.value || '';
+            const deadline = document.getElementById('goalModalDeadline')?.value || '';
+            const description = document.getElementById('goalModalDescription')?.value || '';
+
+            if (!title.trim()) {
+                alert('Proszę wpisać nazwę celu.');
+                return false;
+            }
+
+            // Parse target value - extract number from text like "300000 PLN" or "25 rejestracji"
+            const targetMatch = targetText.match(/[\d\s]+/);
+            const targetValue = targetMatch ? parseFloat(targetMatch[0].replace(/\s/g, '')) || 0 : 0;
+            
+            // Extract unit from target text
+            const unitMatch = targetText.match(/[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ%]+/g);
+            const unit = unitMatch ? unitMatch.join(' ') : 'szt.';
+
+            const goalRecord = {
+                title: title,
+                goalType: goalType,
+                category: category,
+                targetValue: targetValue,
+                currentValue: 0,
+                unit: unit,
+                startDate: startDate,
+                startDateStr: startDate ? new Date(startDate).toLocaleDateString('pl-PL') : '',
+                deadline: deadline,
+                deadlineStr: deadline ? new Date(deadline).toLocaleDateString('pl-PL') : '',
+                description: description,
+                createdAt: new Date().toISOString()
+            };
+
+            upsertRecord('goals', goalRecord);
+            renderSavedGoals();
+
+            // Reset form
+            document.getElementById('goalModalForm').reset();
+
+            // Close modal
+            hideModal('goalModal');
+
+            return false;
+        }
+
+        // =====================================================
+        // Edit Modals (Tasks + Goals)
+        // =====================================================
+        function parsePlDateToIso(dateStr) {
+            // dd.mm.yyyy -> yyyy-mm-dd
+            if (!dateStr || typeof dateStr !== 'string') return '';
+            const m = dateStr.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+            if (!m) return '';
+            const dd = String(m[1]).padStart(2, '0');
+            const mm = String(m[2]).padStart(2, '0');
+            const yyyy = m[3];
+            return `${yyyy}-${mm}-${dd}`;
+        }
+
+        function openTaskEditModal(taskId, draft = null) {
+            const idEl = document.getElementById('editTaskId');
+            const titleEl = document.getElementById('editTaskTitle');
+            const clientEl = document.getElementById('editTaskClient');
+            const dateIsoEl = document.getElementById('editTaskDateIso');
+            const priorityEl = document.getElementById('editTaskPriority');
+            const descEl = document.getElementById('editTaskDescription');
+
+            let task = null;
+            if (taskId) {
+                const tasks = storageGet('tasks', []);
+                task = tasks.find(t => t.id == taskId) || null;
+            }
+
+            if (task) {
+                idEl.value = String(task.id);
+                titleEl.value = task.title || '';
+                clientEl.value = task.client || '';
+                dateIsoEl.value = task.dateISO || parsePlDateToIso(task.dateStr || '');
+                priorityEl.value = task.priority || 'Średni';
+                descEl.value = task.description || '';
+            } else {
+                // Draft from static DOM
+                idEl.value = '';
+                titleEl.value = (draft?.titleFromDom || '').split(' - ')[0]?.trim() || '';
+                clientEl.value = (draft?.titleFromDom || '').split(' - ')[1]?.trim() || '';
+                dateIsoEl.value = '';
+                priorityEl.value = 'Średni';
+                descEl.value = draft?.metaFromDom || '';
+            }
+
+            showModal('taskEditModal');
+        }
+
+        function saveTaskEdits() {
+            const id = document.getElementById('editTaskId').value;
+            const title = document.getElementById('editTaskTitle').value.trim();
+            const client = document.getElementById('editTaskClient').value.trim();
+            const dateISO = document.getElementById('editTaskDateIso').value;
+            const priority = document.getElementById('editTaskPriority').value;
+            const description = document.getElementById('editTaskDescription').value.trim();
+
+            if (!title) {
+                alert('Proszę wpisać tytuł.');
+                return;
+            }
+
+            const tasks = storageGet('tasks', []);
+            let record = null;
+            if (id) {
+                record = tasks.find(t => t.id == id) || null;
+            }
+
+            const dateStr = dateISO ? new Date(dateISO).toLocaleDateString('pl-PL') : (record?.dateStr || new Date().toLocaleDateString('pl-PL'));
+
+            const updated = {
+                ...(record || {}),
+                id: record?.id || undefined,
+                type: record?.type || 'task',
+                title,
+                client,
+                dateISO,
+                dateStr,
+                priority,
+                description,
+                updatedAt: new Date().toISOString()
+            };
+
+            upsertRecord('tasks', updated);
+            renderSavedTasks();
+            hideModal('taskEditModal');
+        }
+
+        function openGoalEditModal(goalId) {
+            const goals = storageGet('goals', []);
+            const goal = goals.find(g => g.id == goalId);
+            if (!goal) return;
+
+            document.getElementById('editGoalId').value = String(goal.id);
+            document.getElementById('editGoalTitle').value = goal.title || '';
+            document.getElementById('editGoalType').value = goal.goalType || 'Liczbowy';
+            document.getElementById('editGoalUnit').value = goal.unit || '';
+            document.getElementById('editGoalTarget').value = goal.targetValue ?? 0;
+            document.getElementById('editGoalCurrent').value = goal.currentValue ?? 0;
+            document.getElementById('editGoalDeadline').value = goal.deadline || '';
+            document.getElementById('editGoalDescription').value = goal.description || '';
+
+            showModal('goalEditModal');
+        }
+
+        function saveGoalEdits() {
+            const id = document.getElementById('editGoalId').value;
+            const title = document.getElementById('editGoalTitle').value.trim();
+            const goalType = document.getElementById('editGoalType').value;
+            const unit = document.getElementById('editGoalUnit').value.trim() || 'PLN';
+            const targetValue = parseFloat(document.getElementById('editGoalTarget').value) || 0;
+            const currentValue = parseFloat(document.getElementById('editGoalCurrent').value) || 0;
+            const deadline = document.getElementById('editGoalDeadline').value;
+            const description = document.getElementById('editGoalDescription').value.trim();
+
+            if (!title) {
+                alert('Proszę wpisać nazwę celu.');
+                return;
+            }
+
+            const goals = storageGet('goals', []);
+            const existing = goals.find(g => g.id == id);
+            if (!existing) return;
+
+            const updated = {
+                ...existing,
+                title,
+                goalType,
+                unit,
+                targetValue,
+                currentValue,
+                deadline,
+                deadlineStr: deadline ? new Date(deadline).toLocaleDateString('pl-PL') : '',
+                description,
+                updatedAt: new Date().toISOString()
+            };
+
+            upsertRecord('goals', updated);
+            renderSavedGoals();
+            hideModal('goalEditModal');
+        }
+
+        // =====================================================
+        // Task Progress Modal
+        // =====================================================
+        let progressTimer = null;
+
+        function openTaskProgressModal(taskId, draft = null) {
+            const titleEl = document.getElementById('progressTaskTitle');
+            const hintEl = document.getElementById('progressTaskHint');
+            const barEl = document.getElementById('progressBarFill');
+            const pctEl = document.getElementById('progressPercentText');
+            const stepEl = document.getElementById('progressStepText');
+
+            // Reset UI
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+            barEl.style.width = '0%';
+            pctEl.textContent = '0%';
+            stepEl.textContent = 'Inicjalizacja…';
+
+            let task = null;
+            if (taskId) {
+                const tasks = storageGet('tasks', []);
+                task = tasks.find(t => t.id == taskId) || null;
+            }
+
+            titleEl.textContent = task?.title ? `Realizacja: ${task.title}` : (draft?.title ? `Realizacja: ${draft.title}` : 'Realizacja zadania');
+            hintEl.textContent = 'Trwa wykonywanie akcji. Proszę czekać…';
+
+            showModal('taskProgressModal');
+
+            // Mark as in-progress in storage (optional)
+            if (task) {
+                upsertRecord('tasks', { ...task, status: 'in-progress', startedAt: new Date().toISOString() });
+                renderSavedTasks();
+            }
+
+            const steps = [
+                'Łączenie…',
+                'Walidacja danych…',
+                'Wysyłanie…',
+                'Finalizacja…',
+                'Zakończono'
+            ];
+            let pct = 0;
+            progressTimer = setInterval(() => {
+                pct += Math.floor(Math.random() * 12) + 6; // +6..+17
+                if (pct >= 100) pct = 100;
+                barEl.style.width = `${pct}%`;
+                pctEl.textContent = `${pct}%`;
+                stepEl.textContent = steps[Math.min(Math.floor(pct / 25), steps.length - 1)];
+
+                if (pct === 100) {
+                    clearInterval(progressTimer);
+                    progressTimer = null;
+                    hintEl.textContent = 'Akcja zakończona.';
+                    if (task) {
+                        upsertRecord('tasks', { ...task, status: 'completed', completedAt: new Date().toISOString() });
+                        renderSavedTasks();
+                    }
+                }
+            }, 450);
+        }
+
+        function closeTaskProgressModal() {
+            if (progressTimer) {
+                clearInterval(progressTimer);
+                progressTimer = null;
+            }
+            hideModal('taskProgressModal');
+        }
+
+        // =====================================================
         // Initialize on DOMContentLoaded
         // =====================================================
         document.addEventListener('DOMContentLoaded', function() {
             renderSavedActivities();
             renderSavedTasks();
+            renderSavedGoals();
             
             // Load tab from URL on page load
             const tabFromUrl = getTabFromUrl();
@@ -4607,6 +5080,7 @@
 
             let activityType = '';
             let activityData = {};
+            let saveGoal = false;
 
             const today = new Date();
             const dateStr = today.toLocaleDateString('pl-PL');
@@ -4614,13 +5088,20 @@
             if (taskForm && taskForm.style.display !== 'none') {
                 activityType = 'task';
                 const client = taskForm.querySelector('.form-select')?.value || '';
-                const title = taskForm.querySelector('.form-input[placeholder*="Tytuł"]')?.value || 'Zadanie';
+                const title = taskForm.querySelector('input[placeholder*="Tytuł"]')?.value || 'Zadanie';
                 const date = taskForm.querySelector('input[type="date"]')?.value || '';
-                const priority = taskForm.querySelector('.form-select:last-of-type')?.value || 'Średni';
+                const selects = taskForm.querySelectorAll('.form-select');
+                const priority = selects.length > 1 ? selects[1].value : 'Średni';
                 const description = taskForm.querySelector('.form-textarea')?.value || '';
 
-                // Also save as task
+                if (!title.trim() || client === 'Wybierz klienta') {
+                    alert('Proszę wypełnić tytuł i wybrać klienta.');
+                    return;
+                }
+
+                // Save as task with type
                 const taskRecord = {
+                    type: 'task',
                     title: title,
                     client: client,
                     dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr,
@@ -4631,34 +5112,156 @@
                 upsertRecord('tasks', taskRecord);
                 renderSavedTasks();
 
-                activityData = { title, client, description, dateStr };
+                activityData = { title, client, description, dateStr: taskRecord.dateStr };
+
             } else if (visitForm && visitForm.style.display !== 'none') {
                 activityType = 'visit';
                 const client = visitForm.querySelector('.form-select')?.value || '';
                 const date = visitForm.querySelector('input[type="date"]')?.value || '';
                 const time = visitForm.querySelector('input[type="time"]')?.value || '';
                 const description = visitForm.querySelector('.form-textarea')?.value || '';
-                activityData = { title: 'Wizyta u klienta', client, description, dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr };
+                const address = visitForm.querySelector('input[placeholder*="ul."]')?.value || '';
+
+                if (client === 'Wybierz klienta') {
+                    alert('Proszę wybrać klienta.');
+                    return;
+                }
+
+                const visitDateStr = date ? new Date(date).toLocaleDateString('pl-PL') : dateStr;
+                activityData = { 
+                    title: 'Wizyta u klienta', 
+                    client, 
+                    description: (time ? time + ' • ' : '') + (address ? address + ' • ' : '') + description, 
+                    dateStr: visitDateStr 
+                };
+
+                // Also save as task
+                const taskRecord = {
+                    type: 'visit',
+                    title: 'Wizyta u klienta',
+                    client: client,
+                    dateStr: visitDateStr,
+                    priority: 'Wysoki',
+                    description: description,
+                    createdAt: new Date().toISOString()
+                };
+                upsertRecord('tasks', taskRecord);
+                renderSavedTasks();
+
+            } else if (goalForm && goalForm.style.display !== 'none') {
+                activityType = 'goal';
+                // Get all text inputs in goalForm
+                const textInputs = goalForm.querySelectorAll('input.form-input[type="text"], input.form-input:not([type])');
+                const numberInput = goalForm.querySelector('input[type="number"]');
+                const dateInput = goalForm.querySelector('input[type="date"]');
+                
+                const title = textInputs[0]?.value || '';
+                const goalType = goalForm.querySelector('.form-select')?.value || 'Liczbowy';
+                const targetValue = numberInput?.value || 0;
+                const unit = textInputs[1]?.value || 'PLN';
+                const deadline = dateInput?.value || '';
+                const description = goalForm.querySelector('.form-textarea')?.value || '';
+
+                if (!title.trim()) {
+                    alert('Proszę wpisać nazwę celu.');
+                    return;
+                }
+
+                // Save as goal
+                const goalRecord = {
+                    title: title,
+                    goalType: goalType,
+                    targetValue: parseFloat(targetValue) || 0,
+                    currentValue: 0,
+                    unit: unit,
+                    deadline: deadline,
+                    deadlineStr: deadline ? new Date(deadline).toLocaleDateString('pl-PL') : '',
+                    description: description,
+                    createdAt: new Date().toISOString()
+                };
+                upsertRecord('goals', goalRecord);
+                renderSavedGoals();
+                saveGoal = true;
+
+                activityData = { title: 'Nowy cel: ' + title, client: '', description, dateStr };
+
             } else if (noteForm && noteForm.style.display !== 'none') {
                 activityType = 'note';
                 const client = noteForm.querySelector('.form-select')?.value || '';
+                const selects = noteForm.querySelectorAll('.form-select');
+                const noteType = selects.length > 1 ? selects[1].value : 'Notatka ogólna';
                 const content = noteForm.querySelector('.form-textarea')?.value || '';
-                activityData = { title: 'Notatka', client, description: content, dateStr };
+
+                if (!content.trim()) {
+                    alert('Proszę wpisać treść notatki.');
+                    return;
+                }
+
+                activityData = { title: noteType || 'Notatka', client, description: content, dateStr };
+
             } else if (callForm && callForm.style.display !== 'none') {
                 activityType = 'call';
                 const client = callForm.querySelector('.form-select')?.value || '';
                 const date = callForm.querySelector('input[type="date"]')?.value || '';
+                const time = callForm.querySelector('input[type="time"]')?.value || '';
                 const description = callForm.querySelector('.form-textarea')?.value || '';
-                activityData = { title: 'Rozmowa telefoniczna', client, description, dateStr: date ? new Date(date).toLocaleDateString('pl-PL') : dateStr };
+
+                if (client === 'Wybierz klienta') {
+                    alert('Proszę wybrać klienta.');
+                    return;
+                }
+
+                const callDateStr = date ? new Date(date).toLocaleDateString('pl-PL') : dateStr;
+                activityData = { 
+                    title: 'Rozmowa telefoniczna', 
+                    client, 
+                    description: (time ? time + ' • ' : '') + description, 
+                    dateStr: callDateStr 
+                };
+
+                // Also save as task
+                const taskRecord = {
+                    type: 'call',
+                    title: 'Rozmowa telefoniczna',
+                    client: client,
+                    dateStr: callDateStr,
+                    priority: 'Średni',
+                    description: description,
+                    createdAt: new Date().toISOString()
+                };
+                upsertRecord('tasks', taskRecord);
+                renderSavedTasks();
+
             } else if (emailForm && emailForm.style.display !== 'none') {
                 activityType = 'email';
                 const client = emailForm.querySelector('.form-select')?.value || '';
                 const subject = emailForm.querySelector('input[type="text"]')?.value || 'Email';
                 const content = emailForm.querySelector('.form-textarea')?.value || '';
-                activityData = { title: subject, client, description: content, dateStr };
+                const date = emailForm.querySelector('input[type="date"]')?.value || '';
+
+                if (client === 'Wybierz klienta') {
+                    alert('Proszę wybrać klienta.');
+                    return;
+                }
+
+                const emailDateStr = date ? new Date(date).toLocaleDateString('pl-PL') : dateStr;
+                activityData = { title: subject || 'Email', client, description: content, dateStr: emailDateStr };
+
+                // Also save as task
+                const taskRecord = {
+                    type: 'email',
+                    title: 'Wysłanie emaila: ' + (subject || 'Email'),
+                    client: client,
+                    dateStr: emailDateStr,
+                    priority: 'Niski',
+                    description: content,
+                    createdAt: new Date().toISOString()
+                };
+                upsertRecord('tasks', taskRecord);
+                renderSavedTasks();
             }
 
-            if (activityType) {
+            if (activityType && !saveGoal) {
                 const activityRecord = {
                     type: activityType,
                     ...activityData,
@@ -4668,8 +5271,19 @@
                 renderSavedActivities();
             }
 
-            alert('Akcja zapisana!');
+            // Reset form fields
+            resetFormFields();
             hideModal('addModal');
+        }
+
+        function resetFormFields() {
+            // Reset all form inputs
+            document.querySelectorAll('#addModal input[type="text"], #addModal input[type="date"], #addModal input[type="time"], #addModal input[type="number"], #addModal textarea').forEach(input => {
+                input.value = '';
+            });
+            document.querySelectorAll('#addModal select').forEach(select => {
+                select.selectedIndex = 0;
+            });
         }
 
         // Activity actions
@@ -4718,15 +5332,20 @@
             upsertRecord('activities', activityRecord);
             renderSavedActivities();
 
-            alert('Notatka zapisana!');
+            // Reset form
+            document.querySelector('#noteModal .form-textarea').value = '';
+
             hideModal('noteModal');
         }
 
         function saveTask() {
             const client = document.getElementById('taskClient')?.value || '';
-            const title = document.querySelector('#taskModal .form-input[placeholder*="Kontakt"]')?.value || 'Zadanie';
-            const description = document.querySelector('#taskModal .form-textarea')?.value || '';
-            const date = document.querySelector('#taskModal input[type="date"]')?.value || '';
+            const titleInput = document.querySelector('#taskModal .form-input[placeholder*="Kontakt"]');
+            const title = titleInput?.value || 'Zadanie';
+            const descriptionInput = document.querySelector('#taskModal .form-textarea');
+            const description = descriptionInput?.value || '';
+            const dateInput = document.querySelector('#taskModal input[type="date"]');
+            const date = dateInput?.value || '';
             const priority = document.querySelector('#taskModal .form-select')?.value || 'Średni';
 
             if (!title.trim()) {
@@ -4737,8 +5356,9 @@
             const today = new Date();
             const dateStr = date ? new Date(date).toLocaleDateString('pl-PL') : today.toLocaleDateString('pl-PL');
 
-            // Save as task
+            // Save as task with type
             const taskRecord = {
+                type: 'task',
                 title: title,
                 client: client,
                 dateStr: dateStr,
@@ -4761,7 +5381,11 @@
             upsertRecord('activities', activityRecord);
             renderSavedActivities();
 
-            alert('Zadanie zapisane!');
+            // Reset form
+            if (titleInput) titleInput.value = '';
+            if (descriptionInput) descriptionInput.value = '';
+            if (dateInput) dateInput.value = '';
+
             hideModal('taskModal');
         }
 
@@ -4777,8 +5401,26 @@
 
         function editTask(button) {
             const taskItem = button.closest('.task-item');
-            const taskTitle = taskItem.querySelector('.task-title').textContent.split(' - ')[0];
-            alert('Edytowanie zadania: ' + taskTitle);
+            const storageId = taskItem?.getAttribute('data-storage-id');
+            if (storageId) {
+                openTaskEditModal(parseFloat(storageId));
+                return;
+            }
+            // Fallback for static tasks: create editable draft from DOM
+            const titleText = taskItem?.querySelector('.task-title')?.textContent || 'Zadanie';
+            const metaText = taskItem?.querySelector('.task-meta')?.textContent || '';
+            openTaskEditModal(null, { titleFromDom: titleText, metaFromDom: metaText });
+        }
+
+        function startTask(button) {
+            const taskItem = button.closest('.task-item');
+            const storageId = taskItem?.getAttribute('data-storage-id');
+            if (storageId) {
+                openTaskProgressModal(parseFloat(storageId));
+                return;
+            }
+            // For static tasks show progress without storage update
+            openTaskProgressModal(null, { title: taskItem?.querySelector('.task-title')?.textContent || 'Zadanie' });
         }
 
         function toggleGoalActions(goalItem) {
@@ -4793,17 +5435,23 @@
         }
 
         function filterGoals(filter) {
-            // Update active tab
-            document.querySelectorAll('.goal-filter-btn').forEach(btn => {
+            // Update active tab (only in goals tab)
+            const goalsTab = document.getElementById('goals');
+            if (!goalsTab) return;
+
+            goalsTab.querySelectorAll('.goal-filter-btn').forEach(btn => {
                 btn.classList.remove('active');
                 btn.style.borderBottom = '2px solid transparent';
             });
-            
-            event.target.classList.add('active');
-            event.target.style.borderBottom = '2px solid #ef7d05';
+
+            const clickedBtn = (typeof event !== 'undefined' && event && event.target) ? event.target.closest('.goal-filter-btn') : null;
+            if (clickedBtn) {
+                clickedBtn.classList.add('active');
+                clickedBtn.style.borderBottom = '2px solid #ef7d05';
+            }
             
             // Filter goals
-            const goals = document.querySelectorAll('.goal-item');
+            const goals = goalsTab.querySelectorAll('.goals-grid .goal-item');
             goals.forEach(goal => {
                 const type = goal.getAttribute('data-type');
                 const status = goal.getAttribute('data-status');
@@ -5637,11 +6285,10 @@
             editActionsList.appendChild(actionItem);
         }
 
-        // Prevent form submissions (for demo)
+        // Prevent form submissions (for demo) - without alerts
         document.querySelectorAll('form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                alert('Demo: Formularz został przesłany pomyślnie!');
                 // Close modal if form is in modal
                 const modal = this.closest('.modal');
                 if (modal) {
