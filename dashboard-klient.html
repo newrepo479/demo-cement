@@ -1284,7 +1284,7 @@
             <div style="position: relative;">
                 <button class="notification-btn" onclick="toggleNotificationMenu(event)">
                     <i class="fi fi-rr-bell"></i>
-                    <span class="notification-badge" id="notificationBadge" data-static-count="3">3</span>
+                    <span class="notification-badge" id="notificationBadge">3</span>
                 </button>
                 <div class="notification-dropdown" id="notificationDropdown">
                     <div class="notification-header">
@@ -1349,7 +1349,7 @@
                 <li><a href="#" onclick="showTab('faktury'); return false;"><i class="fi fi-rr-file-invoice menu-icon"></i> Faktury i płatności</a></li>
                 <li><a href="#" onclick="showTab('raporty'); return false;"><i class="fi fi-rr-chart-line-up menu-icon"></i> Raporty</a></li>
                 <li><a href="#" onclick="showTab('transport'); return false;"><i class="fi fi-rr-truck menu-icon"></i> Zarządzanie transportem</a></li>
-                <li><a href="#" onclick="showTab('reklamacje'); return false;"><i class="fi fi-rr-exclamation-triangle menu-icon"></i> Reklamacje / Zgłoszenia <span class="menu-badge" id="complaintsBadge" data-static-count="2">2</span></a></li>
+                <li><a href="#" onclick="showTab('reklamacje'); return false;"><i class="fi fi-rr-exclamation-triangle menu-icon"></i> Reklamacje / Zgłoszenia <span class="menu-badge" id="complaintsBadge">2</span></a></li>
                 <li><a href="#" onclick="showTab('dane-firmy'); return false;"><i class="fi fi-rr-building menu-icon"></i> Dane firmy</a></li>
                 <li><a href="#" onclick="showTab('kontakt'); return false;"><i class="fi fi-rr-phone-call menu-icon"></i> Kontakt z opiekunem</a></li>
                 <li style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--color-gray);"><a href="chat.html" style="background: linear-gradient(135deg, #ef7d05, #ff9a3c); color: white !important;"><i class="fi fi-rr-comment-alt menu-icon"></i> AI Chat <span class="menu-badge" style="background: white; color: #ef7d05;">NEW</span></a></li>
@@ -3091,22 +3091,22 @@
         // =====================================================
         
         function updateBadges() {
-            // Update notification badge
+            // Update notification badge - count static elements from DOM + unread from localStorage
             const notifBadge = document.getElementById('notificationBadge');
             if (notifBadge) {
-                const staticCount = parseInt(notifBadge.dataset.staticCount) || 0;
+                const staticNotifCount = document.querySelectorAll('#notificationList .notification-item[data-static="true"]').length;
                 const notifications = storageGet('notifications', []);
                 const unreadCount = notifications.filter(n => n.isUnread).length;
-                notifBadge.textContent = staticCount + unreadCount;
+                notifBadge.textContent = staticNotifCount + unreadCount;
             }
             
-            // Update complaints badge
+            // Update complaints badge - count static rows from DOM + all from localStorage
             const complaintsBadge = document.getElementById('complaintsBadge');
             if (complaintsBadge) {
-                const staticCount = parseInt(complaintsBadge.dataset.staticCount) || 0;
+                const staticComplaintRows = document.querySelectorAll('#complaints-tbody tr:not([data-storage-id])').length;
                 const complaints = storageGet('complaints', []);
-                const newComplaintsCount = complaints.filter(c => c.status === 'nowe').length;
-                complaintsBadge.textContent = staticCount + newComplaintsCount;
+                const storageComplaintsCount = complaints.length;
+                complaintsBadge.textContent = staticComplaintRows + storageComplaintsCount;
             }
         }
 
