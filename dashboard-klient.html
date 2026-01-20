@@ -3091,13 +3091,14 @@
         // =====================================================
         
         function updateBadges() {
-            // Update notification badge - count static elements from DOM + unread from localStorage
+            // Update notification badge - count static elements from DOM + ALL from localStorage
+            // Badge must always match the number of items visible in dropdown
             const notifBadge = document.getElementById('notificationBadge');
             if (notifBadge) {
                 const staticNotifCount = document.querySelectorAll('#notificationList .notification-item[data-static="true"]').length;
                 const notifications = storageGet('notifications', []);
-                const unreadCount = notifications.filter(n => n.isUnread).length;
-                notifBadge.textContent = staticNotifCount + unreadCount;
+                const totalStorageCount = notifications.length;
+                notifBadge.textContent = staticNotifCount + totalStorageCount;
             }
             
             // Update complaints badge - count static rows from DOM + all from localStorage
