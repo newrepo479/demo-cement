@@ -1031,20 +1031,12 @@
                 <div class="date-time-grid">
                     <div class="form-group">
                         <label class="form-label" for="delivery-date"><i class="fi fi-rr-calendar"></i> Data dostawy:</label>
-                        <input type="date" id="delivery-date" class="form-input" value="2026-01-12" required>
-                        <p style="font-size: 12px; color: var(--color-gray); margin-top: 8px;"><i class="fi fi-rr-lightbulb"></i> Dostępne terminy: 11-14.01.2026</p>
+                        <input type="date" id="delivery-date" class="form-input" required>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="delivery-time"><i class="fi fi-rr-clock"></i> Godzina dostawy:</label>
-                        <select id="delivery-time" class="form-select" required>
-                            <option value="">Wybierz godzinę...</option>
-                            <option value="08:00">08:00</option>
-                            <option value="10:00">10:00</option>
-                            <option value="12:00" selected>12:00</option>
-                            <option value="14:00">14:00</option>
-                            <option value="16:00">16:00</option>
-                        </select>
+                        <input type="time" id="delivery-time" class="form-input" required>
                     </div>
                 </div>
 
@@ -1891,6 +1883,19 @@
             
             // Check if we're in edit mode
             checkEditMode();
+            
+            // Set current date as default for delivery date input
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const formattedDate = `${yyyy}-${mm}-${dd}`;
+            document.getElementById('delivery-date').value = formattedDate;
+            
+            // Set current time as default
+            const hh = String(today.getHours()).padStart(2, '0');
+            const min = String(today.getMinutes()).padStart(2, '0');
+            document.getElementById('delivery-time').value = `${hh}:${min}`;
         });
 
         // Initialize
