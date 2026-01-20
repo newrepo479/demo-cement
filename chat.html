@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Asystent Produktowy | SOHOsoft Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'custom-black': '#000',
+                        'custom-white': '#fff',
+                        'custom-gray': '#ccc',
+                        'custom-action': '#ef7d05'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Flaticon -->
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-bold-rounded/css/uicons-bold-rounded.css">
+    <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.1.0/uicons-solid-rounded/css/uicons-solid-rounded.css">
+    <!-- Boxicons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Marked.js for markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-black: #000;
+            --color-white: #fff;
+            --color-gray: #ccc;
+            --color-action: #ef7d05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            color: var(--color-black);
+            min-height: 100vh;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray);
+            padding: 0 30px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--color-black);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--color-black);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s;
+            background: #f0f0f0;
+        }
+
+        .back-btn:hover {
+            background: var(--color-gray);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            height: calc(100vh - 70px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .chat-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .chat-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header h1 i {
+            color: var(--color-action);
+        }
+
+        .chat-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(239, 125, 5, 0.2);
+            border: 1px solid var(--color-action);
+            border-radius: 8px;
+            color: var(--color-action);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .source-link:hover {
+            background: var(--color-action);
+            color: white;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .settings-panel label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .settings-panel input[type="password"],
+        .settings-panel select {
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 200px;
+        }
+
+        .settings-panel input:focus,
+        .settings-panel select:focus {
+            outline: none;
+            border-color: var(--color-action);
+            box-shadow: 0 0 0 3px rgba(239, 125, 5, 0.1);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--color-black);
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-primary {
+            background: var(--color-action);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d66a04;
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        /* Messages */
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message.assistant .message-avatar {
+            background: linear-gradient(135deg, var(--color-action), #ff9a3c);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .message.assistant .message-content {
+            background: #f5f5f5;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, var(--color-action), #ff9a3c);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-content p {
+            margin-bottom: 10px;
+        }
+
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 6px;
+        }
+
+        .message-content strong {
+            font-weight: 600;
+        }
+
+        .message-content code {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .message-source {
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .message-source a {
+            color: var(--color-action);
+            text-decoration: none;
+        }
+
+        .message-source a:hover {
+            text-decoration: underline;
+        }
+
+        /* Quick Prompts */
+        .quick-prompts {
+            padding: 12px 24px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .quick-prompt {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .quick-prompt:hover {
+            background: var(--color-action);
+            border-color: var(--color-action);
+            color: white;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px 24px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .input-area input:focus {
+            outline: none;
+            border-color: var(--color-action);
+        }
+
+        .input-area input::placeholder {
+            color: #aaa;
+        }
+
+        /* Loading */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 8px 0;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: #ccc;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Welcome message */
+        .welcome-message {
+            text-align: center;
+            padding: 60px 40px;
+            color: #888;
+        }
+
+        .welcome-message i {
+            font-size: 64px;
+            color: var(--color-action);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .welcome-message h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Error */
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fca5a5;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin: 10px 24px;
+            font-size: 14px;
+        }
+
+        /* Status indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-dot.ready {
+            background: #22c55e;
+        }
+
+        .status-dot.loading {
+            background: var(--color-action);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+            }
+
+            .settings-panel {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .settings-panel input[type="password"],
+            .settings-panel select {
+                min-width: 100%;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-left">
+            <a href="dashboard-klient.html" class="logo">
+                <i class="fi fi-rr-factory"></i>
+                <span>SOHOsoft</span>
+            </a>
+            <a href="dashboard-klient.html" class="back-btn">
+                <i class="fi fi-rr-arrow-left"></i>
+                Powrót do panelu
+            </a>
+        </div>
+        <div class="status-indicator">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Oczekiwanie na klucz API</span>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <h1><i class='bx bxs-bot'></i> AI Chat - Asystent Produktowy</h1>
+            <p>Zapytaj o produkty, ich właściwości, zastosowanie, ceny i dostępność. Chatbot odpowiada na podstawie danych produktowych.</p>
+            <a href="produkt-cem-ii.html" class="source-link" target="_blank">
+                <i class="fi fi-rr-document"></i>
+                Źródło danych: CEM II/A-LL 42,5R
+            </a>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                <label for="apiKey">OpenAI API Key:</label>
+                <input type="password" id="apiKey" placeholder="sk-..." style="flex: 1;">
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <label for="modelSelect">Model:</label>
+                <select id="modelSelect">
+                    <option value="gpt-4o-mini">GPT-4o Mini (szybki)</option>
+                    <option value="gpt-4o">GPT-4o (zaawansowany)</option>
+                    <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+                </select>
+            </div>
+            <button class="btn btn-secondary" onclick="clearChat()">
+                <i class="fi fi-rr-trash"></i>
+                Wyczyść
+            </button>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Messages -->
+            <div class="messages-container" id="messagesContainer">
+                <div class="welcome-message" id="welcomeMessage">
+                    <i class='bx bxs-message-square-dots'></i>
+                    <h2>Witaj w AI Chat!</h2>
+                    <p>Wpisz klucz API OpenAI powyżej i zadaj pytanie o produkty cementowe. Możesz też użyć szybkich podpowiedzi poniżej.</p>
+                </div>
+            </div>
+
+            <!-- Error container -->
+            <div id="errorContainer"></div>
+
+            <!-- Quick Prompts -->
+            <div class="quick-prompts">
+                <button class="quick-prompt" onclick="sendQuickPrompt('Jaki cement polecacie do fundamentów?')">
+                    <i class="fi fi-rr-home"></i> Cement do fundamentów
+                </button>
+                <button class="quick-prompt" onclick="sendQuickPrompt('Jaka jest cena i dostępność cementu CEM II?')">
+                    <i class="fi fi-rr-shopping-cart"></i> Cena i dostępność
+                </button>
+                <button class="quick-prompt" onclick="sendQuickPrompt('Jakie są dostępne opakowania? Porównaj worki, palety i luzem.')">
+                    <i class="fi fi-rr-box"></i> Porównaj opakowania
+                </button>
+                <button class="quick-prompt" onclick="sendQuickPrompt('Jakie są parametry techniczne cementu CEM II/A-LL 42,5R?')">
+                    <i class="fi fi-rr-document"></i> Parametry techniczne
+                </button>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <input type="text" id="messageInput" placeholder="Zadaj pytanie o produkty..." onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" id="sendBtn" onclick="sendMessage()">
+                    <i class="fi fi-rr-paper-plane"></i>
+                    Wyślij
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const PRODUCT_URL = 'produkt-cem-ii.html';
+        const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+        
+        // System prompt for the assistant
+        const SYSTEM_PROMPT = `Jesteś pomocnym asystentem produktowym firmy cementowej. Odpowiadasz na pytania klientów dotyczące produktów, ich właściwości, zastosowań, cen i dostępności.
+
+ZASADY:
+1. Odpowiadaj TYLKO na podstawie dostarczonego kontekstu produktowego
+2. Jeśli informacja nie znajduje się w kontekście, powiedz to jasno
+3. Bądź konkretny i pomocny
+4. Używaj języka polskiego
+5. Jeśli pytanie dotyczy cen lub dostępności - podawaj dane z kontekstu, jeśli są dostępne
+6. Formatuj odpowiedzi czytelnie - używaj list punktowanych dla wielu elementów
+7. Przy pytaniach o zastosowanie - odwołuj się do konkretnych parametrów technicznych`;
+
+        // ============================================
+        // STATE
+        // ============================================
+        let conversationHistory = [];
+        let productContext = '';
+        let productChunks = [];
+        let isLoading = false;
+
+        // Polish stop words for better keyword matching
+        const STOP_WORDS_PL = new Set([
+            'i', 'w', 'z', 'na', 'do', 'o', 'od', 'za', 'po', 'dla', 'to', 'jest', 'są', 'być', 'ma', 'mają',
+            'jak', 'co', 'czy', 'tak', 'nie', 'ale', 'lub', 'oraz', 'a', 'że', 'przez', 'przy', 'jako',
+            'tego', 'tej', 'tym', 'te', 'ten', 'ta', 'jego', 'jej', 'ich', 'się', 'już', 'tylko', 'jeszcze',
+            'może', 'można', 'bardzo', 'który', 'która', 'które', 'których', 'jaki', 'jaka', 'jakie'
+        ]);
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load API key from sessionStorage
+            const savedKey = sessionStorage.getItem('openai_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                updateStatus('ready', 'Gotowy do rozmowy');
+            }
+
+            // Save API key on change
+            document.getElementById('apiKey').addEventListener('input', (e) => {
+                const key = e.target.value.trim();
+                if (key) {
+                    sessionStorage.setItem('openai_api_key', key);
+                    updateStatus('ready', 'Gotowy do rozmowy');
+                } else {
+                    sessionStorage.removeItem('openai_api_key');
+                    updateStatus('', 'Oczekiwanie na klucz API');
+                }
+            });
+
+            // Load product data
+            await loadProductData();
+        });
+
+        // ============================================
+        // PRODUCT DATA LOADING (RAG)
+        // ============================================
+        async function loadProductData() {
+            try {
+                updateStatus('loading', 'Ładowanie danych produktowych...');
+                
+                const response = await fetch(PRODUCT_URL);
+                if (!response.ok) throw new Error('Nie można załadować danych produktu');
+                
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                
+                // Remove scripts and styles
+                doc.querySelectorAll('script, style').forEach(el => el.remove());
+                
+                // Get main content
+                const mainContent = doc.querySelector('.main-content') || doc.body;
+                productContext = mainContent.innerText;
+                
+                // Create chunks for better RAG
+                productChunks = createChunks(mainContent);
+                
+                console.log(`Loaded ${productChunks.length} chunks from product page`);
+                
+                const savedKey = sessionStorage.getItem('openai_api_key');
+                if (savedKey) {
+                    updateStatus('ready', 'Gotowy do rozmowy');
+                } else {
+                    updateStatus('', 'Oczekiwanie na klucz API');
+                }
+            } catch (error) {
+                console.error('Error loading product data:', error);
+                showError('Nie udało się załadować danych produktu. Sprawdź czy plik produkt-cem-ii.html istnieje.');
+            }
+        }
+
+        function createChunks(element) {
+            const chunks = [];
+            
+            // Get all content sections
+            const sections = element.querySelectorAll('.content-section, .detail-section, .product-info-section, .product-price-section, .product-specs, .unit-selection, table');
+            
+            sections.forEach((section, index) => {
+                const text = section.innerText.trim();
+                if (text.length > 50) {
+                    chunks.push({
+                        id: index,
+                        text: text,
+                        tokens: tokenize(text)
+                    });
+                }
+            });
+
+            // Also add paragraphs and lists as separate chunks
+            const paragraphs = element.querySelectorAll('p, ul, h2, h3');
+            paragraphs.forEach((p, index) => {
+                const text = p.innerText.trim();
+                if (text.length > 30 && text.length < 500) {
+                    chunks.push({
+                        id: sections.length + index,
+                        text: text,
+                        tokens: tokenize(text)
+                    });
+                }
+            });
+
+            // Deduplicate by text similarity
+            const uniqueChunks = [];
+            chunks.forEach(chunk => {
+                const isDuplicate = uniqueChunks.some(uc => 
+                    uc.text.includes(chunk.text) || chunk.text.includes(uc.text)
+                );
+                if (!isDuplicate) {
+                    uniqueChunks.push(chunk);
+                }
+            });
+
+            return uniqueChunks;
+        }
+
+        function tokenize(text) {
+            return text
+                .toLowerCase()
+                .replace(/[^\w\sąćęłńóśźż]/g, ' ')
+                .split(/\s+/)
+                .filter(word => word.length > 2 && !STOP_WORDS_PL.has(word));
+        }
+
+        function findRelevantChunks(query, topN = 6) {
+            const queryTokens = new Set(tokenize(query));
+            
+            const scored = productChunks.map(chunk => {
+                // Calculate overlap score
+                const overlap = chunk.tokens.filter(t => queryTokens.has(t)).length;
+                const score = overlap / Math.sqrt(chunk.tokens.length + 1);
+                return { ...chunk, score };
+            });
+
+            // Sort by score and take top N
+            scored.sort((a, b) => b.score - a.score);
+            return scored.slice(0, topN).filter(c => c.score > 0);
+        }
+
+        // ============================================
+        // CHAT FUNCTIONS
+        // ============================================
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isLoading) return;
+            
+            const apiKey = document.getElementById('apiKey').value.trim();
+            if (!apiKey) {
+                showError('Wprowadź klucz API OpenAI');
+                return;
+            }
+
+            // Hide welcome message
+            const welcome = document.getElementById('welcomeMessage');
+            if (welcome) welcome.style.display = 'none';
+
+            // Clear input
+            input.value = '';
+            clearError();
+
+            // Add user message to UI
+            addMessage('user', message);
+            
+            // Add to history
+            conversationHistory.push({ role: 'user', content: message });
+
+            // Show typing indicator
+            showTypingIndicator();
+            isLoading = true;
+            updateStatus('loading', 'AI pisze odpowiedź...');
+
+            try {
+                // Find relevant context chunks
+                const relevantChunks = findRelevantChunks(message);
+                const contextText = relevantChunks.length > 0 
+                    ? relevantChunks.map(c => c.text).join('\n\n---\n\n')
+                    : productContext.substring(0, 4000);
+
+                // Build messages array
+                const messages = [
+                    { role: 'system', content: SYSTEM_PROMPT },
+                    { role: 'system', content: `KONTEKST PRODUKTOWY:\n\n${contextText}` },
+                    ...conversationHistory
+                ];
+
+                // Call OpenAI API
+                const model = document.getElementById('modelSelect').value;
+                const response = await fetch(OPENAI_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: messages,
+                        max_tokens: 1000,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const assistantMessage = data.choices[0].message.content;
+
+                // Add to history
+                conversationHistory.push({ role: 'assistant', content: assistantMessage });
+
+                // Remove typing indicator and add response
+                removeTypingIndicator();
+                addMessage('assistant', assistantMessage, true);
+                
+                updateStatus('ready', 'Gotowy do rozmowy');
+            } catch (error) {
+                console.error('Error:', error);
+                removeTypingIndicator();
+                showError(`Błąd: ${error.message}`);
+                updateStatus('', 'Błąd połączenia');
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        function sendQuickPrompt(prompt) {
+            document.getElementById('messageInput').value = prompt;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function clearChat() {
+            conversationHistory = [];
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = `
+                <div class="welcome-message" id="welcomeMessage">
+                    <i class='bx bxs-message-square-dots'></i>
+                    <h2>Witaj w AI Chat!</h2>
+                    <p>Wpisz klucz API OpenAI powyżej i zadaj pytanie o produkty cementowe. Możesz też użyć szybkich podpowiedzi poniżej.</p>
+                </div>
+            `;
+            clearError();
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+        function addMessage(role, content, showSource = false) {
+            const container = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+
+            const avatar = role === 'assistant' 
+                ? '<i class="bx bxs-bot"></i>' 
+                : '<i class="fi fi-rr-user"></i>';
+
+            // Render markdown for assistant messages
+            const renderedContent = role === 'assistant' 
+                ? marked.parse(content) 
+                : `<p>${escapeHtml(content)}</p>`;
+
+            const sourceHtml = showSource 
+                ? `<div class="message-source">
+                     <i class="fi fi-rr-info"></i>
+                     Źródło: <a href="produkt-cem-ii.html" target="_blank">CEM II/A-LL 42,5R</a>
+                   </div>`
+                : '';
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    ${renderedContent}
+                    ${sourceHtml}
+                </div>
+            `;
+
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('messagesContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar"><i class="bx bxs-bot"></i></div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(typingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function showError(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="error-message"><i class="fi fi-rr-exclamation"></i> ${escapeHtml(message)}</div>`;
+        }
+
+        function clearError() {
+            document.getElementById('errorContainer').innerHTML = '';
+        }
+
+        function updateStatus(status, text) {
+            const dot = document.getElementById('statusDot');
+            const textEl = document.getElementById('statusText');
+            
+            dot.className = 'status-dot';
+            if (status) dot.classList.add(status);
+            textEl.textContent = text;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

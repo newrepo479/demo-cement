@@ -1550,6 +1550,9 @@
             orders.unshift(order);
             localStorage.setItem('app:shared:orders', JSON.stringify(orders));
             
+            // Create notification for the new order
+            saveOrderNotification(order);
+            
             // Update order number in success modal
             const orderNumberEl = document.querySelector('.order-number');
             if (orderNumberEl) {
@@ -1557,6 +1560,34 @@
             }
             
             return order;
+        }
+        
+        // =====================================================
+        // Save Order Notification to Shared Storage
+        // =====================================================
+        function saveOrderNotification(order) {
+            const STORAGE_KEY = 'app:shared:notifications';
+            
+            try {
+                const notifications = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                
+                const notification = {
+                    id: Date.now() + Math.random(),
+                    kind: 'order_created',
+                    title: `Zamówienie ${order.number} - Nowe zamówienie`,
+                    desc: `${order.product} | ${order.quantity} ${order.unit === 'tons' ? 'ton' : order.unit === 'pallets' ? 'palet' : 'sam.'}`,
+                    createdAt: new Date().toISOString(),
+                    isUnread: true,
+                    linkTab: 'zamowienia',
+                    orderId: order.id,
+                    orderNumber: order.number
+                };
+                
+                notifications.unshift(notification);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
+            } catch (e) {
+                console.error('Error saving notification:', e);
+            }
         }
 
         function nextStep() {

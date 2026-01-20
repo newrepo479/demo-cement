@@ -1277,33 +1277,34 @@
                 <li><a href="zamowienie-wizard.html">Nowe zamówienie</a></li>
                 <li><a href="#" onclick="showTab('zamowienia'); return false;">Moje zamówienia</a></li>
                 <li><a href="#" onclick="showTab('kontakt'); return false;">Kontakt z opiekunem</a></li>
-                <li><a href="#">Pomoc</a></li>
+                <li><a href="chat.html" style="background: linear-gradient(135deg, #ef7d05, #ff9a3c); color: white; border-radius: 8px;"><i class="fi fi-rr-comment-alt"></i> AI Chat</a></li>
             </ul>
         </div>
         <div class="nav-right">
             <div style="position: relative;">
                 <button class="notification-btn" onclick="toggleNotificationMenu(event)">
                     <i class="fi fi-rr-bell"></i>
-                    <span class="notification-badge">3</span>
+                    <span class="notification-badge" id="notificationBadge" data-static-count="3">3</span>
                 </button>
                 <div class="notification-dropdown" id="notificationDropdown">
                     <div class="notification-header">
                         <i class="fi fi-rr-bell"></i> Powiadomienia
                     </div>
-                    <div class="notification-list">
-                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                    <div class="notification-list" id="notificationList">
+                        <!-- Dynamic notifications from localStorage will be inserted here -->
+                        <div class="notification-item" data-static="true" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
                             <div class="notification-item-title">Zamówienie #ZAM-1234 - Status zmieniony</div>
                             <div class="notification-item-desc">CEM I 42,5R | 28 ton</div>
                             <div class="notification-item-time">2 godziny temu</div>
                             <span class="notification-item-status updated">W realizacji</span>
                         </div>
-                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                        <div class="notification-item" data-static="true" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
                             <div class="notification-item-title">Zamówienie #ZAM-1235 - Nowe zamówienie</div>
                             <div class="notification-item-desc">CEM II/B-S 42,5N | 15 ton</div>
                             <div class="notification-item-time">5 godzin temu</div>
                             <span class="notification-item-status new">Nowe</span>
                         </div>
-                        <div class="notification-item" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
+                        <div class="notification-item" data-static="true" onclick="showTab('zamowienia', event); toggleNotificationMenu(event);">
                             <div class="notification-item-title">Zamówienie #ZAM-1233 - Dostarczone</div>
                             <div class="notification-item-desc">CEM II/B-S 42,5N | 56 ton</div>
                             <div class="notification-item-time">Wczoraj, 14:30</div>
@@ -1348,9 +1349,10 @@
                 <li><a href="#" onclick="showTab('faktury'); return false;"><i class="fi fi-rr-file-invoice menu-icon"></i> Faktury i płatności</a></li>
                 <li><a href="#" onclick="showTab('raporty'); return false;"><i class="fi fi-rr-chart-line-up menu-icon"></i> Raporty</a></li>
                 <li><a href="#" onclick="showTab('transport'); return false;"><i class="fi fi-rr-truck menu-icon"></i> Zarządzanie transportem</a></li>
-                <li><a href="#" onclick="showTab('reklamacje'); return false;"><i class="fi fi-rr-exclamation-triangle menu-icon"></i> Reklamacje / Zgłoszenia <span class="menu-badge">2</span></a></li>
+                <li><a href="#" onclick="showTab('reklamacje'); return false;"><i class="fi fi-rr-exclamation-triangle menu-icon"></i> Reklamacje / Zgłoszenia <span class="menu-badge" id="complaintsBadge" data-static-count="2">2</span></a></li>
                 <li><a href="#" onclick="showTab('dane-firmy'); return false;"><i class="fi fi-rr-building menu-icon"></i> Dane firmy</a></li>
                 <li><a href="#" onclick="showTab('kontakt'); return false;"><i class="fi fi-rr-phone-call menu-icon"></i> Kontakt z opiekunem</a></li>
+                <li style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--color-gray);"><a href="chat.html" style="background: linear-gradient(135deg, #ef7d05, #ff9a3c); color: white !important;"><i class="fi fi-rr-comment-alt menu-icon"></i> AI Chat <span class="menu-badge" style="background: white; color: #ef7d05;">NEW</span></a></li>
             </ul>
         </aside>
 
@@ -2032,6 +2034,28 @@
                     </div>
                 </div>
                 
+                <!-- Pending Invoices Section (orders waiting for invoice) -->
+                <div class="table-section" id="pending-invoices-section" style="display: none; margin-bottom: 24px;">
+                    <div class="table-header">
+                        <h2 class="table-title"><i class="fi fi-rr-clock"></i> Zamówienia oczekujące na fakturę</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nr zamówienia</th>
+                                <th>Data zamówienia</th>
+                                <th>Produkt</th>
+                                <th>Wartość netto</th>
+                                <th>Status</th>
+                                <th>Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-invoices-tbody">
+                            <!-- Dynamic content from localStorage orders -->
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="table-section">
                     <div class="table-header">
                         <h2 class="table-title">Faktury</h2>
@@ -2500,10 +2524,26 @@
 
                     <div class="form-group">
                         <label class="form-label" for="orderRef">Zamówienie (opcjonalnie)</label>
-                        <select id="orderRef" class="form-select">
+                        <select id="orderRef" class="form-select" onchange="onOrderRefChange()">
                             <option value="">Wybierz zamówienie...</option>
-                            <option value="ZAM-1234">#ZAM-1234 - CEM I 42,5R (09.01.2026)</option>
-                            <option value="ZAM-1233">#ZAM-1233 - CEM II/B-S (05.01.2026)</option>
+                            <!-- Dynamic options populated by populateOrderSelect() -->
+                        </select>
+                    </div>
+
+                    <!-- Order details box - shown when order is selected -->
+                    <div class="form-group" id="orderDetailsBox" style="display: none;">
+                        <div style="background: rgba(239, 125, 5, 0.05); border: 1px solid rgba(239, 125, 5, 0.2); border-radius: 8px; padding: 12px;">
+                            <div style="font-size: 13px; color: var(--color-gray); margin-bottom: 4px;">Szczegóły zamówienia:</div>
+                            <div id="orderDetailsContent" style="font-size: 14px; color: var(--color-black);"></div>
+                        </div>
+                    </div>
+
+                    <!-- Invoice select - shown when order has invoices -->
+                    <div class="form-group" id="invoiceRefGroup" style="display: none;">
+                        <label class="form-label" for="invoiceRef">Faktura powiązana (opcjonalnie)</label>
+                        <select id="invoiceRef" class="form-select">
+                            <option value="">Wybierz fakturę...</option>
+                            <!-- Dynamic options populated by populateInvoiceSelectForOrder() -->
                         </select>
                     </div>
 
@@ -2676,6 +2716,398 @@
             const filtered = records.filter(r => r.id !== id);
             storageSet(key, filtered);
             return filtered;
+        }
+
+        // =====================================================
+        // Static Data from DOM (for merging with localStorage)
+        // =====================================================
+        
+        // Static orders parsed from the orders table in DOM
+        function getStaticOrdersFromDOM() {
+            const staticOrders = [];
+            // Parse from the main orders table (tab-zamowienia)
+            const orderRows = document.querySelectorAll('#orders-tbody tr:not([data-storage-id]):not(.order-details-row)');
+            orderRows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 5) {
+                    const numberText = cells[0]?.querySelector('strong')?.textContent || '';
+                    const dateText = cells[1]?.textContent || '';
+                    const product = cells[2]?.textContent || '';
+                    const quantity = cells[3]?.textContent || '';
+                    const price = cells[4]?.textContent || '';
+                    const status = cells[5]?.querySelector('.status-badge')?.textContent || '';
+                    
+                    if (numberText) {
+                        staticOrders.push({
+                            id: 'static-' + numberText.replace('#', ''),
+                            number: numberText,
+                            date: dateText,
+                            product: product.trim(),
+                            quantity: quantity.trim(),
+                            priceNet: price.trim(),
+                            status: status.trim(),
+                            isStatic: true
+                        });
+                    }
+                }
+            });
+            return staticOrders;
+        }
+        
+        // Static invoices parsed from the invoices table in DOM
+        function getStaticInvoicesFromDOM() {
+            const staticInvoices = [];
+            const invoiceRows = document.querySelectorAll('#invoices-tbody tr:not([data-storage-id])');
+            invoiceRows.forEach(row => {
+                const invoiceNumber = row.getAttribute('data-invoice-number');
+                const cells = row.querySelectorAll('td');
+                if (invoiceNumber && cells.length >= 5) {
+                    staticInvoices.push({
+                        id: 'static-' + invoiceNumber,
+                        invoiceNumber: invoiceNumber,
+                        issueDate: cells[1]?.textContent?.trim() || '',
+                        dueDate: cells[2]?.textContent?.trim() || '',
+                        amount: cells[3]?.textContent?.trim() || '',
+                        status: cells[4]?.querySelector('.status-badge')?.textContent?.trim() || '',
+                        isStatic: true
+                    });
+                }
+            });
+            return staticInvoices;
+        }
+
+        // =====================================================
+        // Merged Data Getters (localStorage + DOM)
+        // =====================================================
+        
+        function getAllOrdersForSelectors() {
+            // Get orders from localStorage
+            const storageOrders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            // Get static orders from DOM
+            const staticOrders = getStaticOrdersFromDOM();
+            
+            // Merge: localStorage orders first, then static ones (no duplicates)
+            const allOrders = [...storageOrders];
+            const existingNumbers = new Set(storageOrders.map(o => o.number));
+            
+            staticOrders.forEach(staticOrder => {
+                if (!existingNumbers.has(staticOrder.number)) {
+                    allOrders.push(staticOrder);
+                }
+            });
+            
+            return allOrders;
+        }
+        
+        function getAllInvoicesForSelectors() {
+            // Get invoices from localStorage
+            const storageInvoices = storageGet('invoices', []);
+            // Get static invoices from DOM
+            const staticInvoices = getStaticInvoicesFromDOM();
+            
+            // Merge
+            const allInvoices = [...storageInvoices];
+            const existingNumbers = new Set(storageInvoices.map(i => i.invoiceNumber));
+            
+            staticInvoices.forEach(staticInvoice => {
+                if (!existingNumbers.has(staticInvoice.invoiceNumber)) {
+                    allInvoices.push(staticInvoice);
+                }
+            });
+            
+            return allInvoices;
+        }
+        
+        function getInvoicesForOrder(orderNumber) {
+            // For now, return invoices that might be linked to this order
+            // In a real system, invoices would have an orderNumber field
+            const allInvoices = getAllInvoicesForSelectors();
+            // Return all invoices as potentially linkable (in real system this would filter by orderNumber)
+            return allInvoices;
+        }
+
+        // =====================================================
+        // Populate Order Select in Complaint Modal
+        // =====================================================
+        
+        function populateOrderSelect() {
+            const select = document.getElementById('orderRef');
+            if (!select) return;
+            
+            // Clear existing options except the first placeholder
+            select.innerHTML = '<option value="">Wybierz zamówienie...</option>';
+            
+            const orders = getAllOrdersForSelectors();
+            
+            orders.forEach(order => {
+                const option = document.createElement('option');
+                const orderNumber = order.number.replace('#', '');
+                option.value = orderNumber;
+                
+                // Format date
+                let dateStr = '';
+                if (order.date) {
+                    if (order.date.includes('T')) {
+                        dateStr = new Date(order.date).toLocaleDateString('pl-PL');
+                    } else {
+                        dateStr = order.date;
+                    }
+                }
+                
+                option.textContent = `#${orderNumber} - ${order.product} (${dateStr})`;
+                option.dataset.product = order.product || '';
+                option.dataset.quantity = order.quantity || '';
+                option.dataset.price = order.priceNet || '';
+                option.dataset.status = order.status || '';
+                option.dataset.date = dateStr;
+                option.dataset.location = order.location || '';
+                option.dataset.transport = order.transport || '';
+                
+                select.appendChild(option);
+            });
+        }
+        
+        function populateInvoiceSelectForOrder(orderNumber) {
+            const invoiceGroup = document.getElementById('invoiceRefGroup');
+            const invoiceSelect = document.getElementById('invoiceRef');
+            
+            if (!invoiceGroup || !invoiceSelect) return;
+            
+            // Clear existing options
+            invoiceSelect.innerHTML = '<option value="">Wybierz fakturę...</option>';
+            
+            if (!orderNumber) {
+                invoiceGroup.style.display = 'none';
+                return;
+            }
+            
+            const invoices = getInvoicesForOrder(orderNumber);
+            
+            if (invoices.length === 0) {
+                // Show message that no invoices yet
+                const option = document.createElement('option');
+                option.value = '';
+                option.textContent = 'Brak faktur (zamówienie oczekuje na fakturę)';
+                option.disabled = true;
+                invoiceSelect.appendChild(option);
+            } else {
+                invoices.forEach(invoice => {
+                    const option = document.createElement('option');
+                    option.value = invoice.invoiceNumber;
+                    option.textContent = `${invoice.invoiceNumber} - ${invoice.amount} (${invoice.status})`;
+                    invoiceSelect.appendChild(option);
+                });
+            }
+            
+            invoiceGroup.style.display = 'block';
+        }
+        
+        function onOrderRefChange() {
+            const select = document.getElementById('orderRef');
+            const detailsBox = document.getElementById('orderDetailsBox');
+            const detailsContent = document.getElementById('orderDetailsContent');
+            
+            if (!select || !detailsBox || !detailsContent) return;
+            
+            const selectedOption = select.options[select.selectedIndex];
+            const orderNumber = select.value;
+            
+            if (!orderNumber) {
+                detailsBox.style.display = 'none';
+                document.getElementById('invoiceRefGroup').style.display = 'none';
+                return;
+            }
+            
+            // Show order details
+            const product = selectedOption.dataset.product || '';
+            const quantity = selectedOption.dataset.quantity || '';
+            const price = selectedOption.dataset.price || '';
+            const status = selectedOption.dataset.status || '';
+            const date = selectedOption.dataset.date || '';
+            const location = selectedOption.dataset.location || '';
+            const transport = selectedOption.dataset.transport || '';
+            
+            let detailsHtml = `<strong>#${orderNumber}</strong><br>`;
+            detailsHtml += `Produkt: ${product}<br>`;
+            detailsHtml += `Ilość: ${quantity}<br>`;
+            if (price) detailsHtml += `Wartość: ${price}<br>`;
+            if (date) detailsHtml += `Data: ${date}<br>`;
+            if (status) detailsHtml += `Status: ${status}`;
+            if (location) detailsHtml += `<br>Lokalizacja: ${location}`;
+            if (transport) detailsHtml += `<br>Transport: ${transport}`;
+            
+            detailsContent.innerHTML = detailsHtml;
+            detailsBox.style.display = 'block';
+            
+            // Populate invoice select
+            populateInvoiceSelectForOrder(orderNumber);
+            
+            // Suggest title if empty
+            const titleInput = document.getElementById('title');
+            if (titleInput && !titleInput.value.trim()) {
+                titleInput.value = `Zgłoszenie do zamówienia #${orderNumber}`;
+            }
+        }
+
+        // =====================================================
+        // Render Pending Invoices (orders without invoices)
+        // =====================================================
+        
+        function renderPendingInvoices() {
+            const section = document.getElementById('pending-invoices-section');
+            const tbody = document.getElementById('pending-invoices-tbody');
+            
+            if (!section || !tbody) return;
+            
+            // Get orders from localStorage only (static orders already have invoices)
+            const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+            
+            // Get invoices to check which orders already have invoices
+            const invoices = storageGet('invoices', []);
+            const ordersWithInvoices = new Set(invoices.map(i => i.orderNumber).filter(Boolean));
+            
+            // Filter orders that don't have invoices yet
+            const pendingOrders = orders.filter(order => {
+                const orderNum = order.number?.replace('#', '');
+                return !ordersWithInvoices.has(orderNum);
+            });
+            
+            if (pendingOrders.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            
+            section.style.display = 'block';
+            tbody.innerHTML = '';
+            
+            pendingOrders.forEach(order => {
+                const unitLabels = { 'tons': 'ton', 'pallets': 'palet', 'trucks': 'sam.' };
+                const unitLabel = unitLabels[order.unit] || order.unit || '';
+                
+                const statusStyles = {
+                    'Nowe': { style: 'background: rgba(239, 125, 5, 0.1); color: var(--color-action);', text: 'Oczekuje na fakturę' },
+                    'W realizacji': { style: 'background: rgba(59, 130, 246, 0.1); color: #3b82f6;', text: 'W realizacji' },
+                    'Dostarczone': { style: 'background: rgba(34, 197, 94, 0.1); color: #22c55e;', text: 'Do zafakturowania' }
+                };
+                const statusInfo = statusStyles[order.status] || statusStyles['Nowe'];
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${order.number}</strong></td>
+                    <td>${new Date(order.date).toLocaleDateString('pl-PL')}</td>
+                    <td>${order.product}</td>
+                    <td>${order.priceNet}</td>
+                    <td><span class="status-badge" style="${statusInfo.style}">${statusInfo.text}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="icon-btn" title="Faktura będzie dostępna po realizacji" onclick="alert('Faktura zostanie wystawiona po zrealizowaniu zamówienia.')"><i class="fi fi-rr-time-fast"></i></button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // =====================================================
+        // Render Notifications from localStorage
+        // =====================================================
+        
+        function renderNotifications() {
+            const list = document.getElementById('notificationList');
+            if (!list) return;
+            
+            // Remove previously rendered dynamic notifications
+            list.querySelectorAll('.notification-item:not([data-static])').forEach(item => item.remove());
+            
+            // Get notifications from localStorage
+            const notifications = storageGet('notifications', []);
+            
+            // Find first static item to insert before
+            const firstStatic = list.querySelector('.notification-item[data-static]');
+            
+            // Render notifications (newest first, limit to 10)
+            notifications.slice(0, 10).reverse().forEach(notif => {
+                const item = document.createElement('div');
+                item.className = 'notification-item';
+                item.setAttribute('data-storage-id', notif.id);
+                item.onclick = function(e) {
+                    if (notif.linkTab) {
+                        showTab(notif.linkTab, e);
+                        toggleNotificationMenu(e);
+                    }
+                    // Mark as read
+                    markNotificationRead(notif.id);
+                };
+                
+                const statusClass = notif.isUnread ? 'new' : 'updated';
+                const statusText = notif.isUnread ? 'Nowe' : 'Przeczytane';
+                
+                // Format time ago
+                const timeAgo = formatTimeAgo(notif.createdAt);
+                
+                item.innerHTML = `
+                    <div class="notification-item-title">${notif.title}</div>
+                    <div class="notification-item-desc">${notif.desc || ''}</div>
+                    <div class="notification-item-time">${timeAgo}</div>
+                    <span class="notification-item-status ${statusClass}">${statusText}</span>
+                `;
+                
+                if (firstStatic) {
+                    list.insertBefore(item, firstStatic);
+                } else {
+                    list.appendChild(item);
+                }
+            });
+        }
+        
+        function markNotificationRead(id) {
+            const notifications = storageGet('notifications', []);
+            const notif = notifications.find(n => n.id === id);
+            if (notif && notif.isUnread) {
+                notif.isUnread = false;
+                storageSet('notifications', notifications);
+                updateBadges();
+            }
+        }
+        
+        function formatTimeAgo(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+            
+            if (diffMins < 1) return 'Przed chwilą';
+            if (diffMins < 60) return `${diffMins} min temu`;
+            if (diffHours < 24) return `${diffHours} godz. temu`;
+            if (diffDays === 1) return 'Wczoraj';
+            return `${diffDays} dni temu`;
+        }
+
+        // =====================================================
+        // Update Badges (Notifications + Complaints)
+        // =====================================================
+        
+        function updateBadges() {
+            // Update notification badge
+            const notifBadge = document.getElementById('notificationBadge');
+            if (notifBadge) {
+                const staticCount = parseInt(notifBadge.dataset.staticCount) || 0;
+                const notifications = storageGet('notifications', []);
+                const unreadCount = notifications.filter(n => n.isUnread).length;
+                notifBadge.textContent = staticCount + unreadCount;
+            }
+            
+            // Update complaints badge
+            const complaintsBadge = document.getElementById('complaintsBadge');
+            if (complaintsBadge) {
+                const staticCount = parseInt(complaintsBadge.dataset.staticCount) || 0;
+                const complaints = storageGet('complaints', []);
+                const newComplaintsCount = complaints.filter(c => c.status === 'nowe').length;
+                complaintsBadge.textContent = staticCount + newComplaintsCount;
+            }
         }
 
         // =====================================================
@@ -2995,6 +3427,11 @@
             renderContactHistory();
             loadCompanyData();
             
+            // New integrations: orders/invoices/complaints wiring
+            renderPendingInvoices();
+            renderNotifications();
+            updateBadges();
+            
             // Load tab from URL on page load
             const tabFromUrl = getTabFromUrl();
             if (tabFromUrl && tabFromUrl !== 'dashboard') {
@@ -3143,12 +3580,21 @@
 
         // Complaint Modal
         function openComplaintModal() {
+            // Populate order select with all available orders
+            populateOrderSelect();
+            // Reset and hide order details and invoice select
+            document.getElementById('orderDetailsBox').style.display = 'none';
+            document.getElementById('invoiceRefGroup').style.display = 'none';
+            // Show modal
             document.getElementById('complaintModal').classList.add('active');
         }
 
         function closeComplaintModal() {
             document.getElementById('complaintModal').classList.remove('active');
             document.getElementById('complaintForm').reset();
+            // Hide optional fields
+            document.getElementById('orderDetailsBox').style.display = 'none';
+            document.getElementById('invoiceRefGroup').style.display = 'none';
         }
 
         function showComplaintDetails(complaintId) {
@@ -3466,6 +3912,7 @@
         function submitComplaint() {
             const type = document.getElementById('complaintType').value;
             const orderRef = document.getElementById('orderRef').value;
+            const invoiceRef = document.getElementById('invoiceRef')?.value || '';
             const priority = document.querySelector('input[name="priority"]:checked').value;
             const title = document.getElementById('title').value.trim();
             const description = document.getElementById('description').value.trim();
@@ -3518,12 +3965,25 @@
             };
             const typeDisplay = typeMap[type] || 'Zgłoszenie';
 
-            // Save to localStorage
+            // Find orderId from orders if orderRef is provided
+            let orderId = null;
+            if (orderRef) {
+                const orders = JSON.parse(localStorage.getItem('app:shared:orders') || '[]');
+                const matchingOrder = orders.find(o => o.number === '#' + orderRef || o.number === orderRef);
+                if (matchingOrder) {
+                    orderId = matchingOrder.id;
+                }
+            }
+
+            // Save to localStorage with full order/invoice references
             const complaintRecord = {
                 number: complaintNumber,
                 type: type,
                 typeDisplay: typeDisplay,
                 orderRef: orderRef,
+                orderNumber: orderRef ? '#' + orderRef : null,
+                orderId: orderId,
+                invoiceNumber: invoiceRef || null,
                 priority: priority,
                 title: title,
                 description: description,
@@ -3537,12 +3997,8 @@
             // Re-render complaints from localStorage
             renderSavedComplaints();
 
-            // Update badge count
-            const badge = document.querySelector('.menu-badge');
-            if (badge) {
-                const currentCount = parseInt(badge.textContent) || 0;
-                badge.textContent = currentCount + 1;
-            }
+            // Update all badges properly
+            updateBadges();
 
             // Close modal and show success message
             closeComplaintModal();

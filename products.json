@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": "cem-ii-a-ll-42-5r",
+      "name": "CEM II/A-LL 42,5R",
+      "description": "Cement Naturalny Luzem - wysokiej jakości cement portlandzki z dodatkiem wapienia",
+      "url": "produkt-cem-ii.html",
+      "category": "cement",
+      "price": "410 PLN/tonę",
+      "availability": "W magazynie"
+    }
+  ],
+  "meta": {
+    "version": "1.0",
+    "lastUpdated": "2026-01-20",
+    "note": "Dodaj więcej produktów do tej tablicy, aby rozszerzyć bazę wiedzy chatbota"
+  }
+}
